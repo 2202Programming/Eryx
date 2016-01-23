@@ -51,8 +51,19 @@ class SparkDT: public IControl {
 
 	void TelepPeriodic() {
 		//Get Xbox Right x  and left x
+		double rightX=xbox->getAxisRightX();
+		double leftX=xbox->getAxisLeftX();
+		if(rightX < .1){
+			rightX = 0.0;
+		}
+		if(leftX < .1){
+			leftX = 0.0;
+		}
 
 		//Set left motor to left x
+		FrontLeftSpark->Set(leftX);
+		RearLeftSpark->Set(leftX);
+
 
 		//Set right motors to right x
 	}
