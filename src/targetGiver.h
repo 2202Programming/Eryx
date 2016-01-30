@@ -17,5 +17,6 @@
 
 #include "IControl.h"
 #include "Integration/noList.cpp"
+#include "Integration/IProfile.h"
 
 
