@@ -4,7 +4,6 @@
  *  Created on: Jan 7, 2016
  *      Author: lazar
  */
-#pragma once
 
 #include <string.h>
 #include <stdio.h>
@@ -16,7 +15,4 @@
 #include <Xbox/XboxController2.h>
 
 #include "IControl.h"
-#include "Integration/noList.cpp"
-#include "Integration/IProfile.h"
-
-
+#include "noList.cpp"
