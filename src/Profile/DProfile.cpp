@@ -8,30 +8,50 @@
 #include <Profile/DProfile.h>
 
 DProfile::DProfile() {
-	// TODO Auto-generated constructor stub
-
+	remakeIndex();
 }
 
 DProfile::~DProfile() {
-	// TODO Auto-generated destructor stub
+	generateIndex();
+	delete master;
 }
 
 std::string DProfile::getValue(std::string label){
-	//TODO
+	profileNode *temp = master;
+	while(temp !=NULL){
+		if(temp->label.compare(label) == 1){
+			return temp->value;
+		}
+	}
+	return "null";
 }
 
 int DProfile::getInt(std::string label){
-	//TODO
+	return std::stoi(getValue(label));
 }
 
 float DProfile::getFloat(std::string label){
-	//TODO
+	return std::stof(getValue(label));
 }
 
 bool DProfile::getBool(std::string label){
+	return getValue(label).at(0) == '1';
+}
+
+bool DProfile::setValue(std::string label, std::string value){
+	bool alreadyExists = true;
+	if(getValue(label).compare("null") == 0){
+		alreadyExists = false;
+
+	}
+	return alreadyExists;
+}
+
+void DProfile::remakeIndex(){
 	//TODO
 }
 
-void DProfile::setValue(std::string label, std::string value){
+void DProfile::generateIndex(){
 	//TODO
 }
+

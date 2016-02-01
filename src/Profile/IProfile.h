@@ -13,20 +13,25 @@ public:
 	IProfile();
 	virtual ~IProfile();
 
-	virtual std::string getValue(std::string label);
-	virtual int getInt(std::string label);
-	virtual float getFloat(std::string label);
-	virtual bool getBool(std::string label);
+	virtual std::string getValue(std::string label){return "null";}
+	virtual int getInt(std::string label){return -999;}
+	virtual float getFloat(std::string label){return -999.9;}
+	virtual bool getBool(std::string label){return false;}
 
-	virtual void setValue(std::string label, std::string value);
+	virtual bool setValue(std::string label, std::string value){return false;}
 };
 
 struct profileNode{
 	std::string label;
 	std::string value;
+	profileNode *parent;
 	profileNode(std::string nl ,std::string nv){
 		label = nl;
 		value = nv;
+	}
+	profileNode(std::string nl, std::string nv, profileNode *nn){
+		profileNode(nl, nv);
+		parent = nn;
 	}
 };
 

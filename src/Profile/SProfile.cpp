@@ -32,6 +32,6 @@ bool SProfile::getBool(std::string label){
 	//TODO
 }
 
-void SProfile::setValue(std::string label, std::string value){
+bool SProfile::setValue(std::string label, std::string value){
 	//TODO
 }

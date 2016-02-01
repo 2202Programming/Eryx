@@ -13,6 +13,9 @@
 
 class SProfile: public IProfile {
 public:
+
+	profileNode *master;
+
 	SProfile();
 	~SProfile();
 
@@ -21,7 +24,8 @@ public:
 	float getFloat(std::string label);
 	bool getBool(std::string label);
 
-	void setValue(std::string label, std::string value);
+	bool setValue(std::string label, std::string value);
+
 };
 
 #endif /* SRC_PROFILE_SPROFILE_H_ */
