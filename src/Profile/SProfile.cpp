@@ -16,19 +16,24 @@ SProfile::SProfile() {
 }
 
 SProfile::~SProfile() {
-	delete master;
+	profileNode *temp = master;
+	profileNode *test;
+	while(temp != NULL){
+		test = temp->parent;
+		temp = temp->parent;
+	}
 }
 
 std::string SProfile::getValue(std::string label){
 	profileNode *temp = master;
-	while(temp !=NULL){
-		if(temp->label.compare(label) == 1){
+	while(temp != NULL){
+		if(temp->label.compare(label) == 0){
 			return temp->value;
 		}
+		temp = temp->parent;
 	}
 	return "null";
 }
-
 int SProfile::getInt(std::string label){
 	return std::stoi(getValue(label));
 }
