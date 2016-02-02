@@ -8,30 +8,44 @@
 #include <Profile/SProfile.h>
 
 SProfile::SProfile() {
-	// TODO Auto-generated constructor stub
+	master = new profileNode("MOTORFL", "1", master);
+	master = new profileNode("MOTORBL", "2", master);
+	master = new profileNode("MOTORFR", "3", master);
+	master = new profileNode("MOTORBR", "4", master);
 
 }
 
 SProfile::~SProfile() {
-	// TODO Auto-generated destructor stub
+	delete master;
 }
 
 std::string SProfile::getValue(std::string label){
-	//TODO
+	profileNode *temp = master;
+	while(temp !=NULL){
+		if(temp->label.compare(label) == 1){
+			return temp->value;
+		}
+	}
+	return "null";
 }
 
 int SProfile::getInt(std::string label){
-	//TODO
+	return std::stoi(getValue(label));
 }
 
 float SProfile::getFloat(std::string label){
-	//TODO
+	return std::stof(getValue(label));
 }
 
 bool SProfile::getBool(std::string label){
-	//TODO
+	return getValue(label).at(0) == '1';
 }
 
 bool SProfile::setValue(std::string label, std::string value){
-	//TODO
+	bool alreadyExists = true;
+	if(getValue(label).compare("null") == 0){
+		alreadyExists = false;
+
+	}
+	return alreadyExists;
 }
