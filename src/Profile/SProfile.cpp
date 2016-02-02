@@ -19,9 +19,11 @@ SProfile::~SProfile() {
 	profileNode *temp = master;
 	profileNode *test;
 	while(temp != NULL){
-		test = temp->parent;
+		test = temp;
 		temp = temp->parent;
+		delete test;
 	}
+	delete temp;
 }
 
 std::string SProfile::getValue(std::string label){
