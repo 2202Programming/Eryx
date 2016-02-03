@@ -28,6 +28,7 @@ struct profileNode{
 	profileNode(std::string nl ,std::string nv){
 		label = nl;
 		value = nv;
+		parent = NULL;
 	}
 	profileNode(std::string nl, std::string nv, profileNode *nn){
 		profileNode(nl, nv);
