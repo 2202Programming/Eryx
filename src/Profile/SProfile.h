@@ -10,11 +10,13 @@
 
 #include <Profile/IProfile.h>
 #include <string>
+#include <vector>
 
-class SProfile: public IProfile {
+class SProfile : public IProfile {
 public:
 
-	profileNode *master;
+	std::vector<std::string> *labels;
+	std::vector<std::string> *values;
 
 	SProfile();
 	~SProfile();
@@ -27,5 +29,6 @@ public:
 	bool setValue(std::string label, std::string value);
 
 };
+
 
 #endif /* SRC_PROFILE_SPROFILE_H_ */

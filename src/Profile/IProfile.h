@@ -21,7 +21,8 @@ public:
 	virtual bool setValue(std::string label, std::string value){return false;}
 };
 
-struct profileNode{
+class profileNode{
+public:
 	std::string label;
 	std::string value;
 	profileNode *parent;
