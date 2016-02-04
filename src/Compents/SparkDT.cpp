@@ -18,7 +18,7 @@ class SparkDT: public IControl {
 
 	int FrontLeftChannel, FrontRightChannel, RearLeftChannel, RearRightChannel;
 	Spark *FrontLeftSpark, *FrontRightSpark, *RearLeftSpark, *RearRightSpark;
-	XboxController2 *xbox = MasterXboxController::getInstance();
+	IXbox *xbox = MasterXboxController::getInstance();
 
 	SparkDT(IControl::profile profile) {
 		//Decides the pinouts based on which profile it is in

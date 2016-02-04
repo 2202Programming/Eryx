@@ -1,16 +1,8 @@
-#ifndef XBOX_CONTROLLER_2_H
-#define XBOX_CONTROLLER_2_H
-#include "IXbox.h"
-/**
- * DO NOT USE THIS!!!
- * USE IXBOX.h INSTEAD!!!
- * Thanks! :)
- */
-class XboxController2 : IXbox {
+#ifndef IXBOX_H
+#define IXBOX_H
+class IXbox {
 public:
-	//cannot call update
-	virtual ~XboxController2()=0;
-	//virtual ~XboxController2()=0 {}
+	virtual ~IXbox()=0;
 
 	virtual bool getXPressed()=0;/*PRESSED AND HELD ARE NOT DEPENDENT ON HOW OFTEN THEY ARE CALLED*/
 	virtual bool getXHeld()=0;
@@ -43,6 +35,7 @@ public:
 	virtual float getAxisLeftY()=0;
 	virtual float getAxisRightX()=0;
 	virtual float getAxisRightY()=0;
-};
+private:
 
+};
 #endif

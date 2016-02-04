@@ -84,7 +84,7 @@ public:
 
 	Robot() {
 		master = new noList();
-		profile = CompareID(SmartDashboard::GetString("Identity"));
+		//profile = CompareID(SmartDashboard::GetString("Identity"));
 
 		if(profile = IControl::Proto){
 		}
@@ -135,6 +135,8 @@ private:
 			test->value->TeleopPeriodic();
 			test = test->parent;
 		}
+		IXbox* xbox=MasterXboxController::getInstance();
+		SmartDashboard::PutNumber("IsAHeld", xbox->getAHeld());
 	}
 
 	void TestInit() {
