@@ -8,7 +8,7 @@
 #ifndef SRC_PROFILE_SPROFILE_H_
 #define SRC_PROFILE_SPROFILE_H_
 
-#include <Profile/IProfile.h>
+#include "Profile/IProfile.h"
 #include <string>
 
 class SProfile: public IProfile {
@@ -20,9 +20,6 @@ public:
 	~SProfile();
 
 	std::string getValue(std::string label);
-	int getInt(std::string label);
-	float getFloat(std::string label);
-	bool getBool(std::string label);
 
 	bool setValue(std::string label, std::string value);
 

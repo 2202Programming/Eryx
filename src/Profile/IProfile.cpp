@@ -5,7 +5,7 @@
  *      Author: lazar
  */
 
-#include <Profile/IProfile.h>
+#include "IProfile.h"
 
 IProfile::IProfile() {
 	// TODO Auto-generated constructor stub

@@ -5,40 +5,38 @@
  *      Author: lazar
  */
 
-#include <Profile/SProfile.h>
+#include "SProfile.h"
 
 SProfile::SProfile() {
 	master = new profileNode("MOTORFL", "1", master);
 	master = new profileNode("MOTORBL", "2", master);
 	master = new profileNode("MOTORFR", "3", master);
 	master = new profileNode("MOTORBR", "4", master);
-
+	master = new profileNode("SET", "SET", master);
+	master = new profileNode("TRUE", "SET", master);
+	master = new profileNode("FLOAT", "42.0", master);
 }
 
 SProfile::~SProfile() {
-	delete master;
+	profileNode *temp = master;
+	profileNode *test;
+	while(temp != NULL){
+		test = temp;
+		temp = temp->parent;
+		delete test;
+	}
+	delete temp;
 }
 
 std::string SProfile::getValue(std::string label){
 	profileNode *temp = master;
-	while(temp !=NULL){
-		if(temp->label.compare(label) == 1){
+	while(temp != NULL){
+		if(temp->label.compare(label) == 0){
 			return temp->value;
 		}
+		temp = temp->parent;
 	}
-	return "null";
-}
-
-int SProfile::getInt(std::string label){
-	return std::stoi(getValue(label));
-}
-
-float SProfile::getFloat(std::string label){
-	return std::stof(getValue(label));
-}
-
-bool SProfile::getBool(std::string label){
-	return getValue(label).at(0) == '1';
+	return "";
 }
 
 bool SProfile::setValue(std::string label, std::string value){

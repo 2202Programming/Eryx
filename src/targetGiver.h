@@ -4,6 +4,7 @@
  *  Created on: Jan 7, 2016
  *      Author: lazar
  */
+#pragma once
 
 #include <string.h>
 #include <stdio.h>

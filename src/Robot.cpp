@@ -1,8 +1,8 @@
-
 #include "targetGiver.h"
 #include "Profile/IProfile.h"
 #include "Profile/SProfile.h"
 #include "Drive/Drive.h"
+
 
 class Robot: public IterativeRobot {
 public:
@@ -42,6 +42,7 @@ public:
 
 	Robot() {
 		master = new noList();
+
 		id = CompareID(SmartDashboard::GetString("Identity", ""));
 		//EX ADDNODE
 		//master->addNode(new IControl, "NAME");
@@ -114,4 +115,5 @@ private:
 		}
 	}
 };
+
 START_ROBOT_CLASS(Robot);
