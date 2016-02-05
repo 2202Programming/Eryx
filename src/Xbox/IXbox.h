@@ -1,6 +1,7 @@
 #ifndef IXBOX_H
 #define IXBOX_H
-class IXbox {
+#include "IControl.h"
+class IXbox: public IControl {
 public:
 	virtual ~IXbox()=0;
 
