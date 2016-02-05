@@ -1,5 +1,5 @@
-
 #include "targetGiver.h"
+
 
 class Robot: public IterativeRobot {
 public:
@@ -38,9 +38,6 @@ public:
 
 	Robot() {
 		master = new noList();
-		profile = CompareID(SmartDashboard::GetString("Identity", ""));
-
-
 	}
 
 private:
@@ -108,4 +105,5 @@ private:
 		}
 	}
 };
+
 START_ROBOT_CLASS(Robot);
