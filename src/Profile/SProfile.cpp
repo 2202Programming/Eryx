@@ -5,51 +5,45 @@
  *      Author: lazar
  */
 
-#include <Profile/SProfile.h>
+#include "SProfile.h"
 
 SProfile::SProfile() {
-	labels = new std::vector<std::string>();
-	values = new std::vector<std::string>();
-	setValue("MOTORFL", "1");
-	setValue("MOTORFR", "2");
-	setValue("MOTORBL", "3");
-	setValue("MOTORBR", "4");
+	master = new profileNode("MOTORFL", "1", master);
+	master = new profileNode("MOTORBL", "2", master);
+	master = new profileNode("MOTORFR", "3", master);
+	master = new profileNode("MOTORBR", "4", master);
+	master = new profileNode("SET", "SET", master);
+	master = new profileNode("TRUE", "SET", master);
+	master = new profileNode("FLOAT", "42.0", master);
 }
 
 SProfile::~SProfile() {
-
+	profileNode *temp = master;
+	profileNode *test;
+	while(temp != NULL){
+		test = temp;
+		temp = temp->parent;
+		delete test;
+	}
+	delete temp;
 }
 
 std::string SProfile::getValue(std::string label){
-	int x = 0;
-	for (int i = 0; i < labels->size(); i++)
-	{
-		if (labels->at(i).compare(label) == 0)
-		{
-			x = i;
+	profileNode *temp = master;
+	while(temp != NULL){
+		if(temp->label.compare(label) == 0){
+			return temp->value;
 		}
+		temp = temp->parent;
 	}
-
-	return values->at(x);
-}
-int SProfile::getInt(std::string label){
-	std::string x = getValue(label);
-	if(x.compare("")==0){
-		return -999;
-	}
-	return std::stoi(getValue(label));
-}
-
-float SProfile::getFloat(std::string label){
-	return std::stof(getValue(label));
-}
-
-bool SProfile::getBool(std::string label){
-	return getValue(label).at(0) == '1';
+	return "";
 }
 
 bool SProfile::setValue(std::string label, std::string value){
-	labels->push_back(label);
-	values->push_back(value);
-	return true;
+	bool alreadyExists = true;
+	if(getValue(label).compare("null") == 0){
+		alreadyExists = false;
+
+	}
+	return alreadyExists;
 }
