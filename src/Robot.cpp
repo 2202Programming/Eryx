@@ -1,4 +1,7 @@
 #include "targetGiver.h"
+#include "Profile/IProfile.h"
+#include "Profile/SProfile.h"
+#include "Drive/Drive.h"
 
 
 class Robot: public IterativeRobot {
@@ -34,10 +37,17 @@ public:
 	}
 
 	noList* master;
-	IControl::profile profile;
+	IControl::profile id;
+	IProfile *profile = new SProfile();
 
 	Robot() {
 		master = new noList();
+
+		id = CompareID(SmartDashboard::GetString("Identity", ""));
+		//EX ADDNODE
+		//master->addNode(new IControl, "NAME");
+		master->addNode(new Drive(profile), "drive");
+
 	}
 
 private:
@@ -48,7 +58,7 @@ private:
 		SmartDashboard::PutString("State", "Robot Init");
 		nLNode* test = master->head;
 		while (test != NULL) {
-			test->value->RobotInit(IControl::profile(profile));
+			test->value->RobotInit(IControl::profile(id));
 			test = test->parent;
 		}
 
