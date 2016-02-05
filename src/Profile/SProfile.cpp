@@ -5,33 +5,45 @@
  *      Author: lazar
  */
 
-#include <Profile/SProfile.h>
+#include "SProfile.h"
 
 SProfile::SProfile() {
-	// TODO Auto-generated constructor stub
-
+	master = new profileNode("MOTORFL", "1", master);
+	master = new profileNode("MOTORBL", "2", master);
+	master = new profileNode("MOTORFR", "3", master);
+	master = new profileNode("MOTORBR", "4", master);
+	master = new profileNode("SET", "SET", master);
+	master = new profileNode("TRUE", "SET", master);
+	master = new profileNode("FLOAT", "42.0", master);
 }
 
 SProfile::~SProfile() {
-	// TODO Auto-generated destructor stub
+	profileNode *temp = master;
+	profileNode *test;
+	while(temp != NULL){
+		test = temp;
+		temp = temp->parent;
+		delete test;
+	}
+	delete temp;
 }
 
 std::string SProfile::getValue(std::string label){
-	//TODO
-}
-
-int SProfile::getInt(std::string label){
-	//TODO
-}
-
-float SProfile::getFloat(std::string label){
-	//TODO
-}
-
-bool SProfile::getBool(std::string label){
-	//TODO
+	profileNode *temp = master;
+	while(temp != NULL){
+		if(temp->label.compare(label) == 0){
+			return temp->value;
+		}
+		temp = temp->parent;
+	}
+	return "";
 }
 
 bool SProfile::setValue(std::string label, std::string value){
-	//TODO
+	bool alreadyExists = true;
+	if(getValue(label).compare("null") == 0){
+		alreadyExists = false;
+
+	}
+	return alreadyExists;
 }

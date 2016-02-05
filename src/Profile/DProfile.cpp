@@ -19,9 +19,10 @@ DProfile::~DProfile() {
 std::string DProfile::getValue(std::string label){
 	profileNode *temp = master;
 	while(temp !=NULL){
-		if(temp->label.compare(label) == 1){
+		if(temp->label.compare(label) == 0){
 			return temp->value;
 		}
+		temp = temp->parent;
 	}
 	return "null";
 }
