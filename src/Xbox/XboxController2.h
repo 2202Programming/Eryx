@@ -1,5 +1,6 @@
 #ifndef XBOX_CONTROLLER_2_H
 #define XBOX_CONTROLLER_2_H
+
 #include "IXbox.h"
 /**
  * DO NOT USE THIS!!!
@@ -7,6 +8,7 @@
  * Thanks! :)
  */
 class XboxController2 : IXbox {
+
 public:
 	//cannot call update
 	virtual ~XboxController2()=0;
