@@ -53,8 +53,8 @@ void Motor::TeleopPeriodic() {
 	frontRight->Set(rightSpeed);
 	backRight->Set(rightSpeed);
 */
-	shootLeft->Set(0.5);
-	shootRight->Set(0.5);
+	shootLeft->Set(0.2);
+	shootRight->Set(0.2);
 
 	SmartDashboard::PutNumber("Left Speed", encSL->GetRate());
 	SmartDashboard::PutNumber("Right Speed", encSR->GetRate());

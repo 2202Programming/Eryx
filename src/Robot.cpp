@@ -66,8 +66,8 @@ public:
 		m = new Motor(profile);
 
 		master->addNode(m, "Motor");
-		master->addNode(new Drive(profile, m, xbox), "Drive");
-		master->addNode(new Shooter(m, xbox), "Shooter");
+		//master->addNode(new Drive(profile, m, xbox), "Drive");
+		//master->addNode(new Shooter(m, xbox), "Shooter");
 	}
 private:
 	LiveWindow *lw;
