@@ -17,6 +17,7 @@ Shooter::~Shooter() {
 }
 
 void Shooter::TeleopInit() {
+	//Shooter starts stopped
 	motor->setShoot(false);
 }
 
@@ -27,9 +28,10 @@ void Shooter::TeleopPeriodic() {
 }
 
 void Shooter::readXbox() {
-	if (xbox->getXHeld()) {
+	//Toggle - not hold
+	if (xbox->getLeftBumperPressed()) { //Turn shooter on
 		runShoot = true;
-	} else if (xbox->getBHeld()) {
+	} else if (xbox->getRightBumperPressed()) { //Turn shooter off
 		runShoot = false;
 	}
 }

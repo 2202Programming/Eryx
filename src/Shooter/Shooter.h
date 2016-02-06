@@ -17,11 +17,16 @@ class Shooter: public IControl {
 public:
 	Shooter(Motor *motor, IXbox *xbox);
 	virtual ~Shooter();
+
+	//IControl
 	void TeleopInit();
 	void TeleopPeriodic();
+
+private:
+	//Input from Xbox Controller
 	void readXbox();
 
-	bool runShoot;
+	bool runShoot; //True if shooting motors should be running
 
 	IXbox *xbox;
 	Motor *motor;

@@ -57,6 +57,7 @@ public:
 	Motor *m;
 	IXbox *xbox;
 	IProfile* profile;
+	ISensorControl *nav;
 
 
 	Robot() {
@@ -66,7 +67,8 @@ public:
 		m = new Motor(profile);
 
 		master->addNode(m, "Motor");
-		//master->addNode(new Drive(profile, m, xbox), "Drive");
+		//master->addNode(new Drive(profile, m, xbox, nav), "Drive");
+		//master->addNode(nav, "nav");
 		master->addNode(new Shooter(m, xbox), "Shooter");
 		master->addNode(xbox, "Xbox");
 	}
