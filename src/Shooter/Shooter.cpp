@@ -20,7 +20,7 @@ void Shooter::TeleopInit() {
 	motor->setShoot(false);
 }
 
-void Shooter::TeleopPeriod() {
+void Shooter::TeleopPeriodic() {
 	readXbox();
 	motor->setShoot(runShoot);
 

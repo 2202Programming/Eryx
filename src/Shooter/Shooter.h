@@ -18,7 +18,7 @@ public:
 	Shooter(Motor *motor, IXbox *xbox);
 	virtual ~Shooter();
 	void TeleopInit();
-	void TeleopPeriod();
+	void TeleopPeriodic();
 	void readXbox();
 
 	bool runShoot;
