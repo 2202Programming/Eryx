@@ -5,6 +5,7 @@
 #include "Xbox/MasterXboxController.h"
 #include "WPILib.h"
 #include "Drive/Drive.h"
+#include "Components/TimShooter.h"
 
 #define debug 1
 
@@ -55,17 +56,24 @@ public:
 	noList* master;
 	IXbox *xbox;
 	IProfile* profile;
-
 	Robot() {
+
 		xbox = MasterXboxController::getInstance();
 		profile = new SProfile();
 		master = new noList();
+		profile = new SProfile();
 
-		master->addNode(xbox, "xbox");
-		master->addNode(new Drive(profile), "drive");
-		/*
-		 * Add Elements into the List Here
-		 */
+		std::string robot = profile->getValue("ROBOT");
+
+		if (robot.compare("PROTO") == 0) {
+			master->addNode(xbox, "xbox");
+			master->addNode(new Drive(profile), "drive");
+		}
+		else if(robot.compare("TIM")==0){
+			master->addNode(xbox, "xbox");
+			master->addNode(new Drive(profile), "drive");
+			master->addNode(new TimShooter(profile, xbox), "shooter");
+		}
 	}
 private:
 	LiveWindow *lw;
@@ -113,10 +121,10 @@ private:
 		}
 	}
 
-	void TestInit(){
+	void TestInit() {
 		SmartDashboard::PutString("State", "Test Init");
 		nLNode* test = master->head;
-		while(test != NULL){
+		while (test != NULL) {
 			test->value->TestInit();
 			test = test->parent;
 		}
@@ -126,7 +134,7 @@ private:
 		SmartDashboard::PutString("State", "Test Periodic");
 		lw->Run();
 		nLNode* test = master->head;
-		while (test != NULL){
+		while (test != NULL) {
 			test->value->TestPeriodic();
 			test = test->parent;
 		}
