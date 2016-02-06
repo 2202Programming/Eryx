@@ -10,14 +10,14 @@
 #include "IDrive.h"
 #include "Profile/IProfile.h"
 #include "Motor/Motor.h"
-#include "Xbox/MasterXboxController.h"
+#include "Xbox/IXbox.h"
 
 #ifndef SRC_DRIVE_H_
 #define SRC_DRIVE_H_
 
 class Drive: public IDrive, public IControl {
 public:
-	Drive(IProfile *np, Motor *motor, MasterXboxController *xbox);
+	Drive(IProfile *np, Motor *motor, IXbox *xbox);
 	virtual ~Drive();
 
 	void TeleopInit();
@@ -33,7 +33,7 @@ public:
 	IProfile *profile;
 
 	Motor *motor;
-	MasterXboxController *xbox;
+	IXbox *xbox;
 
 	double leftSpeed;
 	double rightSpeed;

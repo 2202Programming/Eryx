@@ -8,14 +8,14 @@
 #include "WPILib.h"
 #include "IControl.h"
 #include "Motor/Motor.h"
-#include "Xbox/MasterXboxController.h"
+#include "Xbox/IXbox.h"
 
 #ifndef SRC_SHOOTER_SHOOTER_H_
 #define SRC_SHOOTER_SHOOTER_H_
 
 class Shooter: public IControl {
 public:
-	Shooter(Motor *motor, MasterXboxController *xbox);
+	Shooter(Motor *motor, IXbox *xbox);
 	virtual ~Shooter();
 	void TeleopInit();
 	void TeleopPeriod();
@@ -23,7 +23,7 @@ public:
 
 	bool runShoot;
 
-	MasterXboxController *xbox;
+	IXbox *xbox;
 	Motor *motor;
 
 };

@@ -7,7 +7,7 @@
 
 #include <Shooter/Shooter.h>
 
-Shooter::Shooter(Motor *motor, MasterXboxController *xbox) {
+Shooter::Shooter(Motor *motor, IXbox *xbox) {
 		this->xbox = xbox;
 		this->motor = motor;
 		runShoot = false;
@@ -27,9 +27,9 @@ void Shooter::TeleopPeriod() {
 }
 
 void Shooter::readXbox() {
-	if (xbox->isXHeld()) {
+	if (xbox->getXHeld()) {
 		runShoot = true;
-	} else if (xbox->isBHeld()) {
+	} else if (xbox->getBHeld()) {
 		runShoot = false;
 	}
 }

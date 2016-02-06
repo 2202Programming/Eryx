@@ -7,7 +7,7 @@
 
 #include "Drive/Drive.h"
 
-Drive::Drive(IProfile *np, Motor *motor, MasterXboxController *xbox) {
+Drive::Drive(IProfile *np, Motor *motor, IXbox *xbox) {
 	profile = np;
 	this->motor = motor;
 	this->xbox = xbox;
