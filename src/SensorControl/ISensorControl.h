@@ -27,9 +27,11 @@ public:
 		};
 	MotorCommand updateMotorSpeedResponse;
 	//Currently does absolutely nothing other than set DriveSystemState to running.
+	// Top loop
 	virtual DriveSystemState DriveSystemControlUpdate(DriveSystemState currentState, DriveSystemState requestedState){
 		return DriveSystemState::running;
 	}
+	// Bottom loop, right before actual motor command
 	virtual MotorCommand *UpdateMotorSpeeds(int leftMotorSpeed, int rightMotorSpeed){
 
 		updateMotorSpeedResponse.leftMotorSpeed = leftMotorSpeed;
