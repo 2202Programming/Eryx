@@ -11,37 +11,37 @@ public:
 
 		IControl::profile ret;
 
-		if (id.compare("Tim") == 1) {
+		if (id.compare("Tim") == 0) {
 			ret = IControl::profile::Tim;
 		}
 
-		else if (id.compare("Hoen") == 1) {
+		else if (id.compare("Hoen") == 0) {
 			ret = IControl::profile::Hoen;
 		}
 
-		else if (id.compare("Monty20")) {
+		else if (id.compare("Monty20")==0) {
 			ret = IControl::Monty20;
 		}
 
-		else if (id.compare("Proto")) {
+		else if (id.compare("Proto")==0) {
 			ret = IControl::Proto;
 		}
 
-		else if (id.compare("bot2016")) {
+		else if (id.compare("bot2016")==0) {
 			ret = IControl::bot2016;
 		} else {
 			ret = IControl::nothing;
 		}
-
 		return ret;
 	}
 
 	noList* master;
 	IControl::profile id;
-	IProfile *profile = new SProfile();
+	IProfile *profile;
 
 	Robot() {
 		master = new noList();
+		profile = new SProfile();
 
 		id = CompareID(SmartDashboard::GetString("Identity", ""));
 		//EX ADDNODE
