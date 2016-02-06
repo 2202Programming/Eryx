@@ -44,7 +44,7 @@ void Drive::readXboxArcadeT() {
 	SmartDashboard::PutNumber("X Value", x);
 	SmartDashboard::PutNumber("Y Value", y);
 
-	x *= .8;
+	x *= .6;
 
 	leftSpeed = y;
 	rightSpeed = y;

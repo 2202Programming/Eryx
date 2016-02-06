@@ -6,6 +6,7 @@
 #include "WPILib.h"
 #include "Drive/Drive.h"
 #include "Components/TimShooter.h"
+#include "Components/Arm.h"
 
 #define debug 1
 
@@ -65,14 +66,18 @@ public:
 
 		std::string robot = profile->getValue("ROBOT");
 
+		master->addNode(xbox, "xbox");
+		master->addNode(new Arm(profile, xbox), "ARM");
+
 		if (robot.compare("PROTO") == 0) {
-			master->addNode(xbox, "xbox");
 			master->addNode(new Drive(profile), "drive");
 		}
 		else if(robot.compare("TIM")==0){
-			master->addNode(xbox, "xbox");
+
 			master->addNode(new Drive(profile), "drive");
 			master->addNode(new TimShooter(profile, xbox), "shooter");
+		}
+		else if(robot.compare("ARM")==0){
 		}
 	}
 private:

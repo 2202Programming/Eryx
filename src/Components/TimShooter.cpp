@@ -16,7 +16,10 @@ TimShooter::TimShooter(IProfile *pro, IXbox *x) {
 
 	Spin1 = new Jaguar(profile->getInt("SPIN1"));
 	Spin2 = new Jaguar(profile->getInt("SPIN2"));
+
 	updown = new Victor(profile->getInt("UPDOWN"));
+	UpMax = new DigitalInput(profile->getInt("UPMAX"));
+	DownMax = new DigitalInput(profile->getInt("DOWNMAX"));
 
 	safe = new Solenoid(2);
 	fire = new Solenoid(3);

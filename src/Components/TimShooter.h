@@ -37,7 +37,10 @@ private:
 
 	Jaguar *Spin1;
 	Jaguar *Spin2;
+
 	Victor *updown;
+	DigitalInput *UpMax;
+	DigitalInput *DownMax;
 
 	Solenoid *safe;
 	Solenoid *fire;
