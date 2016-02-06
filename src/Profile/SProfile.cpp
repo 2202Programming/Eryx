@@ -8,15 +8,16 @@
 #include "SProfile.h"
 
 SProfile::SProfile() {
-	master = new profileNode("MOTORFL", "4", master);
-	master = new profileNode("MOTORBL", "3", master);
-	master = new profileNode("MOTORFR", "2", master);
-	master = new profileNode("MOTORBR", "1", master);
+	master = new profileNode("MOTORFL", "1", master);
+	master = new profileNode("MOTORBL", "2", master);
+	master = new profileNode("MOTORFR", "3", master);
+	master = new profileNode("MOTORBR", "4", master);
 	master = new profileNode("ROBOT", "TIM", master);
 	master = new profileNode("SPIN1", "5", master);
 	master = new profileNode("SPIN2", "6", master);
-	master = new profileNode("SAFE", "0", master);
-	master = new profileNode("FIRE", "1", master);
+	master = new profileNode("SAFE", "3", master);
+	master = new profileNode("FIRE", "4", master);
+	master = new profileNode("UPDOWN", "7", master);
 }
 
 SProfile::~SProfile() {

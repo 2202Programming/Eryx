@@ -27,7 +27,7 @@ void Drive::TeleopInit() {
 	motor->TeleopInit();
 }
 void Drive::TeleopPeriodic() {
-	readXboxArcadeD();
+	readXboxArcadeT();
 	updateMotors();
 
 	motor->TeleopPeriodic();
@@ -44,7 +44,7 @@ void Drive::readXboxArcadeT() {
 	SmartDashboard::PutNumber("X Value", x);
 	SmartDashboard::PutNumber("Y Value", y);
 
-	x *= .5;
+	x *= .8;
 
 	leftSpeed = y;
 	rightSpeed = y;
