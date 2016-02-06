@@ -47,16 +47,9 @@ public:
 	 * the Driver Station packet rate of about 50Hz.
 	 */
 	//Identity Profiles
-	enum profile{
-		Tim,
-		Hoen,
-		Proto,
-		Monty20,
-		bot2016,
-		nothing
-	};
 
-	virtual void RobotInit(enum profile){} //
+
+	virtual void RobotInit(){} //
 	virtual void DisabledInit(){}
 	virtual void AutonomousInit(){}
 	virtual void TeleopInit(){}

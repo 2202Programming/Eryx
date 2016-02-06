@@ -1,55 +1,73 @@
-#include "targetGiver.h"
+#include <string>
 #include "Profile/IProfile.h"
 #include "Profile/SProfile.h"
+#include "Xbox/IXbox.h"
+#include "Xbox/MasterXboxController.h"
+#include "WPILib.h"
 #include "Drive/Drive.h"
 
+#define debug 1
+
+
+struct nLNode {
+	IControl* value;
+	std::string id;
+	nLNode* parent;
+
+	nLNode(IControl* val, std::string nid) {
+		value = val;
+		id = nid;
+		parent = NULL;
+	}
+};
+
+struct noList {
+	nLNode* head;
+	int length = 0;
+
+	noList() {
+		head = NULL;
+	}
+	nLNode* getComponent(std::string id) {
+		nLNode* test = head;
+		while (test != NULL) {
+			std::string tid = test->id;
+			if (id.compare(id) == 0) {
+				return test;
+			} else {
+				test = test->parent;
+			}
+		}
+		if (debug) {
+			printf("noList: No Element Found in the Array");
+		}
+		return NULL;
+	}
+
+	void addNode(IControl* obj, std::string nid) {
+		nLNode* object = new nLNode(obj, nid);
+		object->parent = head;
+		head = object;
+	}
+};
 
 class Robot: public IterativeRobot {
 public:
-
-	IControl::profile CompareID(std::string id) {
-
-		IControl::profile ret;
-
-		if (id.compare("Tim") == 0) {
-			ret = IControl::profile::Tim;
-		}
-
-		else if (id.compare("Hoen") == 0) {
-			ret = IControl::profile::Hoen;
-		}
-
-		else if (id.compare("Monty20")==0) {
-			ret = IControl::Monty20;
-		}
-
-		else if (id.compare("Proto")==0) {
-			ret = IControl::Proto;
-		}
-
-		else if (id.compare("bot2016")==0) {
-			ret = IControl::bot2016;
-		} else {
-			ret = IControl::nothing;
-		}
-		return ret;
-	}
-
 	noList* master;
-	IControl::profile id;
-	IProfile *profile;
-
+	IXbox *xbox;
+	IProfile* profile;
 	Robot() {
+		xbox = MasterXboxController::getInstance();
+		profile = new SProfile();
 		master = new noList();
 		profile = new SProfile();
 
-		id = CompareID(SmartDashboard::GetString("Identity", ""));
-		//EX ADDNODE
-		//master->addNode(new IControl, "NAME");
+		master->addNode(xbox, "xbox");
 		master->addNode(new Drive(profile), "drive");
-
+		/*
+		 * Add Elements into the List Here
+		 */
 	}
-
 private:
 	LiveWindow *lw;
 
@@ -58,7 +76,7 @@ private:
 		SmartDashboard::PutString("State", "Robot Init");
 		nLNode* test = master->head;
 		while (test != NULL) {
-			test->value->RobotInit(IControl::profile(id));
+			test->value->RobotInit();
 			test = test->parent;
 		}
 
@@ -96,10 +114,10 @@ private:
 		}
 	}
 
-	void TestInit() {
+	void TestInit(){
 		SmartDashboard::PutString("State", "Test Init");
 		nLNode* test = master->head;
-		while (test != NULL) {
+		while(test != NULL){
 			test->value->TestInit();
 			test = test->parent;
 		}
@@ -109,7 +127,7 @@ private:
 		SmartDashboard::PutString("State", "Test Periodic");
 		lw->Run();
 		nLNode* test = master->head;
-		while (test != NULL) {
+		while (test != NULL){
 			test->value->TestPeriodic();
 			test = test->parent;
 		}

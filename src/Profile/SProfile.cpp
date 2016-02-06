@@ -8,13 +8,11 @@
 #include "SProfile.h"
 
 SProfile::SProfile() {
-	master = new profileNode("MOTORFL", "1", master);
-	master = new profileNode("MOTORBL", "2", master);
-	master = new profileNode("MOTORFR", "3", master);
-	master = new profileNode("MOTORBR", "4", master);
-	master = new profileNode("SET", "SET", master);
-	master = new profileNode("TRUE", "SET", master);
-	master = new profileNode("FLOAT", "42.0", master);
+	master = new profileNode("MOTORFL", "4", master);
+	master = new profileNode("MOTORBL", "3", master);
+	master = new profileNode("MOTORFR", "2", master);
+	master = new profileNode("MOTORBR", "1", master);
+
 }
 
 SProfile::~SProfile() {
