@@ -18,9 +18,12 @@ public:
 	void TeleopInit();
 	void TeleopPeriodic();
 	void setDrive(float speedL, float speedR);
+	void setShoot(bool run);
 
 	float leftSpeed;
 	float rightSpeed;
+	float sRightSpeed;
+	float sLeftSpeed;
 
 	IProfile *profile;
 
@@ -30,6 +33,10 @@ protected:
 	Jaguar *backLeft;
 	Jaguar *backRight;
 
+	Talon *shootLeft;
+	Talon *shootRight;
 
+	Encoder *encSR;
+	Encoder *encSL;
 };
 
