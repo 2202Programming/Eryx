@@ -17,7 +17,7 @@
 
 class Drive: public IDrive, public IControl {
 public:
-	Drive(IProfile *np);
+	Drive(IProfile *np, Motor *motor, MasterXboxController *xbox);
 	virtual ~Drive();
 
 	void TeleopInit();

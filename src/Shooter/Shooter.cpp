@@ -7,7 +7,7 @@
 
 #include <Shooter/Shooter.h>
 
-Shooter::Shooter(MasterXboxController *xbox, Motor *motor) {
+Shooter::Shooter(Motor *motor, MasterXboxController *xbox) {
 		this->xbox = xbox;
 		this->motor = motor;
 		runShoot = false;

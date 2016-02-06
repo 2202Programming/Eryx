@@ -15,7 +15,7 @@
 
 class Shooter: public IControl {
 public:
-	Shooter(MasterXboxController *xbox, Motor *motor);
+	Shooter(Motor *motor, MasterXboxController *xbox);
 	virtual ~Shooter();
 	void TeleopInit();
 	void TeleopPeriod();

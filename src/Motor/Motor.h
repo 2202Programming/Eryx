@@ -11,7 +11,7 @@
 #include "WPILib.h"
 
 
-class Motor {
+class Motor: public IControl {
 public:
 	Motor(IProfile *np);
 	virtual ~Motor();

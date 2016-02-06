@@ -2,6 +2,7 @@
 #include "Profile/IProfile.h"
 #include "Profile/SProfile.h"
 #include "Drive/Drive.h"
+#include "Shooter/Shooter.h"
 
 
 class Robot: public IterativeRobot {
@@ -39,6 +40,8 @@ public:
 	noList* master;
 	IControl::profile id;
 	IProfile *profile = new SProfile();
+	Motor *m;
+	MasterXboxController *x;
 
 	Robot() {
 		master = new noList();
@@ -46,7 +49,13 @@ public:
 		id = CompareID(SmartDashboard::GetString("Identity", ""));
 		//EX ADDNODE
 		//master->addNode(new IControl, "NAME");
-		master->addNode(new Drive(profile), "drive");
+		m = new Motor(profile);
+		x = MasterXboxController::getInstance();
+
+		master->addNode(m, "Motor");
+		master->addNode(x, "Xbox");
+		master->addNode(new Drive(profile, m, x), "Drive");
+		master->addNode(new Shooter(m, x), "Shooter");
 
 	}
 

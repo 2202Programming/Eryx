@@ -17,11 +17,11 @@ Motor::Motor(IProfile *np) {
 	int MOTORFR = profile->getInt("MOTORFR");
 	int MOTORBR = profile->getInt("MOTORBR");
 
-	frontLeft = new Jaguar(MOTORFL);
+	/*frontLeft = new Jaguar(MOTORFL);
 	frontRight = new Jaguar(MOTORFR);
 	backLeft = new Jaguar(MOTORBL);
 	backRight = new Jaguar(MOTORBR);
-
+*/
 	shootLeft = new Talon(5);
 	shootRight = new Talon(6);
 
@@ -48,13 +48,16 @@ void Motor::TeleopPeriodic() {
 	SmartDashboard::PutNumber("Left Speed", leftSpeed);
 	SmartDashboard::PutNumber("Right Speed", rightSpeed);
 
-	frontLeft->Set(leftSpeed);
+	/*frontLeft->Set(leftSpeed);
 	backLeft->Set(leftSpeed);
 	frontRight->Set(rightSpeed);
 	backRight->Set(rightSpeed);
+*/
+	shootLeft->Set(0.5);
+	shootRight->Set(0.5);
 
-	shootLeft->Set(sLeftSpeed);
-	shootRight->Set(sRightSpeed);
+	SmartDashboard::PutNumber("Left Speed", encSL->GetRate());
+	SmartDashboard::PutNumber("Right Speed", encSR->GetRate());
 }
 
 void Motor::setDrive(float speedL, float speedR) {
