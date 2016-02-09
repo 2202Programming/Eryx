@@ -6,6 +6,7 @@
  */
 #include "NetworkTables/NetworkTable.h"
 #include <AHRS.h>
+#include <Vision/Vision.h>
 
 void Vision::RobotInit() {
 	table=NetworkTable::GetTable("database");

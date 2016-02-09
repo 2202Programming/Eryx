@@ -55,14 +55,20 @@ public:
 	noList* master;
 	IXbox *xbox;
 	IProfile* profile;
+	ISensorControl* sensorControl;
+	IVision* vision;
 
 	Robot() {
 		xbox = MasterXboxController::getInstance();
 		profile = new SProfile();
 		master = new noList();
+		vision = new Vision();
+		sensorControl = new NavxSensorControl(xbox, profile, vision);
 
-		master->addNode(xbox, "xbox");
-		master->addNode(new Drive(profile), "drive");
+		master->addNode(xbox, "Xbox");
+		master->addNode(new Drive(profile), "Drive");
+		master->addNode(sensorControl, "Sensor Control");
+		master->addNode(vision, "Vision");
 		/*
 		 * Add Elements into the List Here
 		 */
