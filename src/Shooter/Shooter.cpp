@@ -2,7 +2,7 @@
  * Shooter.cpp
  *
  *  Created on: Feb 5, 2016
- *      Author: Beast Laptop
+ *      Author: Daniel Owen
  */
 
 #include <Shooter/Shooter.h>

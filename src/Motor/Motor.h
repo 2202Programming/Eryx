@@ -2,13 +2,14 @@
  * Motor.h
  *
  *  Created on: Jan 27, 2016
- *      Author: Beast
+ *      Author: Daniel Owen
  */
 #pragma once
 
 #include "Profile/IProfile.h"
 #include "IControl.h"
 #include "WPILib.h"
+#include "Math.h"
 
 
 class Motor: public IControl {

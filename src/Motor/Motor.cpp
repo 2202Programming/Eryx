@@ -2,7 +2,7 @@
  * Motor.cpp
  *
  *  Created on: Jan 27, 2016
- *      Author: Beast
+ *      Author: Daniel Owen
  */
 
 #include <Motor/Motor.h>
