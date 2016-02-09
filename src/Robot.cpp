@@ -6,6 +6,10 @@
 #include "WPILib.h"
 #include "Drive/Drive.h"
 #include "Shooter/Shooter.h"
+#include "Vision/IVision.h"
+#include "SensorControl/ISensorControl.h"
+#include "Vision/Vision.h"
+#include "SensorControl/NavxSensorControl.h"
 
 #define debug 1
 
@@ -57,20 +61,22 @@ public:
 	Motor *m;
 	IXbox *xbox;
 	IProfile* profile;
-	ISensorControl *nav;
-
+	ISensorControl* sensorControl;
+	IVision* vision;
 
 	Robot() {
 		xbox = MasterXboxController::getInstance();
 		profile = new SProfile();
 		master = new noList();
-		m = new Motor(profile);
+		vision = new Vision();
+		sensorControl = new NavxSensorControl(xbox, profile, vision);
 
-		master->addNode(m, "Motor");
-		//master->addNode(new Drive(profile, m, xbox, nav), "Drive");
-		//master->addNode(nav, "nav");
-		master->addNode(new Shooter(m, xbox), "Shooter");
 		master->addNode(xbox, "Xbox");
+		master->addNode(sensorControl, "Sensor Control");
+		master->addNode(vision, "Vision");
+		/*
+		 * Add Elements into the List Here
+		 */
 	}
 private:
 	LiveWindow *lw;

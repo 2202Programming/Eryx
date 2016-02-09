@@ -7,10 +7,11 @@
 
 #include <SensorControl/NavxSensorControl.h>
 
-NavxSensorControl::NavxSensorControl(IXbox *xboxInstance, IProfile *profileInstance) {
+NavxSensorControl::NavxSensorControl(IXbox *xboxInstance, IProfile *profileInstance, IVision *visionInstance) {
 	// TODO Auto-generated constructor stub
 	xbox = xboxInstance;
 	profile = profileInstance;
+	vision = visionInstance;
 }
 
 NavxSensorControl::~NavxSensorControl() {
@@ -45,11 +46,12 @@ void NavxSensorControl::TargetingStateMachine(){
 		if (currentDriveState == DriveSystemState::stopped)
 		{
 			// Tell Vision to take a picture
+			vision->startAiming();
 			targetState = TargetingState::waitForPicResult;
 		}
 		break;
 	case TargetingState::waitForPicResult:
-		visionTargetAngle = 90;
+		visionTargetAngle = vision->getDegreesToTurn();
 		turnController->SetSetpoint(visionTargetAngle);
 		turnController->SetOutputRange(-1, 1);
 		turnController->Enable();

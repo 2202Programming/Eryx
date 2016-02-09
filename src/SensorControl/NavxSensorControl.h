@@ -10,18 +10,20 @@
 #include <Xbox/IXbox.h>
 #include <Profile/IProfile.h>
 #include <AHRS.h>
+#include <Vision/IVision.h>
 
 #include <SensorControl/ISensorControl.h>
 
 class NavxSensorControl: public ISensorControl, public PIDOutput {
 public:
-	NavxSensorControl(IXbox *xbox, IProfile *profileInstance);
+	NavxSensorControl(IXbox *xbox, IProfile *profileInstance, IVision *visionInstance);
 	virtual ~NavxSensorControl();
 
 	IXbox *xbox;
 	IProfile *profile;
 	AHRS *ahrs;                         // navX-MXP
 	PIDController *turnController;      // PID Controller
+	IVision *vision;
 
 	enum TargetingState{
 		waitForButtonPress,
