@@ -5,6 +5,7 @@
 #include "Xbox/MasterXboxController.h"
 #include "WPILib.h"
 #include "Drive/Drive.h"
+#include "Shooter/Shooter.h"
 
 #define debug 1
 
@@ -53,19 +54,23 @@ struct noList {
 class Robot: public IterativeRobot {
 public:
 	noList* master;
+	Motor *m;
 	IXbox *xbox;
 	IProfile* profile;
+	ISensorControl *nav;
+
 
 	Robot() {
 		xbox = MasterXboxController::getInstance();
 		profile = new SProfile();
 		master = new noList();
+		m = new Motor(profile);
 
-		master->addNode(xbox, "xbox");
-		master->addNode(new Drive(profile), "drive");
-		/*
-		 * Add Elements into the List Here
-		 */
+		master->addNode(m, "Motor");
+		//master->addNode(new Drive(profile, m, xbox, nav), "Drive");
+		//master->addNode(nav, "nav");
+		master->addNode(new Shooter(m, xbox), "Shooter");
+		master->addNode(xbox, "Xbox");
 	}
 private:
 	LiveWindow *lw;
