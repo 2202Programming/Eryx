@@ -5,6 +5,7 @@
  *      Author: Team Wumbo
  */
 #include "NetworkTables/NetworkTable.h"
+#include <AHRS.h>
 
 void Vision::RobotInit() {
 	table=NetworkTable::GetTable("database");
