@@ -5,6 +5,11 @@
 #include "Xbox/MasterXboxController.h"
 #include "WPILib.h"
 #include "Drive/Drive.h"
+#include "Shooter/Shooter.h"
+#include "Vision/IVision.h"
+#include "SensorControl/ISensorControl.h"
+#include "Vision/Vision.h"
+#include "SensorControl/NavxSensorControl.h"
 
 #define debug 1
 
@@ -53,16 +58,22 @@ struct noList {
 class Robot: public IterativeRobot {
 public:
 	noList* master;
+	Motor *m;
 	IXbox *xbox;
 	IProfile* profile;
+	ISensorControl* sensorControl;
+	IVision* vision;
 
 	Robot() {
 		xbox = MasterXboxController::getInstance();
 		profile = new SProfile();
 		master = new noList();
+		vision = new Vision();
+		sensorControl = new NavxSensorControl(xbox, profile, vision);
 
-		master->addNode(xbox, "xbox");
-		master->addNode(new Drive(profile), "drive");
+		master->addNode(xbox, "Xbox");
+		master->addNode(sensorControl, "Sensor Control");
+		master->addNode(vision, "Vision");
 		/*
 		 * Add Elements into the List Here
 		 */
