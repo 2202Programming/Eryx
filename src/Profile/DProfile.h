@@ -1,32 +1,28 @@
-/*
- * DProfile.h
- *
- *  Created on: Jan 30, 2016
- *      Author: lazar
- */
 
-#ifndef SRC_PROFILE_DPROFILE_H_
-#define SRC_PROFILE_DPROFILE_H_
+#pragma once
 
-#include <Profile/IProfile.h>
+#include "Profile/IProfile.h"
+#include <iostream>
 #include <fstream>
+#include <string>
 
-class DProfile: virtual public IProfile {
+class DProfile :
+	public IProfile
+{
 public:
 	DProfile();
-	virtual ~DProfile();
+	~DProfile();
 
 	std::string getValue(std::string label);
-	int getInt(std::string label);
-	float getFloat(std::string label);
-	bool getBool(std::string label);
-
 	bool setValue(std::string label, std::string value);
 
-protected:
-	void remakeIndex();
+private:
+	profileNode *master = NULL;
+
+	void findIndex();
 	void generateIndex();
-	profileNode *master;
+
+private:
+
 };
 
-#endif /* SRC_PROFILE_DPROFILE_H_ */

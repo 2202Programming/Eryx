@@ -1,9 +1,9 @@
 /*
- * IProfile.h
- *
- *  Created on: Jan 30, 2016
- *      Author: lazar
- */
+* IProfile.h
+*
+*  Created on: Jan 30, 2016
+*      Author: lazar
+*/
 
 #ifndef SRC_PROFILE_IPROFILE_H_
 #define SRC_PROFILE_IPROFILE_H_
@@ -11,13 +11,14 @@
 #include <string>
 
 class IProfile {
+
 public:
 	IProfile();
 	virtual ~IProfile();
 
-	virtual std::string getValue(std::string label){return "null";}
+	virtual std::string getValue(std::string label) { return "null"; }
 
-	virtual bool setValue(std::string label, std::string value){return false;}
+	virtual bool setValue(std::string label, std::string value) { return false; }
 
 	virtual int getInt(std::string label) {
 		std::string value = getValue(label);
@@ -44,7 +45,7 @@ public:
 	}
 
 	virtual bool getBool(std::string label) {
-		std::string value =  getValue(label);
+		std::string value = getValue(label);
 		if (value == "ON") return true;
 		if (value == "TRUE") return true;
 		if (value == "SET") return true;
@@ -54,12 +55,12 @@ public:
 
 };
 
-class profileNode{
+class profileNode {
 public:
 	std::string label;
 	std::string value;
 	profileNode *parent;
-	profileNode(std::string nl ,std::string nv){
+	profileNode(std::string nl, std::string nv) {
 		label = nl;
 		value = nv;
 		parent = NULL;
