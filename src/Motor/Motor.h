@@ -2,34 +2,42 @@
  * Motor.h
  *
  *  Created on: Jan 27, 2016
- *      Author: Beast
+ *      Author: Daniel Owen
  */
 #pragma once
 
 #include "Profile/IProfile.h"
 #include "IControl.h"
 #include "WPILib.h"
+#include "Math.h"
 
 
-class Motor {
+class Motor: public IControl {
 public:
 	Motor(IProfile *np);
 	virtual ~Motor();
+
+	//IControl
 	void TeleopInit();
 	void TeleopPeriodic();
+
+	//Methods for Components
 	void setDrive(float speedL, float speedR);
+	void setShoot(float speedL, float speedR); // w/ encoders
+	void setArm(float aLowerSpeed, float aUpperSpeed);
 
-	float leftSpeed;
-	float rightSpeed;
+private:
+	IProfile *profile; //Robot profile for ports
 
-	IProfile *profile;
+	Talon *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
-protected:
-	Jaguar *frontLeft;
-	Jaguar *frontRight;
-	Jaguar *backLeft;
-	Jaguar *backRight;
+	Talon *shootLeftF, *shootRightF, *shootLeftB, *shootRightB; //Shooter Motors
 
+	Talon *armLower, *armUpper; //Arm Motors
+	Encoder *encALower, *encAUpper; //Arm Encoders
 
+	float leftSpeed, rightSpeed; //Drive variables
+	float sLeftSpeed, sRightSpeed; //Shooter variables
+	float aLowerSpeed, aUpperSpeed; //Arm variables
 };
 

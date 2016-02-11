@@ -6,9 +6,14 @@
 #include "WPILib.h"
 #include "Drive/Drive.h"
 #include "Components/TimShooter.h"
+#include "Shooter/Shooter.h"
+#include "Vision/IVision.h"
+#include "SensorControl/ISensorControl.h"
+#include "Vision/Vision.h"
+#include "SensorControl/NavxSensorControl.h"
+#include "Motor/Motor.h"
 
 #define debug 1
-
 
 struct nLNode {
 	IControl* value;
@@ -55,24 +60,40 @@ struct noList {
 class Robot: public IterativeRobot {
 public:
 	noList* master;
+	Motor *m;
 	IXbox *xbox;
 	IProfile* profile;
+	ISensorControl* sensorControl;
+	IVision* vision;
+	Drive *drive;
+
 	Robot() {
 
 		xbox = MasterXboxController::getInstance();
 		profile = new SProfile();
 		master = new noList();
 		profile = new SProfile();
+
 		std::string robot = profile->getValue("ROBOT");
+
+		master->addNode(xbox, "Xbox");
 
 		if (robot.compare("PROTO") == 0) {
 			master->addNode(xbox, "xbox");
 			master->addNode(new Drive(profile), "drive");
-		}
-		else if(robot.compare("TIM")==0){
+		} else if (robot.compare("TIM") == 0) {
 			master->addNode(xbox, "xbox");
 			master->addNode(new Drive(profile), "drive");
 			master->addNode(new TimShooter(profile, xbox), "shooter");
+		} else if (robot.compare("ORYX") == 0) {
+			vision = new Vision();
+			m = new Motor(profile);
+			sensorControl = new NavxSensorControl(xbox, profile, vision);
+			drive = new Drive(profile, m, xbox, sensorControl);
+			master->addNode(sensorControl, "Sensor Control");
+			master->addNode(vision, "Vision");
+			master->addNode(drive, "Drive");
+			master->addNode(m, "Motor");
 		}
 	}
 private:
