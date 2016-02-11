@@ -2,7 +2,7 @@
  * Arm.h
  *
  *  Created on: Feb 6, 2016
- *      Author: Beast
+ *      Author: Daniel Owen
  */
 
 #include "WPILib.h"

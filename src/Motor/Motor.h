@@ -2,13 +2,14 @@
  * Motor.h
  *
  *  Created on: Jan 27, 2016
- *      Author: Beast
+ *      Author: Daniel Owen
  */
 #pragma once
 
 #include "Profile/IProfile.h"
 #include "IControl.h"
 #include "WPILib.h"
+#include "Math.h"
 
 
 class Motor: public IControl {
@@ -22,7 +23,7 @@ public:
 
 	//Methods for Components
 	void setDrive(float speedL, float speedR);
-	void setShoot(bool run);
+	void setShoot(float speedL, float speedR); // w/ encoders
 	void setArm(float aLowerSpeed, float aUpperSpeed);
 
 private:
@@ -30,8 +31,7 @@ private:
 
 	Talon *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
-	Talon *shootLeft, *shootRight; //Shooter Motors
-	Encoder *encSR, *encSL; //Shooter Encoders
+	Talon *shootLeftF, *shootRightF, *shootLeftB, *shootRightB; //Shooter Motors
 
 	Talon *armLower, *armUpper; //Arm Motors
 	Encoder *encALower, *encAUpper; //Arm Encoders

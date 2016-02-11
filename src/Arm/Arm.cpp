@@ -2,9 +2,9 @@
  * Arm.cpp
  *
  *  Created on: Feb 6, 2016
- *      Author: Beast
+ *      Author: Daniel Owen
  */
-/*
+
 #include <Arm/Arm.h>
 
 Arm::Arm(Motor *motor, IXbox *xbox) {
@@ -47,4 +47,4 @@ void Arm::readXbox() {
 	} else {
 		upperSpeed = 0.0;
 	}
-}*/
+}
