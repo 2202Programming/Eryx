@@ -18,12 +18,12 @@ Shooter::~Shooter() {
 
 void Shooter::TeleopInit() {
 	//Shooter starts stopped
-	motor->setShoot(false);
+	motor->setShoot2(false);
 }
 
 void Shooter::TeleopPeriodic() {
 	readXbox();
-	motor->setShoot(runShoot);
+	motor->setShoot2(runShoot);
 
 }
 
