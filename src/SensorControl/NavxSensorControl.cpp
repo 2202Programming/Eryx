@@ -12,6 +12,8 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance, IProfile *profileInsta
 	xbox = xboxInstance;
 	profile = profileInstance;
 	vision = visionInstance;
+	turnController = new PIDController(0.03, 0.001, 0.02, ahrs, this);
+	ahrs = new AHRS(SPI::Port::kMXP);
 }
 
 NavxSensorControl::~NavxSensorControl() {
@@ -19,8 +21,15 @@ NavxSensorControl::~NavxSensorControl() {
 }
 
 MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed, float rightMotorSpeed){\
-	updateMotorSpeedResponse.leftMotorSpeed = leftMotorSpeed;
-	updateMotorSpeedResponse.rightMotorSpeed = rightMotorSpeed;
+	switch (targetState)
+	{
+	case TargetingState::driveToAngle:
+		break;
+	default:
+		updateMotorSpeedResponse.leftMotorSpeed = leftMotorSpeed;
+		updateMotorSpeedResponse.rightMotorSpeed = rightMotorSpeed;
+		break;
+	}
 	return &updateMotorSpeedResponse;
 }
 
@@ -35,31 +44,36 @@ void NavxSensorControl::TargetingStateMachine(){
 	float motorSpeed = 0;
 	switch (targetState)
 	{
+
 	case TargetingState::waitForButtonPress:
 		if (xbox->getLeftTriggerPressed())
 		{
 			commandDriveState = DriveSystemState::stopped;
 			targetState = TargetingState::waitForStopped;
 		}
+
 		break;
 	case TargetingState::waitForStopped:
 		if (currentDriveState == DriveSystemState::stopped)
 		{
 			// Tell Vision to take a picture
-			vision->startAiming();
+			//vision->startAiming();
 			targetState = TargetingState::waitForPicResult;
 		}
 		break;
 	case TargetingState::waitForPicResult:
-		visionTargetAngle = vision->getDegreesToTurn();
+		/*visionTargetAngle = vision->getDegreesToTurn();
 		turnController->SetSetpoint(visionTargetAngle);
 		turnController->SetOutputRange(-1, 1);
 		turnController->Enable();
+		*/
 		targetState = TargetingState::driveToAngle;
+		updateMotorSpeedResponse.leftMotorSpeed = 0;
+		updateMotorSpeedResponse.rightMotorSpeed = 0;
 		break;
 	case TargetingState::driveToAngle:
 		// Go to that angle
-		if (abs(turnController->GetError()) < visionAngleTolerance)
+		/*if (abs(turnController->GetError()) < visionAngleTolerance)
 		{
 			turnController->Disable();
 			targetState = TargetingState::waitForButtonPress;
@@ -68,6 +82,12 @@ void NavxSensorControl::TargetingStateMachine(){
 			motorSpeed = turnSpeed;
 		}
 		UpdateMotorSpeeds(-motorSpeed, motorSpeed);
+		*/
+		updateMotorSpeedResponse.leftMotorSpeed = 1;
+		updateMotorSpeedResponse.rightMotorSpeed = 1;
+
+		//targetState = TargetingState::waitForButtonPress;
+		//commandDriveState = DriveSystemState::running;
 		break;
 	default:
 		targetState = TargetingState::waitForButtonPress;

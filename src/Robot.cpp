@@ -10,6 +10,7 @@
 #include "SensorControl/ISensorControl.h"
 #include "Vision/Vision.h"
 #include "SensorControl/NavxSensorControl.h"
+#include "Motor/Motor.h"
 
 #define debug 1
 
@@ -63,17 +64,23 @@ public:
 	IProfile* profile;
 	ISensorControl* sensorControl;
 	IVision* vision;
+	Drive *drive;
+
 
 	Robot() {
 		xbox = MasterXboxController::getInstance();
 		profile = new SProfile();
 		master = new noList();
 		vision = new Vision();
+		m = new Motor(profile);
 		sensorControl = new NavxSensorControl(xbox, profile, vision);
+		drive = new Drive(profile, m, xbox, sensorControl);
 
 		master->addNode(xbox, "Xbox");
 		master->addNode(sensorControl, "Sensor Control");
 		master->addNode(vision, "Vision");
+		master->addNode(drive, "Drive");
+		master->addNode(m, "Motor");
 		/*
 		 * Add Elements into the List Here
 		 */
