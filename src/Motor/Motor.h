@@ -23,8 +23,7 @@ public:
 
 	//Methods for Components
 	void setDrive(float speedL, float speedR);
-	void setShoot1(bool run); // w/ encoders
-	void setShoot2(bool run); // w/ out encoders
+	void setShoot(float speedL, float speedR); // w/ encoders
 	void setArm(float aLowerSpeed, float aUpperSpeed);
 
 private:
@@ -33,7 +32,6 @@ private:
 	Talon *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
 	Talon *shootLeftF, *shootRightF, *shootLeftB, *shootRightB; //Shooter Motors
-	Encoder *encSLF, *encSRF, *encSLB, *encSRB; //Shooter Encoders
 
 	Talon *armLower, *armUpper; //Arm Motors
 	Encoder *encALower, *encAUpper; //Arm Encoders

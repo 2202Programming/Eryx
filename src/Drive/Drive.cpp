@@ -78,7 +78,7 @@ void Drive::readXboxArcadeD() {
 	SmartDashboard::PutNumber("X Value", x);
 	SmartDashboard::PutNumber("Y Value", y);
 
-	//Logic to get
+	//x*x + y*y is >= 1
 	if (y > 0)
 		y *= y;
 	else
@@ -91,7 +91,7 @@ void Drive::readXboxArcadeD() {
 
 	// For Nav states
 	if (requestedState == nav->stopped) {
-		if (fabs(x <= 0.05) && fabs(y <= 0.05) && !(leftSpeed == 0 && rightSpeed == 0) && userControl) {
+		if (!(fabs(leftSpeed) <= 0.05 && fabs(rightSpeed) <= 0.05) && userControl) {
 			state = nav->stopping;
 		} else {
 			state = nav->stopped;

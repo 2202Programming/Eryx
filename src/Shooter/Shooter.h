@@ -25,12 +25,19 @@ public:
 private:
 	//Input from Xbox Controller
 	void readXbox();
+	void setAngle();
+	void updateMotor1();
+	void updateMotor2();
 
 	bool runShoot; //True if shooting motors should be running
+	int angle;
+	float leftSpeed, rightSpeed;
 
 	IXbox *xbox;
 	Motor *motor;
-
+	Compressor *c;
+	DoubleSolenoid *s1, *s2;
+	Encoder *encSLF, *encSRF, *encSLB, *encSRB; //Shooter Encoders
 };
 
 #endif /* SRC_SHOOTER_SHOOTER_H_ */

@@ -26,14 +26,6 @@ Motor::Motor(IProfile *np) {
 	shootRightB = new Talon(8);
 	shootLeftF->SetInverted(true); //For test board
 	shootLeftB->SetInverted(true); //For test board
-	encSLF = new Encoder(0, 1);
-	encSRF = new Encoder(2, 3);
-	encSLB = new Encoder(4, 5);
-	encSRB = new Encoder(6, 7);
-	encSLF->SetReverseDirection(false); //For test board
-	encSRF->SetReverseDirection(true); //For test board
-	encSLB->SetReverseDirection(false); //For test board
-	encSRB->SetReverseDirection(true); //For test board
 
 	//Arm
 	armLower = new Talon(7);
@@ -105,46 +97,10 @@ void Motor::setDrive(float speedL, float speedR) { //Called from drive class
 }
 
 void Motor::setShoot1(bool run) { //Called from the shooter class
-	double rateR = encSRF->GetRate();
-	double rateL = encSLF->GetRate();
-
-	//Logic to keep the wheels within 150 of the desired RPM
-	//Left side
-	if (rateL < RPM) {
-		if (rateL < RPM - 150)
-			sLeftSpeed += 0.01;
-		else
-			sLeftSpeed += 0.005;
-
-	} else if (rateL == RPM) {
-		sLeftSpeed = 0.75;
-	} else {
-		if (rateL > RPM + 150)
-			sLeftSpeed -= 0.01;
-		else
-			sLeftSpeed -= 0.005;
-	}
-
-	//Right Side
-	if (rateR < RPM) {
-		if (rateR < RPM - 150)
-			sRightSpeed += 0.01;
-		else
-			sRightSpeed += 0.005;
-
-	} else if (rateR == RPM) {
-		sRightSpeed = 0.75;
-	} else {
-		if (rateR > RPM + 150)
-			sRightSpeed -= 0.01;
-		else
-			sRightSpeed -= 0.005;
-	}
 }
 
 void Motor::setShoot2(bool run) {
-	sLeftSpeed = 0.75;
-	sRightSpeed = 0.75;
+
 }
 
 void Motor::setArm(float aLowerSPeed, float aUpperSpeed) { //Called from the arm class
