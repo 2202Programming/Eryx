@@ -93,8 +93,8 @@ void Motor::TeleopPeriodic() { //Update all motors every loop
 }
 
 void Motor::setDrive(float speedL, float speedR) { //Called from drive class
-	leftSpeed = speedL;
-	rightSpeed = -speedR; //For test bot
+	leftSpeed = -speedL;
+	rightSpeed = speedR; //For test bot
 }
 
 void Motor::setShoot(bool run) { //Called from the shooter class
