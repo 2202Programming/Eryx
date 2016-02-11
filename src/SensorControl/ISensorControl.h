@@ -12,8 +12,8 @@
 
 class MotorCommand {
 public:
-	int leftMotorSpeed;
-	int rightMotorSpeed;
+	float leftMotorSpeed;
+	float rightMotorSpeed;
 };
 
 class ISensorControl: public IControl {
@@ -32,7 +32,7 @@ public:
 		return DriveSystemState::running;
 	}
 	// Bottom loop, right before actual motor command
-	virtual MotorCommand *UpdateMotorSpeeds(int leftMotorSpeed, int rightMotorSpeed){
+	virtual MotorCommand *UpdateMotorSpeeds(float leftMotorSpeed, float rightMotorSpeed){
 
 		updateMotorSpeedResponse.leftMotorSpeed = leftMotorSpeed;
 		updateMotorSpeedResponse.rightMotorSpeed = rightMotorSpeed;
