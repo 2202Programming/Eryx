@@ -12,8 +12,8 @@
 #include "Vision/Vision.h"
 #include "SensorControl/NavxSensorControl.h"
 #include "Motor/Motor.h"
-#include "Components/Arm.h"
 #include "Drive/SimpleDrive.h"
+#include "Arm/Arm.h"
 
 #define debug 1
 
@@ -86,10 +86,6 @@ public:
 
 		} else if (robot.compare("TIM") == 0) {
 
-			master->addNode(xbox, "xbox");
-
-		} else if (robot.compare("TIM") == 0) {
-
 			master->addNode(new SimpleDrive(profile, xbox), "drive");
 			master->addNode(new TimShooter(profile, xbox), "shooter");
 
@@ -103,12 +99,13 @@ public:
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
 			master->addNode(drive, "Drive");
-			master->addNode(m, "Motor");
-		} else if (robot.compare("ARM") == 0) {
-			master->addNode(new Arm(profile, xbox), "ARM");
+			master->addNode(new Arm(m, xbox), "ARM");
 
+			//MUST BE CALLED LAST
+			master->addNode(m, "Motor");
 		}
 	}
+
 private:
 	LiveWindow *lw;
 
