@@ -26,6 +26,7 @@ private:
 	IProfile *profile;
 	IXbox *xbox;
 
+	double leftSpeed, rightSpeed;
 	Spark *FLM, *FRM, *RLM, *RRM;
 
 };
