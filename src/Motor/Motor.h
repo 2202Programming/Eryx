@@ -26,6 +26,10 @@ public:
 	void setShoot(float speedL, float speedR); // w/ encoders
 	void setArm(float aLowerSpeed, float aUpperSpeed);
 
+	//TODO What
+	void setShoot1(bool run);
+	void setShoot2(bool run);
+
 private:
 	IProfile *profile; //Robot profile for ports
 

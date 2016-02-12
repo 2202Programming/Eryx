@@ -17,6 +17,7 @@ Arm::Arm(Motor *motor, IXbox *xbox) {
 }
 
 Arm::~Arm() {
+
 }
 
 void Arm::TeleopInit() {

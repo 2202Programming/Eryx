@@ -93,6 +93,7 @@ void Motor::setDrive(float speedL, float speedR) { //Called from drive class
 }
 
 void Motor::setShoot1(bool run) { //Called from the shooter class
+
 }
 
 void Motor::setShoot2(bool run) {
