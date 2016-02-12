@@ -16,3 +16,10 @@ SimpleDrive::~SimpleDrive() {
 	// TODO Auto-generated destructor stub
 }
 
+void SimpleDrive::TeleopInit(){
+
+}
+
+void SimpleDrive::TeleopPeriodic(){
+
+}

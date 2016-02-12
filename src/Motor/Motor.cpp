@@ -105,3 +105,7 @@ void Motor::setArm(float aLowerSPeed, float aUpperSpeed) { //Called from the arm
 	this->aUpperSpeed = aUpperSpeed;
 }
 
+void Motor::setShoot(float speedL, float speedR){
+
+}
+
