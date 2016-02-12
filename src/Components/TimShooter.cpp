@@ -10,13 +10,19 @@
 TimShooter::TimShooter(IProfile *pro, IXbox *x) {
 	// TODO Auto-generated constructor stub
 	profile = pro;
+	xbox = x;
 
 	c = new Compressor();
+
 	Spin1 = new Jaguar(profile->getInt("SPIN1"));
 	Spin2 = new Jaguar(profile->getInt("SPIN2"));
 
-	safe = new Solenoid(profile->getInt("SAFE"));
-	fire = new Solenoid(profile->getInt("FIRE"));
+	updown = new Victor(profile->getInt("UPDOWN"));
+	UpMax = new DigitalInput(profile->getInt("UPMAX"));
+	DownMax = new DigitalInput(profile->getInt("DOWNMAX"));
+
+	safe = new Solenoid(2);
+	fire = new Solenoid(3);
 }
 
 TimShooter::~TimShooter() {
@@ -25,38 +31,48 @@ TimShooter::~TimShooter() {
 
 void TimShooter::TeleopInit(){
 	c->SetClosedLoopControl(true);
-	setSolenoid(false);
+	fire->Set(true);
+	safe->Set(false);
 	setMotors(0.0);
 }
 
 void TimShooter::TeleopPeriodic(){
+
 	c->SetClosedLoopControl(true);
-	if(xbox->getRightBumperPressed() && !(state == 4)){
+
+	if(xbox->getRightBumperPressed() && !(state == 4.0)){
 		state++;
 	}
 
-	if(xbox->getLeftBumperPressed() && !(state == 0)){
+	if(xbox->getLeftBumperPressed() && !(state == 0.0)){
 		state --;
 	}
-	setMotors(state * .25);
+	setMotors(.25*state);
 
-	if(xbox->getRightTriggerHeld())
-		setSolenoid(true);
-	else setSolenoid(false);
+	bool go = xbox->getRightTriggerHeld();
+	SmartDashboard::PutBoolean("GO", go);
+	if(go){
+		fire->Set(false);
+		safe->Set(true);
+	}
+	else {
+		fire->Set(true);
+		safe->Set(false);
+	}
+
+	bool updo = xbox->getAHeld();
+	SmartDashboard::PutBoolean("UPDOWN", updo);
+	if(updo){
+		updown->Set(.1);
+	}
+	else updown->Set(0.0);
+
 }
 
 void TimShooter::DisabledInit(){
+
 	c->SetClosedLoopControl(false);
-}
 
-void TimShooter::toggleSolenoid(){
-	safe->Set(!safe->Get());
-	fire->Set(!fire->Get());
-}
-
-void TimShooter::setSolenoid(bool trigger){
-	safe->Set(!trigger);
-	fire->Set(trigger);
 }
 
 void TimShooter::setMotors(float value){

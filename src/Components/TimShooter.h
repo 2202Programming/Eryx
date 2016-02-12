@@ -24,12 +24,11 @@ public:
 
 private:
 
-	void toggleSolenoid();
-	void setSolenoid(bool trigger);
+
 	void setMotors(float value);
 
 
-	int state = 0;
+	double state = 0.0;
 
 	IProfile *profile;
 	IXbox *xbox;
@@ -38,6 +37,10 @@ private:
 
 	Jaguar *Spin1;
 	Jaguar *Spin2;
+
+	Victor *updown;
+	DigitalInput *UpMax;
+	DigitalInput *DownMax;
 
 	Solenoid *safe;
 	Solenoid *fire;
