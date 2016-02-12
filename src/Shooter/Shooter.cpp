@@ -48,19 +48,23 @@ void Shooter::TeleopPeriodic() {
 	setAngle();
 	motor->setShoot(leftSpeed, rightSpeed);
 
+	SmartDashboard::PutNumber("Left Shoot Speed", encSLF->GetRate());
+	SmartDashboard::PutNumber("Right Shoot Speed", encSRF->GetRate());
+	SmartDashboard::PutNumber("Left Shoot Speed", encSLB->GetRate());
+	SmartDashboard::PutNumber("Right Shoot Speed", encSRB->GetRate());
 }
 
 void Shooter::readXbox() {
 	//Toggle - not hold
-	if (xbox->getLeftTriggerHeld()) { //Turn shooter on
+	if (xbox->getRightTriggerHeld()) { //Turn shooter on
 		runShoot = true;
 	} else { //Turn shooter off
 		runShoot = false;
 	}
 
-	if (xbox->getStartHeld() && angle <= 3) {
+	if (xbox->getRightBumperHeld() && angle <= 3) {
 		angle++;
-	} else if (angle >= 0) {
+	} else if (xbox->getLeftBumperHeld() && angle >= 0) {
 		angle--;
 	}
 }

@@ -83,10 +83,6 @@ void Motor::TeleopPeriodic() { //Update all motors every loop
 	//Date Feeds
 	SmartDashboard::PutNumber("Left Speed", leftSpeed);
 	SmartDashboard::PutNumber("Right Speed", rightSpeed);
-	SmartDashboard::PutNumber("Left Shoot Speed", encSLF->GetRate());
-	SmartDashboard::PutNumber("Right Shoot Speed", encSRF->GetRate());
-	SmartDashboard::PutNumber("Left Shoot Speed", encSLB->GetRate());
-	SmartDashboard::PutNumber("Right Shoot Speed", encSRB->GetRate());
 	SmartDashboard::PutNumber("Left Motor", sRightSpeed);
 	SmartDashboard::PutNumber("Right Motor", sLeftSpeed);
 }
