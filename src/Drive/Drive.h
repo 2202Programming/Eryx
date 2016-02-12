@@ -2,7 +2,7 @@
  * Drive.h
  *
  *  Created on: Jan 27, 2016
- *      Author: Beast
+ *      Author: Daniel Owen
  */
 
 #include "WPILib.h"
@@ -12,6 +12,7 @@
 #include "Motor/Motor.h"
 #include "Xbox/IXbox.h"
 #include "SensorControl/ISensorControl.h"
+#include "Math.h"
 
 #ifndef SRC_DRIVE_H_
 #define SRC_DRIVE_H_
