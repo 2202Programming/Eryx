@@ -79,17 +79,23 @@ public:
 		master->addNode(xbox, "Xbox");
 
 		if (robot.compare("PROTO") == 0) {
+
 			master->addNode(xbox, "xbox");
 			master->addNode(new Drive(profile), "drive");
+
 		} else if (robot.compare("TIM") == 0) {
+
 			master->addNode(xbox, "xbox");
 			master->addNode(new Drive(profile), "drive");
 			master->addNode(new TimShooter(profile, xbox), "shooter");
+
 		} else if (robot.compare("ORYX") == 0) {
+
 			vision = new Vision();
 			m = new Motor(profile);
 			sensorControl = new NavxSensorControl(xbox, profile, vision);
 			drive = new Drive(profile, m, xbox, sensorControl);
+
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
 			master->addNode(drive, "Drive");
