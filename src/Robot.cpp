@@ -87,9 +87,12 @@ public:
 		} else if (robot.compare("TIM") == 0) {
 
 			master->addNode(xbox, "xbox");
+
 		}
 		if (robot.compare("PROTO") == 0) {
+
 			master->addNode(new Drive(profile), "drive");
+
 		}
 		else if(robot.compare("TIM")==0){
 
