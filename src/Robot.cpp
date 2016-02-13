@@ -14,6 +14,7 @@
 #include "Motor/Motor.h"
 #include "Drive/SimpleDrive.h"
 #include "Arm/Arm.h"
+#include "Profile/DProfile.h"
 
 #define debug 1
 
@@ -71,11 +72,10 @@ public:
 	std::vector<stepBase> *auton;
 	std::string robot;
 
-
 	Robot() {
 
 		xbox = MasterXboxController::getInstance();
-		profile = new SProfile();
+		profile = new DProfile();
 		master = new noList();
 		profile = new SProfile();
 
@@ -97,7 +97,7 @@ public:
 			vision = new Vision();
 			m = new Motor(profile);
 			sensorControl = new NavxSensorControl(xbox, profile, vision);
-			drive = new Drive( m, xbox, sensorControl);
+			drive = new Drive(m, xbox, sensorControl);
 
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
@@ -112,7 +112,7 @@ public:
 
 		auton = new std::vector<stepBase>();
 
-		if(autonID.compare("BASIC")==0){
+		if (autonID.compare("BASIC") == 0) {
 			driveStep step1 = driveStep();
 			step1.command = stepBase::driveStraight;
 			step1.distance = 5;
@@ -154,20 +154,21 @@ private:
 		SmartDashboard::PutString("State", "Autonomous Periodic");
 		//No list here beacause auto was always a bit more complicated
 		int x = 0;
-		if(robot.compare("ORYX")==0)
-		{
-		stepBase *command = &auton->at(x);
-		if(command != NULL){
-			bool result = sensorControl->AutonomousPeriodic(command);
-			if(result){
-				x += 1;
-				command = &auton->at(x);
+		if (robot.compare("ORYX") == 0) {
+			stepBase *command = &auton->at(x);
+			if (command != NULL) {
+				bool result = sensorControl->AutonomousPeriodic(command);
+				if (result) {
+					x += 1;
+					command = &auton->at(x);
+				}
 			}
 		}
+		nLNode* test = master->head;
+		while (test != NULL) {
+			test->value->AutonomousPeriodic();
+			test = test->parent;
 		}
-
-
-
 	}
 
 	void TeleopInit() {
