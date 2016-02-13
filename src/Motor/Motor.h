@@ -11,7 +11,6 @@
 #include "WPILib.h"
 #include "Math.h"
 
-
 class Motor: public IControl {
 public:
 	Motor(IProfile *np);
@@ -23,25 +22,27 @@ public:
 
 	//Methods for Components
 	void setDrive(float speedL, float speedR);
-	void setShoot(float speedL, float speedR); // w/ encoders
+	void setShoot(float speedL, float speedR);
 	void setArm(float aLowerSpeed, float aUpperSpeed);
+	void setIntake(float intakeSpeed);
 
 	//TODO What
 	void setShoot1(bool run);
 	void setShoot2(bool run);
 
 private:
-	IProfile *profile; //Robot profile for ports
-
 	Talon *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
-	Talon *shootLeftF, *shootRightF, *shootLeftB, *shootRightB; //Shooter Motors
+	Talon *shootFrontLeft, *shootFrontRight, *shootBackLeft, *shootBackRight; //Shooter Motors
 
 	Talon *armLower, *armUpper; //Arm Motors
-	Encoder *encALower, *encAUpper; //Arm Encoders
+	Encoder *encArmLower, *encArmUpper; //Arm Encoders
+
+	Talon *intake;
 
 	float leftSpeed, rightSpeed; //Drive variables
 	float sLeftSpeed, sRightSpeed; //Shooter variables
 	float aLowerSpeed, aUpperSpeed; //Arm variables
+	float intakeSpeed;
 };
 

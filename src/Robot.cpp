@@ -94,7 +94,7 @@ public:
 			vision = new Vision();
 			m = new Motor(profile);
 			sensorControl = new NavxSensorControl(xbox, profile, vision);
-			drive = new Drive(profile, m, xbox, sensorControl);
+			drive = new Drive( m, xbox, sensorControl);
 
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
