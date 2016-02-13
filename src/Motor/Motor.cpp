@@ -13,10 +13,10 @@
 Motor::Motor(IProfile *np) {
 
 	//Drive
-	frontLeft = new Talon(np->getInt("DRIVEFL"));
-	frontRight = new Talon(np->getInt("DRIVEFR"));
-	backLeft = new Talon(np->getInt("DRIVEBL"));
-	backRight = new Talon(np->getInt("DRIVEBR"));
+	frontLeft = new Jaguar(np->getInt("DRIVEFL"));
+	frontRight = new Jaguar(np->getInt("DRIVEFR"));
+	backLeft = new Jaguar(np->getInt("DRIVEBL"));
+	backRight = new Jaguar(np->getInt("DRIVEBR"));
 	frontLeft->SetInverted(np->getBool("DRIVEFL_INVERT"));
 	frontRight->SetInverted(np->getBool("DRIVEFR_INVERT"));
 	backLeft->SetInverted(np->getBool("DRIVEBL_INVERT"));

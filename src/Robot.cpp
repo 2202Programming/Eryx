@@ -62,153 +62,160 @@ struct noList {
 
 class Robot: public IterativeRobot {
 public:
+
 	noList* master;
+	IProfile* profile;
+	std::vector<stepBase> *auton;
 	Motor *m;
 	IXbox *xbox;
-	IProfile* profile;
 	ISensorControl* sensorControl;
 	IVision* vision;
 	Drive *drive;
+	Arm *arm;
 
-	std::vector<stepBase> *auton;
 	std::string robot;
 
 	Robot() {
+		master = new noList();
+		profile = new DProfile();
 
 		xbox = MasterXboxController::getInstance();
-		profile = new DProfile();
-		master = new noList();
-		profile = new SProfile();
 
 		robot = profile->getValue("ROBOT");
 
 		master->addNode(xbox, "Xbox");
+		/*
+		 if (robot.compare("PROTO") == 0) {
 
-		if (robot.compare("PROTO") == 0) {
+		 master->addNode(new SimpleDrive(profile, xbox), "drive");
 
-			master->addNode(new SimpleDrive(profile, xbox), "drive");
+		 } else if (robot.compare("TIM") == 0) {
 
-		} else if (robot.compare("TIM") == 0) {
+		 master->addNode(new SimpleDrive(profile, xbox), "drive");
+		 master->addNode(new TimShooter(profile, xbox), "shooter");
 
-			master->addNode(new SimpleDrive(profile, xbox), "drive");
-			master->addNode(new TimShooter(profile, xbox), "shooter");
+		 }// else if (robot.compare("ORYX") == 0) {
+		 */
+		vision = new Vision();
+		m = new Motor(profile);
+		sensorControl = new NavxSensorControl(xbox, profile, vision);
+		drive = new Drive(m, xbox, sensorControl);
+		arm = new Arm(m, xbox);
 
-		} else if (robot.compare("ORYX") == 0) {
+		master->addNode(sensorControl, "Sensor Control");
+		master->addNode(vision, "Vision");
+		master->addNode(drive, "Drive");
+		master->addNode(arm, "ARM");
 
-			vision = new Vision();
-			m = new Motor(profile);
-			sensorControl = new NavxSensorControl(xbox, profile, vision);
-			drive = new Drive(m, xbox, sensorControl);
+		//MUST BE CALLED LAST
+		master->addNode(m, "Motor");
 
-			master->addNode(sensorControl, "Sensor Control");
-			master->addNode(vision, "Vision");
-			master->addNode(drive, "Drive");
-			master->addNode(new Arm(m, xbox), "ARM");
 
-			//MUST BE CALLED LAST
-			master->addNode(m, "Motor");
-		}
 
-		std::string autonID = profile->getValue("AUTOLIST");
+	std::string autonID = profile->getValue("AUTOLIST");
 
-		auton = new std::vector<stepBase>();
+	auton = new std::vector<stepBase>();
 
-		if (autonID.compare("BASIC") == 0) {
-			driveStep step1 = driveStep();
-			step1.command = stepBase::driveStraight;
-			step1.distance = 5;
-			step1.stepNum = 0;
-			step1.speed = .5;
-			auton->push_back(step1);
+	if (autonID.compare("BASIC") == 0) {
+		driveStep step1 = driveStep();
+		step1.command = stepBase::driveStraight;
+		step1.distance = 5;
+		step1.stepNum = 0;
+		step1.speed = .5;
+		auton->push_back(step1);
 
-			stepBase fin = stepBase();
-			fin.command = stepBase::stop;
-			fin.stepNum = 1;
-			auton->push_back(fin);
-		}
+		stepBase fin = stepBase();
+		fin.command = stepBase::stop;
+		fin.stepNum = 1;
+		auton->push_back(fin);
 	}
+
+}
 
 private:
-	LiveWindow *lw;
+LiveWindow *lw;
 
-	void RobotInit() {
-		lw = LiveWindow::GetInstance();
-		SmartDashboard::PutString("Profile",robot);
-		SmartDashboard::PutString("State", "Robot Init");
-		nLNode* test = master->head;
-		while (test != NULL) {
-			test->value->RobotInit();
-			test = test->parent;
-		}
-
+void RobotInit() {
+	lw = LiveWindow::GetInstance();
+	//SmartDashboard::PutString("Profile",robot);
+	SmartDashboard::PutString("MOTORFL", profile->getValue("MOTORFL"));
+	SmartDashboard::PutString("State", "Robot Init");
+	nLNode* test = master->head;
+	while (test != NULL) {
+		test->value->RobotInit();
+		test = test->parent;
 	}
 
-	void AutonomousInit() {
-		SmartDashboard::PutString("State", "Autonomous Init");
-		nLNode* test = master->head;
-		while (test != NULL) {
-			test->value->AutonomousInit();
-			test = test->parent;
-		}
-	}
+}
 
-	void AutonomousPeriodic() {
-		SmartDashboard::PutString("State", "Autonomous Periodic");
-		//No list here beacause auto was always a bit more complicated
-		int x = 0;
-		if (robot.compare("ORYX") == 0) {
-			stepBase *command = &auton->at(x);
-			if (command != NULL) {
-				bool result = sensorControl->AutonomousPeriodic(command);
-				if (result) {
-					x += 1;
-					command = &auton->at(x);
-				}
+void AutonomousInit() {
+	SmartDashboard::PutString("State", "Autonomous Init");
+	nLNode* test = master->head;
+	while (test != NULL) {
+		test->value->AutonomousInit();
+		test = test->parent;
+	}
+}
+
+void AutonomousPeriodic() {
+	SmartDashboard::PutString("State", "Autonomous Periodic");
+	//No list here beacause auto was always a bit more complicated
+
+	int x = 0;
+	if (robot.compare("ORYX") == 0) {
+		stepBase *command = &auton->at(x);
+		if (command != NULL) {
+			bool result = sensorControl->AutonomousPeriodic(command);
+			if (result) {
+				x += 1;
+				command = &auton->at(x);
 			}
 		}
-		nLNode* test = master->head;
-		while (test != NULL) {
-			test->value->AutonomousPeriodic();
-			test = test->parent;
-		}
+	}
+	nLNode* test = master->head;
+	while (test != NULL) {
+		test->value->AutonomousPeriodic();
+		test = test->parent;
 	}
 
-	void TeleopInit() {
-		SmartDashboard::PutString("State", "Teleop Init");
-		nLNode* test = master->head;
-		while (test != NULL) {
-			test->value->TeleopInit();
-			test = test->parent;
-		}
-	}
+}
 
-	void TeleopPeriodic() {
-		SmartDashboard::PutString("State", "Teleop Periodic");
-		nLNode* test = master->head;
-		while (test != NULL) {
-			test->value->TeleopPeriodic();
-			test = test->parent;
-		}
+void TeleopInit() {
+	SmartDashboard::PutString("State", "Teleop Init");
+	nLNode* test = master->head;
+	while (test != NULL) {
+		test->value->TeleopInit();
+		test = test->parent;
 	}
+}
 
-	void TestInit() {
-		SmartDashboard::PutString("State", "Test Init");
-		nLNode* test = master->head;
-		while (test != NULL) {
-			test->value->TestInit();
-			test = test->parent;
-		}
+void TeleopPeriodic() {
+	SmartDashboard::PutString("State", "Teleop Periodic");
+	nLNode* test = master->head;
+	while (test != NULL) {
+		test->value->TeleopPeriodic();
+		test = test->parent;
 	}
+}
 
-	void TestPeriodic() {
-		SmartDashboard::PutString("State", "Test Periodic");
-		lw->Run();
-		nLNode* test = master->head;
-		while (test != NULL) {
-			test->value->TestPeriodic();
-			test = test->parent;
-		}
+void TestInit() {
+	SmartDashboard::PutString("State", "Test Init");
+	nLNode* test = master->head;
+	while (test != NULL) {
+		test->value->TestInit();
+		test = test->parent;
 	}
+}
+
+void TestPeriodic() {
+	SmartDashboard::PutString("State", "Test Periodic");
+	lw->Run();
+	nLNode* test = master->head;
+	while (test != NULL) {
+		test->value->TestPeriodic();
+		test = test->parent;
+	}
+}
 };
 
 START_ROBOT_CLASS(Robot);

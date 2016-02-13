@@ -1,10 +1,12 @@
 #include "Profile/DProfile.h"
-#define FILE "/home/admin/profile.txt"
+#define FILE "/home/docs/profile.txt"
 
 using namespace std;
 DProfile::DProfile()
 {
+
 	findIndex();
+	//setValue("MOTORFL", "1");
 }
 
 
@@ -43,7 +45,7 @@ bool DProfile::setValue(std::string label, std::string value)
 void DProfile::findIndex()
 {
 	string line;
-	ifstream myfile("test.txt");
+	ifstream myfile(FILE);
 	if (myfile.is_open())
 	{
 		while (!myfile.eof())

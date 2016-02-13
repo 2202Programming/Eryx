@@ -17,7 +17,7 @@ Drive::Drive(Motor *motor, IXbox *xbox, ISensorControl *nav) {
 	//init floats, state, and userControl
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
-	state = nav->stopped;
+	state = nav->running;
 
 	requestedState = nav->running;
 	userControl = false;
@@ -103,7 +103,7 @@ void Drive::readXboxArcadeD() {
 
 	if (state == nav->running || state == nav->stopping) { //If running or stopping update speeds here
 		leftSpeed = acceleration(y - x, leftSpeed);
-		rightSpeed = acceleration(y + x, rightSpeed);
+		rightSpeed = -acceleration(y + x, rightSpeed);
 	}
 
 	SmartDashboard::PutNumber("XOut Value", rightSpeed);

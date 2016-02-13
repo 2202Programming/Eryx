@@ -31,7 +31,7 @@ public:
 	void setShoot2(bool run);
 
 private:
-	Talon *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
+	Jaguar *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
 	Talon *shootFrontLeft, *shootFrontRight, *shootBackLeft, *shootBackRight; //Shooter Motors
 
