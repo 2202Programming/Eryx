@@ -93,6 +93,7 @@ void Motor::setDrive(float speedL, float speedR) { //Called from drive class
 }
 
 void Motor::setShoot1(bool run) { //Called from the shooter class
+
 }
 
 void Motor::setShoot2(bool run) {
@@ -102,5 +103,9 @@ void Motor::setShoot2(bool run) {
 void Motor::setArm(float aLowerSPeed, float aUpperSpeed) { //Called from the arm class
 	this->aLowerSpeed = aLowerSpeed;
 	this->aUpperSpeed = aUpperSpeed;
+}
+
+void Motor::setShoot(float speedL, float speedR){
+
 }
 

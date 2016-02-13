@@ -19,7 +19,8 @@ Drive::Drive(IProfile *np, Motor *motor, IXbox *xbox, ISensorControl *nav) {
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
 	state = nav->stopped;
-	requestedState = NULL;
+	//TODO you cannot set a enum to null
+	requestedState = ISensorControl::running;
 	userControl = false;
 }
 

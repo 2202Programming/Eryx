@@ -1,58 +1,64 @@
-/*
- * DProfile.cpp
- *
- *  Created on: Jan 30, 2016
- *      Author: lazar
- */
+#include "Profile/DProfile.h"
+#define FILE "C:/Users/lazar/OneDrive/Documents/Programming/Workspace/TESTBOX/ProfileTest/ProfileTest/test.txt"
 
-#include <Profile/DProfile.h>
-
-DProfile::DProfile() {
-	remakeIndex();
+using namespace std;
+DProfile::DProfile()
+{
+	findIndex();
 }
 
-DProfile::~DProfile() {
+
+DProfile::~DProfile()
+{
 	generateIndex();
-	delete master;
+	profileNode *temp = master;
+	profileNode *test;
+	while (temp != NULL) {
+		test = temp;
+		temp = temp->parent;
+		delete test;
+	}
+	delete temp;
 }
 
-std::string DProfile::getValue(std::string label){
+std::string DProfile::getValue(std::string label)
+{
 	profileNode *temp = master;
-	while(temp !=NULL){
-		if(temp->label.compare(label) == 0){
+	while (temp != NULL) {
+		if (temp->label.compare(label) == 0) {
 			return temp->value;
 		}
 		temp = temp->parent;
 	}
-	return "null";
+	return "";
 }
 
-int DProfile::getInt(std::string label){
-	return std::stoi(getValue(label));
+bool DProfile::setValue(std::string label, std::string value)
+{
+	/* Iterate throught the program and check to make sure the value does not exist */
+	master = new profileNode(label, value, master);
+	return false;
 }
 
-float DProfile::getFloat(std::string label){
-	return std::stof(getValue(label));
-}
-
-bool DProfile::getBool(std::string label){
-	return getValue(label).at(0) == '1';
-}
-
-bool DProfile::setValue(std::string label, std::string value){
-	bool alreadyExists = true;
-	if(getValue(label).compare("null") == 0){
-		alreadyExists = false;
-
+void DProfile::findIndex()
+{
+	string line;
+	ifstream myfile("test.txt");
+	if (myfile.is_open())
+	{
+		while (!myfile.eof())
+		{
+			getline(myfile, line);
+			string first = line.substr(0, line.find(","));
+			string sec = line.substr(line.find(",") + 1, line.size());
+			//master = new profileNode(first, sec, master);
+			setValue(first, sec);
+		}
+		myfile.close();
 	}
-	return alreadyExists;
 }
 
-void DProfile::remakeIndex(){
-	//TODO
+void DProfile::generateIndex()
+{
+	/* Was Designed to Make the Index if someone adds to it in the Program but I dont think it is needed */
 }
-
-void DProfile::generateIndex(){
-	//TODO
-}
-

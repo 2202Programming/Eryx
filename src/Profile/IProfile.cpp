@@ -1,9 +1,9 @@
 /*
- * IProfile.cpp
- *
- *  Created on: Jan 30, 2016
- *      Author: lazar
- */
+* IProfile.cpp
+*
+*  Created on: Jan 30, 2016
+*      Author: lazar
+*/
 
 #include "IProfile.h"
 

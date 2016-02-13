@@ -17,6 +17,7 @@ Arm::Arm(Motor *motor, IXbox *xbox) {
 }
 
 Arm::~Arm() {
+
 }
 
 void Arm::TeleopInit() {
@@ -48,3 +49,4 @@ void Arm::readXbox() {
 		upperSpeed = 0.0;
 	}
 }
+
