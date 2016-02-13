@@ -23,12 +23,11 @@ public:
 
 	//Methods for Components
 	void setDrive(float speedL, float speedR);
-	void setShoot(float speedL, float speedR); // w/ encoders
+	void setShoot(float speedL, float speedR);
 	void setArm(float aLowerSpeed, float aUpperSpeed);
+	void setIntake(float intakeSpeed);
 
 private:
-	IProfile *profile; //Robot profile for ports
-
 	Talon *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
 	Talon *shootLeftF, *shootRightF, *shootLeftB, *shootRightB; //Shooter Motors
@@ -36,8 +35,11 @@ private:
 	Talon *armLower, *armUpper; //Arm Motors
 	Encoder *encALower, *encAUpper; //Arm Encoders
 
+	Talon *intake;
+
 	float leftSpeed, rightSpeed; //Drive variables
 	float sLeftSpeed, sRightSpeed; //Shooter variables
 	float aLowerSpeed, aUpperSpeed; //Arm variables
+	float intakeSpeed;
 };
 

@@ -9,25 +9,28 @@
 
 #define RPM 2500
 
-Shooter::Shooter(Motor *motor, IXbox *xbox) {
+Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	this->xbox = xbox;
 	this->motor = motor;
 	c = new Compressor();
-	s1 = new DoubleSolenoid(0, 1);
-	s2 = new DoubleSolenoid(2, 3);
+	s1 = new DoubleSolenoid(p->getInt("SHOOTER_SOL1_1"), p->getInt("SHOOTER_SOL1_2"));
+	trigger = new DoubleSolenoid(p->getInt("SHOOTER_SOL2_1"), p->getInt("SHOOTER_SOL2_2"));
+	encSLF = new Encoder(p->getInt("SHOOTERFL_ENC1"), p->getInt("SHOOTERFL_ENC2"));
+	encSRF = new Encoder(p->getInt("SHOOTEFR_ENC1"), p->getInt("SHOOTERLR_ENC2"));
+	encSLB = new Encoder(p->getInt("SHOOTERBL_ENC1"), p->getInt("SHOOTERBL_ENC2"));
+	encSRB = new Encoder(p->getInt("SHOOTERBR_ENC1"), p->getInt("SHOOTERBR_ENC2"));
+	encSLF->SetReverseDirection(p->getBool("SHOOTERFL_ENC1_INVERT")); //For test board
+	encSRF->SetReverseDirection(p->getBool("SHOOTERFR_ENC1_INVERT")); //For test board
+	encSLB->SetReverseDirection(p->getBool("SHOOTERBL_ENC1_INVERT")); //For test board
+	encSRB->SetReverseDirection(p->getBool("SHOOTERBR_ENC1_INVERT")); //For test board
+
 	runShoot = false;
-	angle = 0;
+	runIntake = false;
+	runTrigger = false;
+	angle = false;
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
 
-	encSLF = new Encoder(0, 1);
-	encSRF = new Encoder(2, 3);
-	encSLB = new Encoder(4, 5);
-	encSRB = new Encoder(6, 7);
-	encSLF->SetReverseDirection(false); //For test board
-	encSRF->SetReverseDirection(true); //For test board
-	encSLB->SetReverseDirection(false); //For test board
-	encSRB->SetReverseDirection(true); //For test board
 }
 
 Shooter::~Shooter() {
@@ -37,16 +40,26 @@ void Shooter::TeleopInit() {
 	//Shooter starts stopped
 	motor->setShoot(0.0, 0.0);
 	c->Start();
-	s1->Set(s1->kForward);
-	s2->Set(s2->kForward);
+	s1->Set(s1->kReverse);
+	trigger->Set(trigger->kForward);
 }
 
 void Shooter::TeleopPeriodic() {
 	readXbox();
-	motor->setShoot2(runShoot);
 	updateMotor2();
-	setAngle();
-	motor->setShoot(leftSpeed, rightSpeed);
+	setPnumatics();
+
+	if (runShoot) {
+		motor->setShoot(leftSpeed, rightSpeed);
+	} else {
+		motor->setShoot(0.0, 0.0);
+	}
+
+	if (runIntake) {
+		motor->setIntake(1.0);
+	} else {
+		motor->setIntake(0.0);
+	}
 
 	SmartDashboard::PutNumber("Left Shoot Speed", encSLF->GetRate());
 	SmartDashboard::PutNumber("Right Shoot Speed", encSRF->GetRate());
@@ -56,38 +69,39 @@ void Shooter::TeleopPeriodic() {
 
 void Shooter::readXbox() {
 	//Toggle - not hold
-	if (xbox->getRightTriggerHeld()) { //Turn shooter on
-		runShoot = true;
-	} else { //Turn shooter off
-		runShoot = false;
+	if (xbox->getR3Pressed()) { //Turn shooter on/off
+		runShoot = !runShoot;
 	}
 
-	if (xbox->getRightBumperHeld() && angle <= 3) {
-		angle++;
-	} else if (xbox->getLeftBumperHeld() && angle >= 0) {
-		angle--;
+	if (xbox->getRightTriggerPressed()) { //Toggle trigger
+		runTrigger = !runTrigger;
+	}
+
+	if (xbox->getRightBumperHeld()) { //Up
+		angle = true;
+	} else if (xbox->getLeftBumperHeld()) { //Down
+		angle = false;
+	}
+
+	if (xbox->getBackHeld()) {
+		runIntake = true;
+	} else {
+		runIntake = false;
 	}
 }
 
-void Shooter::setAngle() {
-	switch (angle) {
-	case 0: // Down
-		s1->Set(s1->kForward);
-		s2->Set(s2->kForward);
-		break;
-	case 1: // angle 1
-		s1->Set(s1->kReverse);
-		s2->Set(s2->kForward);
-		break;
-	case 2: //angle 2
-		s1->Set(s1->kForward);
-		s2->Set(s2->kReverse);
-		break;
-	case 3: //angle 3
-		s1->Set(s1->kReverse);
-		s2->Set(s2->kReverse);
-		break;
+void Shooter::setPnumatics() {
 
+	if (angle) {
+		s1->Set(s1->kForward); //Up
+	} else {
+		s1->Set(s1->kReverse); //Down
+	}
+
+	if (runTrigger) {
+		trigger->Set(trigger->kForward);
+	} else {
+		trigger->Set(trigger->kReverse);
 	}
 }
 
