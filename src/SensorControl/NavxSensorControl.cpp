@@ -21,6 +21,10 @@ NavxSensorControl::~NavxSensorControl() {
 }
 
 MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed, float rightMotorSpeed){\
+	if (inAutonomous)
+	{
+
+	}
 	switch (targetState)
 	{
 	case TargetingState::driveToAngle:
@@ -108,6 +112,37 @@ void NavxSensorControl::TeleopInit(){
 }
 
 void NavxSensorControl::TeleopPeriodic(){
-
+	inAutonomous = false;
 	TargetingStateMachine();
+}
+
+void NavxSensorControl::AutonomousInit()
+{
+	currentStep = -1;
+	inAutonomous = true;
+}
+
+void NavxSensorControl::InitDriveStraight(driveStep *step)
+{
+
+}
+
+bool NavxSensorControl::ExecDriveStraight(driveStep *step)
+{
+
+}
+
+bool NavxSensorControl::AutonomousPeriodic(stepBase *step)
+{
+	switch (step->command)
+	{
+	case step->driveStraight:
+	if (currentStep != step->stepNum)
+	{
+		currentStep = step->stepNum;
+		InitDriveStraight((driveStep *) step);
+	}
+	return ExecDriveStraight((driveStep *) step);
+	break;
+	}
 }
