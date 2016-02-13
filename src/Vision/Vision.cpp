@@ -14,6 +14,7 @@ void Vision::RobotInit() {
 
 void Vision::TeleopPeriodic() {
 	visionUpdate();
+	SmartDashboard::PutNumber("VisionState", table->GetNumber("shootingState", -1));
 }
 
 void Vision::visionUpdate() {

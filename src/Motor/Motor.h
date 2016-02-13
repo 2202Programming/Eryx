@@ -26,6 +26,10 @@ public:
 	void setArm(float aLowerSpeed, float aUpperSpeed);
 	void setIntake(float intakeSpeed);
 
+	//TODO What
+	void setShoot1(bool run);
+	void setShoot2(bool run);
+
 private:
 	Talon *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 

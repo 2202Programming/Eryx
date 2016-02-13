@@ -116,4 +116,3 @@ void Motor::setArm(float aLowerSPeed, float aUpperSpeed) { //Called from the arm
 void Motor::setIntake(float intakeSpeed) {
 	this->intakeSpeed = intakeSpeed;
 }
-

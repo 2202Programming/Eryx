@@ -46,5 +46,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 /Debug/
-
-Debug/src/IControl.o
+Debug/src/Robot.o
+*.o
+*.o
+.cproject

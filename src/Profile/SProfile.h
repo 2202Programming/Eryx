@@ -1,21 +1,23 @@
 /*
- * SProfile.h
- *
- *  Created on: Jan 30, 2016
- *      Author: lazar
- */
+* SProfile.h
+*
+*  Created on: Jan 30, 2016
+*      Author: lazar
+*/
 
 #ifndef SRC_PROFILE_SPROFILE_H_
 #define SRC_PROFILE_SPROFILE_H_
 
 #include "Profile/IProfile.h"
 #include <string>
+#include <map>
 
-class SProfile: public IProfile {
+
+class SProfile : public IProfile {
 public:
 
-	profileNode *master;
-
+	
+	std::map<std::string, std::string> *storage;
 	SProfile();
 	~SProfile();
 

@@ -67,10 +67,10 @@ void Shooter::TeleopPeriodic() {
 		motor->setIntake(0.0);
 	}
 
-	SmartDashboard::PutNumber("Left Shoot Speed", encSLF->GetRate());
-	SmartDashboard::PutNumber("Right Shoot Speed", encSRF->GetRate());
-	SmartDashboard::PutNumber("Left Shoot Speed", encSLB->GetRate());
-	SmartDashboard::PutNumber("Right Shoot Speed", encSRB->GetRate());
+	SmartDashboard::PutNumber("Left Shoot Speed", encFrontLeft->GetRate());
+	SmartDashboard::PutNumber("Right Shoot Speed", encFrontRight->GetRate());
+	SmartDashboard::PutNumber("Left Shoot Speed", encBackLeft->GetRate());
+	SmartDashboard::PutNumber("Right Shoot Speed", encBackRight->GetRate());
 }
 
 void Shooter::readXbox() {
@@ -112,8 +112,8 @@ void Shooter::setPnumatics() {
 }
 
 void Shooter::updateMotor1() {
-	double rateR = encSRF->GetRate();
-	double rateL = encSLF->GetRate();
+	double rateR = encFrontRight->GetRate();
+	double rateL = encFrontLeft->GetRate();
 
 	//Logic to keep the wheels within 150 of the desired RPM
 	//Left side

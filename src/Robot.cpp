@@ -5,12 +5,15 @@
 #include "Xbox/MasterXboxController.h"
 #include "WPILib.h"
 #include "Drive/Drive.h"
+#include "Components/TimShooter.h"
 #include "Shooter/Shooter.h"
 #include "Vision/IVision.h"
 #include "SensorControl/ISensorControl.h"
 #include "Vision/Vision.h"
 #include "SensorControl/NavxSensorControl.h"
 #include "Motor/Motor.h"
+#include "Drive/SimpleDrive.h"
+#include "Arm/Arm.h"
 
 #define debug 1
 
@@ -66,25 +69,43 @@ public:
 	IVision* vision;
 	Drive *drive;
 
-
 	Robot() {
+
 		xbox = MasterXboxController::getInstance();
 		profile = new SProfile();
 		master = new noList();
-		vision = new Vision();
-		m = new Motor(profile);
-		sensorControl = new NavxSensorControl(xbox, profile, vision);
-		drive = new Drive(profile, m, xbox, sensorControl);
+		profile = new SProfile();
+
+		std::string robot = profile->getValue("ROBOT");
 
 		master->addNode(xbox, "Xbox");
-		master->addNode(sensorControl, "Sensor Control");
-		master->addNode(vision, "Vision");
-		master->addNode(drive, "Drive");
-		master->addNode(m, "Motor");
-		/*
-		 * Add Elements into the List Here
-		 */
+
+		if (robot.compare("PROTO") == 0) {
+
+			master->addNode(new SimpleDrive(profile, xbox), "drive");
+
+		} else if (robot.compare("TIM") == 0) {
+
+			master->addNode(new SimpleDrive(profile, xbox), "drive");
+			master->addNode(new TimShooter(profile, xbox), "shooter");
+
+		} else if (robot.compare("ORYX") == 0) {
+
+			vision = new Vision();
+			m = new Motor(profile);
+			sensorControl = new NavxSensorControl(xbox, profile, vision);
+			drive = new Drive( m, xbox, sensorControl);
+
+			master->addNode(sensorControl, "Sensor Control");
+			master->addNode(vision, "Vision");
+			master->addNode(drive, "Drive");
+			master->addNode(new Arm(m, xbox), "ARM");
+
+			//MUST BE CALLED LAST
+			master->addNode(m, "Motor");
+		}
 	}
+
 private:
 	LiveWindow *lw;
 
@@ -131,10 +152,10 @@ private:
 		}
 	}
 
-	void TestInit(){
+	void TestInit() {
 		SmartDashboard::PutString("State", "Test Init");
 		nLNode* test = master->head;
-		while(test != NULL){
+		while (test != NULL) {
 			test->value->TestInit();
 			test = test->parent;
 		}
@@ -144,7 +165,7 @@ private:
 		SmartDashboard::PutString("State", "Test Periodic");
 		lw->Run();
 		nLNode* test = master->head;
-		while (test != NULL){
+		while (test != NULL) {
 			test->value->TestPeriodic();
 			test = test->parent;
 		}
