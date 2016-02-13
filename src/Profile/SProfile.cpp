@@ -40,7 +40,7 @@ SProfile::SProfile()
 	setValue("SET", "SET");
 	setValue("TRUE", "TRUE");
 	setValue("FLOAT", "42.0");
-	setValue("ROBOT", "ARM");
+	setValue("ROBOT", "ORYX");
 	setValue("SPIN1", "5");
 	setValue("SPIN2", "6");
 	setValue("SAFE", "3");

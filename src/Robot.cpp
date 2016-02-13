@@ -14,6 +14,7 @@
 #include "Motor/Motor.h"
 #include "Drive/SimpleDrive.h"
 #include "Arm/Arm.h"
+#include "Profile/DProfile.h"
 
 #define debug 1
 
@@ -68,15 +69,16 @@ public:
 	ISensorControl* sensorControl;
 	IVision* vision;
 	Drive *drive;
+	std::string robot;
 
 	Robot() {
 
 		xbox = MasterXboxController::getInstance();
-		profile = new SProfile();
+		profile = new DProfile();
 		master = new noList();
 		profile = new SProfile();
 
-		std::string robot = profile->getValue("ROBOT");
+		robot = profile->getValue("ROBOT");
 
 		master->addNode(xbox, "Xbox");
 
@@ -111,6 +113,7 @@ private:
 
 	void RobotInit() {
 		lw = LiveWindow::GetInstance();
+		SmartDashboard::PutString("Profile",robot);
 		SmartDashboard::PutString("State", "Robot Init");
 		nLNode* test = master->head;
 		while (test != NULL) {

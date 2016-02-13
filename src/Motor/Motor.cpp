@@ -14,10 +14,12 @@ Motor::Motor(IProfile *np) {
 	profile = np;
 
 	//Drive
-	frontLeft = new Talon(1);
-	frontRight = new Talon(2);
-	backLeft = new Talon(3);
-	backRight = new Talon(4);
+	frontLeft = new Talon(3); //3 for tim - 1 for 2016
+	frontRight = new Talon(1); //1 for tim - 2 for 2016
+	backLeft = new Talon(4); //4 for tim - 3 for 2016
+	backRight = new Talon(2); //2 for tim - 4 for 2016
+	frontLeft->SetInverted(true); //true for tim - false for 2016
+	backLeft->SetInverted(true); //true for tim - false for 2016
 
 	//Shooter
 	shootLeftF = new Talon(5);
@@ -88,7 +90,7 @@ void Motor::TeleopPeriodic() { //Update all motors every loop
 }
 
 void Motor::setDrive(float speedL, float speedR) { //Called from drive class
-	leftSpeed = -speedL;
+	leftSpeed = speedL;
 	rightSpeed = speedR; //For test bot
 }
 
