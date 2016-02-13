@@ -25,12 +25,14 @@ public:
 };
 
 class driveStep: public stepBase{
+public:
 	float distance;
 	float speed;
 
 };
 
 class turnStep:public stepBase{
+public:
 	float speed;
 	float angle;
 };

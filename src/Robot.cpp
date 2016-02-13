@@ -68,6 +68,8 @@ public:
 	ISensorControl* sensorControl;
 	IVision* vision;
 	Drive *drive;
+	std::list<stepBase> *auton;
+
 
 	Robot() {
 
@@ -103,6 +105,14 @@ public:
 
 			//MUST BE CALLED LAST
 			master->addNode(m, "Motor");
+		}
+
+		std::string autonID = profile->getValue("AUTOLIST");
+
+		if(autonID.compare("BASIC")==0){
+			driveStep *step1 = new driveStep();
+			step1->command = stepBase::driveStraight;
+
 		}
 	}
 
