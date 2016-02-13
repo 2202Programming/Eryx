@@ -22,6 +22,8 @@ public:
 	virtual ~Drive();
 
 	//IControl
+	void AutonomousInit();
+	void AutonomousPeriodic();
 	void TeleopInit();
 	void TeleopPeriodic();
 

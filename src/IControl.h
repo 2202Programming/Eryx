@@ -84,6 +84,7 @@ public:
 	virtual void TestInit(){}
 
 	virtual void DisabledPeriodic(){}
+	virtual void AutonomousPeriodic() {} //For shooter, motor, and drive
 	virtual bool AutonomousPeriodic(stepBase *step) {
 		return 1;
 	}

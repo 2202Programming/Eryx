@@ -34,6 +34,7 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	runIntake = false;
 	runTrigger = false;
 	angle = false;
+	shot = false;
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
 
@@ -42,12 +43,43 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 Shooter::~Shooter() {
 }
 
+void Shooter::AutonomousInit() {
+	angle = true;
+}
+
+void Shooter::AutonomousPeriodic() {
+	updateMotor2();
+	setPnumatics();
+	motor->setShoot(leftSpeed, rightSpeed);
+
+	if (encFrontLeft->GetRate() > RPM) {
+		runTrigger = true;
+		shot = true;
+	}
+}
+
+void Shooter::shoot() {
+	runShoot = true;
+}
+
+bool Shooter::hasShot() {
+	if (shot == true) {
+		shot = false;
+		return true;
+	}
+
+	return false;
+}
+
 void Shooter::TeleopInit() {
 	//Shooter starts stopped
 	motor->setShoot(0.0, 0.0);
+	runShoot = false;
 	c->Start();
 	s1->Set(s1->kReverse);
+	angle = false;
 	trigger->Set(trigger->kForward);
+	runTrigger = false;
 }
 
 void Shooter::TeleopPeriodic() {
@@ -55,11 +87,7 @@ void Shooter::TeleopPeriodic() {
 	updateMotor2();
 	setPnumatics();
 
-	if (runShoot) {
-		motor->setShoot(leftSpeed, rightSpeed);
-	} else {
-		motor->setShoot(0.0, 0.0);
-	}
+	motor->setShoot(leftSpeed, rightSpeed);
 
 	if (runIntake) {
 		motor->setIntake(1.0);
@@ -115,41 +143,51 @@ void Shooter::updateMotor1() {
 	double rateR = encFrontRight->GetRate();
 	double rateL = encFrontLeft->GetRate();
 
-	//Logic to keep the wheels within 150 of the desired RPM
-	//Left side
-	if (rateL < RPM) {
-		if (rateL < RPM - 150)
-			leftSpeed += 0.01;
-		else
-			leftSpeed += 0.005;
+	if (runShoot) {
+		//Logic to keep the wheels within 150 of the desired RPM
+		//Left side
+		if (rateL < RPM) {
+			if (rateL < RPM - 150)
+				leftSpeed += 0.01;
+			else
+				leftSpeed += 0.005;
 
-	} else if (rateL == RPM) {
-		leftSpeed = 0.75;
+		} else if (rateL == RPM) {
+			leftSpeed = 0.75;
+		} else {
+			if (rateL > RPM + 150)
+				leftSpeed -= 0.01;
+			else
+				leftSpeed -= 0.005;
+		}
+
+		//Right Side
+		if (rateR < RPM) {
+			if (rateR < RPM - 150)
+				rightSpeed += 0.01;
+			else
+				rightSpeed += 0.005;
+
+		} else if (rateR == RPM) {
+			rightSpeed = 0.75;
+		} else {
+			if (rateR > RPM + 150)
+				rightSpeed -= 0.01;
+			else
+				rightSpeed -= 0.005;
+		}
 	} else {
-		if (rateL > RPM + 150)
-			leftSpeed -= 0.01;
-		else
-			leftSpeed -= 0.005;
-	}
-
-	//Right Side
-	if (rateR < RPM) {
-		if (rateR < RPM - 150)
-			rightSpeed += 0.01;
-		else
-			rightSpeed += 0.005;
-
-	} else if (rateR == RPM) {
-		rightSpeed = 0.75;
-	} else {
-		if (rateR > RPM + 150)
-			rightSpeed -= 0.01;
-		else
-			rightSpeed -= 0.005;
+		leftSpeed = 0.0;
+		rightSpeed = 0.0;
 	}
 }
 
 void Shooter::updateMotor2() {
-	leftSpeed = 0.75;
-	rightSpeed = 0.75;
+	if (runShoot) {
+		leftSpeed = 1.0;
+		rightSpeed = 1.0;
+	} else {
+		leftSpeed = 0.0;
+		rightSpeed = 0.0;
+	}
 }

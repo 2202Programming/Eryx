@@ -26,6 +26,16 @@ Drive::Drive(Motor *motor, IXbox *xbox, ISensorControl *nav) {
 Drive::~Drive() {
 }
 
+void Drive::AutonomousInit() {
+	requestedState = nav->stopped;
+	state = nav->stopped;
+}
+
+void Drive::AutonomousPeriodic() {
+	navSpeed = nav->UpdateMotorSpeeds(0.0, 0.0);
+	updateMotors();
+}
+
 void Drive::TeleopInit() {
 	motor->setDrive(0.0, 0.0);
 

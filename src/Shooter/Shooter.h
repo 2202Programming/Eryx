@@ -20,6 +20,8 @@ public:
 	virtual ~Shooter();
 
 	//IControl
+	void AutonomousInit();
+	void AutonomousPeriodic();
 	void TeleopInit();
 	void TeleopPeriodic();
 
@@ -29,12 +31,15 @@ private:
 	void setPnumatics();
 	void updateMotor1(); // w/ encoders
 	void updateMotor2(); // w/o encoders
+	void shoot();
+	bool hasShot();
 
 	bool runShoot; //True if shooting motors should be running
 	bool runIntake;
 	bool runTrigger;
 	bool angle;
 	float leftSpeed, rightSpeed;
+	bool shot;
 
 	IXbox *xbox;
 	Motor *motor;
