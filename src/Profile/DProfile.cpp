@@ -35,7 +35,7 @@ std::string DProfile::getValue(std::string label)
 
 bool DProfile::setValue(std::string label, std::string value)
 {
-	/* Iterate throught the program and check to make sure the value does not exist */
+	/* Iterate throughout the program and check to make sure the value does not exist */
 	master = new profileNode(label, value, master);
 	return false;
 }

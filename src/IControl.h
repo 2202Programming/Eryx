@@ -9,6 +9,34 @@
 #define SRC_ICONTROL_H_
 
 
+class stepBase{
+public:
+
+	enum step{
+		driveStraight,
+		turn,
+		target,
+		shoot,
+		stop,
+	};
+
+	int stepNum;
+	step command;
+};
+
+class driveStep: public stepBase{
+public:
+	float distance;
+	float speed;
+
+};
+
+class turnStep:public stepBase{
+public:
+	float speed;
+	float angle;
+};
+
 
 /**
  * IterativeRobot implements a specific type of Robot Program framework, extending the RobotBase class.
@@ -56,7 +84,7 @@ public:
 	virtual void TestInit(){}
 
 	virtual void DisabledPeriodic(){}
-	virtual int AutonomousPeriodic(int input) {
+	virtual bool AutonomousPeriodic(stepBase *step) {
 		return 1;
 	}
 	virtual void AutonomousExecute(){}
@@ -71,7 +99,6 @@ protected:
 
 
 };
-
 
 
 
