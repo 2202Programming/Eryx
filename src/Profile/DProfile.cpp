@@ -1,5 +1,5 @@
 #include "Profile/DProfile.h"
-#define FILE "C:/Users/lazar/OneDrive/Documents/Programming/Workspace/TESTBOX/ProfileTest/ProfileTest/test.txt"
+#define FILE "/home/docs/profile.txt"
 
 using namespace std;
 DProfile::DProfile()
