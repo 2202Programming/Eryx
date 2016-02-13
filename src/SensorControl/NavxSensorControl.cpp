@@ -13,8 +13,8 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 	xbox = xboxInstance;
 	profile = profileInstance;
 	vision = visionInstance;
-	turnController = new PIDController(0.03, 0.001, 0.02, ahrs, this);
 	ahrs = new AHRS(SPI::Port::kMXP);
+	turnController = new PIDController(0.001, 0.0005, 0.00, ahrs, this);
 }
 
 NavxSensorControl::~NavxSensorControl() {
@@ -58,14 +58,16 @@ void NavxSensorControl::TargetingStateMachine() {
 	case TargetingState::waitForStopped:
 		if (currentDriveState == DriveSystemState::stopped) {
 			// Tell Vision to take a picture
-			vision->startAiming();
+			//vision->startAiming();
 			targetState = TargetingState::waitForPicResult;
 		}
 		break;
 	case TargetingState::waitForPicResult:
-		if (vision->getDoneAiming()) {
-			visionTargetAngle = vision->getDegreesToTurn();
-			turnController->SetSetpoint(visionTargetAngle);
+		//if (vision->getDoneAiming()) {
+		if (true) {
+			//visionTargetAngle = vision->getDegreesToTurn();
+			visionTargetAngle = 42;
+			turnController->SetSetpoint(10);
 			turnController->SetOutputRange(-1, 1);
 			turnController->Enable();
 			targetState = TargetingState::driveToAngle;
@@ -75,14 +77,29 @@ void NavxSensorControl::TargetingStateMachine() {
 		break;
 	case TargetingState::driveToAngle:
 		// Go to that angle
-		if (abs(turnController->GetError()) < visionAngleTolerance) {
+		if (abs(turnController->GetError()) < 30) {
 			turnController->Disable();
 			targetState = TargetingState::waitForButtonPress;
 			commandDriveState = DriveSystemState::running;
+			//motorSpeed = 0;
 		} else {
 			motorSpeed = turnSpeed;
 		}
-		UpdateMotorSpeeds(-motorSpeed, motorSpeed);
+		SmartDashboard::PutNumber("NavX Motor Speed", motorSpeed);
+		/*if (abs(motorSpeed) > 0.3)
+		 {
+		 if (motorSpeed > 0)
+		 {
+		 motorSpeed = 0.3;
+		 }
+		 else
+		 {
+		 motorSpeed = -0.3;
+		 }
+		 }*/
+
+		updateMotorSpeedResponse.leftMotorSpeed = -motorSpeed;
+		updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
 
 		//updateMotorSpeedResponse.leftMotorSpeed = 1;
 		//updateMotorSpeedResponse.rightMotorSpeed = 1;
@@ -109,6 +126,10 @@ void NavxSensorControl::TeleopInit() {
 void NavxSensorControl::TeleopPeriodic() {
 	inAutonomous = false;
 	TargetingStateMachine();
+
+	SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
+	SmartDashboard::PutNumber("Roll", ahrs->GetRoll());
+	SmartDashboard::PutNumber("Pitch", ahrs->GetRoll());
 }
 
 void NavxSensorControl::AutonomousInit() {

@@ -103,9 +103,9 @@ public:
 		arm = new Arm(m, xbox);
 
 		master->addNode(sensorControl, "Sensor Control");
-		master->addNode(vision, "Vision");
+		//master->addNode(vision, "Vision");
 		master->addNode(drive, "Drive");
-		master->addNode(arm, "ARM");
+		//master->addNode(arm, "ARM");
 
 		//MUST BE CALLED LAST
 		master->addNode(m, "Motor");

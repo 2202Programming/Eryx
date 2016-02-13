@@ -13,14 +13,14 @@
 Motor::Motor(IProfile *np) {
 
 	//Drive
-	frontLeft = new Jaguar(np->getInt("DRIVEFL"));
-	frontRight = new Jaguar(np->getInt("DRIVEFR"));
-	backLeft = new Jaguar(np->getInt("DRIVEBL"));
-	backRight = new Jaguar(np->getInt("DRIVEBR"));
-	frontLeft->SetInverted(np->getBool("DRIVEFL_INVERT"));
+	frontLeft = new Spark(2);
+	frontRight = new Spark(4);
+	backLeft = new Spark(1);
+	backRight = new Spark(3);
+	/*frontLeft->SetInverted(np->getBool("DRIVEFL_INVERT"));
 	frontRight->SetInverted(np->getBool("DRIVEFR_INVERT"));
 	backLeft->SetInverted(np->getBool("DRIVEBL_INVERT"));
-	backRight->SetInverted(np->getBool("DRIVEBR_INVERT"));
+	backRight->SetInverted(np->getBool("DRIVEBR_INVERT"));*/
 
 	//Shooter
 	shootFrontLeft = new Talon(np->getInt("SHOOTFL"));
@@ -73,8 +73,8 @@ void Motor::TeleopInit() {
 
 void Motor::TeleopPeriodic() { //Update all motors every loop
 	//Drive
-	frontLeft->Set(leftSpeed);
-	backLeft->Set(leftSpeed);
+	frontLeft->Set(-leftSpeed);
+	backLeft->Set(-leftSpeed);
 	frontRight->Set(rightSpeed);
 	backRight->Set(rightSpeed);
 

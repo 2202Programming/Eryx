@@ -32,6 +32,8 @@ void Drive::TeleopInit() {
 	SmartDashboard::PutNumber("Accel", 0.1); //Acceleration curve Value 0.1 - 0.05 is good
 
 	userControl = true; //Start with user control
+	state = nav->running;
+	requestedState = nav->running;
 }
 
 void Drive::TeleopPeriodic() {
@@ -102,12 +104,12 @@ void Drive::readXboxArcadeD() {
 		state = nav->running;
 
 	if (state == nav->running || state == nav->stopping) { //If running or stopping update speeds here
-		leftSpeed = acceleration(y - x, leftSpeed);
-		rightSpeed = -acceleration(y + x, rightSpeed);
+		leftSpeed = acceleration(y + x, leftSpeed);
+		rightSpeed = acceleration(y - x, rightSpeed);
 	}
 
-	SmartDashboard::PutNumber("XOut Value", rightSpeed);
-	SmartDashboard::PutNumber("YOut Value", leftSpeed);
+	SmartDashboard::PutNumber("RightOut Value", rightSpeed);
+	SmartDashboard::PutNumber("LeftOut Value", leftSpeed);
 }
 //Compare requested speed with last speed, if difference greater than accel value only change by accel value
 float Drive::acceleration(float newS, float oldS) {
@@ -127,6 +129,7 @@ void Drive::updateMotors() {
 	if (requestedState == nav->stopped && state == nav->stopped) { //Update speeds here if nav is controlling
 		leftSpeed = navSpeed->leftMotorSpeed;
 		rightSpeed = navSpeed->rightMotorSpeed;
+		SmartDashboard::PutBoolean("Nav", true);
 	}
 
 	//Update motors

@@ -11,6 +11,7 @@
 #include <Profile/IProfile.h>
 #include <AHRS.h>
 #include <Vision/IVision.h>
+#include "WPILib.h"
 
 #include <SensorControl/ISensorControl.h>
 
