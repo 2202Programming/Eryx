@@ -11,29 +11,33 @@
 #define RPM 2500
 
 Motor::Motor(IProfile *np) {
-	profile = np;
 
 	//Drive
-	frontLeft = new Talon(3); //3 for tim - 1 for 2016
-	frontRight = new Talon(1); //1 for tim - 2 for 2016
-	backLeft = new Talon(4); //4 for tim - 3 for 2016
-	backRight = new Talon(2); //2 for tim - 4 for 2016
-	frontLeft->SetInverted(true); //true for tim - false for 2016
-	backLeft->SetInverted(true); //true for tim - false for 2016
+	frontLeft = new Talon(np->getInt("DRIVEFL"));
+	frontRight = new Talon(np->getInt("DRIVEFR"));
+	backLeft = new Talon(np->getInt("DRIVEBL"));
+	backRight = new Talon(np->getInt("DRIVEBR"));
+	frontLeft->SetInverted(np->getBool("DRIVEFL_INVERT"));
+	frontRight->SetInverted(np->getBool("DRIVEFR_INVERT"));
+	backLeft->SetInverted(np->getBool("DRIVEBL_INVERT"));
+	backRight->SetInverted(np->getBool("DRIVEBR_INVERT"));
 
 	//Shooter
-	shootLeftF = new Talon(5);
-	shootRightF = new Talon(6);
-	shootLeftB = new Talon(7);
-	shootRightB = new Talon(8);
-	shootLeftF->SetInverted(true); //For test board
-	shootLeftB->SetInverted(true); //For test board
+	shootFrontLeft = new Talon(np->getInt("SHOOTFL"));
+	shootFrontRight = new Talon(np->getInt("SHOOTFR"));
+	shootBackLeft = new Talon(np->getInt("SHOOTBL"));
+	shootBackRight = new Talon(np->getInt("SHOOTBR"));
 
 	//Arm
-	armLower = new Talon(7);
-	armUpper = new Talon(8);
-	encALower = new Encoder(4, 5);
-	encAUpper = new Encoder(6, 7);
+	armLower = new Talon(np->getInt("ARM_LOWER"));
+	armUpper = new Talon(np->getInt("ARM_UPPER"));
+	encArmLower = new Encoder(np->getInt("ARM_LOWER_ENC1"),
+			np->getInt("ARM_LOWER_ENC2"));
+	encArmUpper = new Encoder(np->getInt("ARM_UPPER_ENC1"),
+			np->getInt("ARM_UPPER_ENC2"));
+
+	//Intake
+	intake = new Talon(np->getInt("INTAKE"));
 
 	//Init Floats
 	leftSpeed = 0.0;
@@ -42,6 +46,7 @@ Motor::Motor(IProfile *np) {
 	sRightSpeed = 0.0;
 	aLowerSpeed = 0.0;
 	aUpperSpeed = 0.0;
+	intakeSpeed = 0.0;
 }
 
 Motor::~Motor() {
@@ -55,14 +60,15 @@ void Motor::TeleopInit() {
 	backRight->Set(0);
 
 	//Shooter
-	shootLeftF->Set(0.0);
-	shootRightF->Set(0.0);
-	shootLeftB->Set(0.0);
-	shootRightB->Set(0.0);
+	shootFrontLeft->Set(0.0);
+	shootFrontRight->Set(0.0);
+	shootBackLeft->Set(0.0);
+	shootBackRight->Set(0.0);
 
 	//Arm
 	armLower->Set(0.0);
 	armUpper->Set(0.0);
+	intake->Set(0.0);
 }
 
 void Motor::TeleopPeriodic() { //Update all motors every loop
@@ -73,14 +79,17 @@ void Motor::TeleopPeriodic() { //Update all motors every loop
 	backRight->Set(rightSpeed);
 
 	//Shooter
-	shootLeftF->Set(sLeftSpeed);
-	shootRightF->Set(sRightSpeed);
-	shootLeftB->Set(sLeftSpeed);
-	shootRightB->Set(sRightSpeed);
+	shootFrontLeft->Set(sLeftSpeed);
+	shootFrontRight->Set(sRightSpeed);
+	shootBackLeft->Set(sLeftSpeed);
+	shootBackRight->Set(sRightSpeed);
 
 	//Arm
 	armLower->Set(aLowerSpeed);
 	armUpper->Set(aUpperSpeed);
+
+	//Intake
+	intake->Set(intakeSpeed);
 
 	//Date Feeds
 	SmartDashboard::PutNumber("Left Speed", leftSpeed);
@@ -94,12 +103,9 @@ void Motor::setDrive(float speedL, float speedR) { //Called from drive class
 	rightSpeed = speedR; //For test bot
 }
 
-void Motor::setShoot1(bool run) { //Called from the shooter class
-
-}
-
-void Motor::setShoot2(bool run) {
-
+void Motor::setShoot(float speedL, float speedR) { //Called from the shooter class
+	sLeftSpeed = speedL;
+	sRightSpeed = speedR;
 }
 
 void Motor::setArm(float aLowerSPeed, float aUpperSpeed) { //Called from the arm class
@@ -107,7 +113,6 @@ void Motor::setArm(float aLowerSPeed, float aUpperSpeed) { //Called from the arm
 	this->aUpperSpeed = aUpperSpeed;
 }
 
-void Motor::setShoot(float speedL, float speedR){
-
+void Motor::setIntake(float intakeSpeed) {
+	this->intakeSpeed = intakeSpeed;
 }
-

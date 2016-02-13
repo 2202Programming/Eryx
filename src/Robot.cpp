@@ -69,7 +69,10 @@ public:
 	ISensorControl* sensorControl;
 	IVision* vision;
 	Drive *drive;
+
+	std::vector<stepBase> *auton;
 	std::string robot;
+
 
 	Robot() {
 
@@ -96,7 +99,7 @@ public:
 			vision = new Vision();
 			m = new Motor(profile);
 			sensorControl = new NavxSensorControl(xbox, profile, vision);
-			drive = new Drive(profile, m, xbox, sensorControl);
+			drive = new Drive( m, xbox, sensorControl);
 
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
@@ -105,6 +108,24 @@ public:
 
 			//MUST BE CALLED LAST
 			master->addNode(m, "Motor");
+		}
+
+		std::string autonID = profile->getValue("AUTOLIST");
+
+		auton = new std::vector<stepBase>();
+
+		if(autonID.compare("BASIC")==0){
+			driveStep step1 = driveStep();
+			step1.command = stepBase::driveStraight;
+			step1.distance = 5;
+			step1.stepNum = 0;
+			step1.speed = .5;
+			auton->push_back(step1);
+
+			stepBase fin = stepBase();
+			fin.command = stepBase::stop;
+			fin.stepNum = 1;
+			auton->push_back(fin);
 		}
 	}
 
@@ -135,6 +156,21 @@ private:
 	void AutonomousPeriodic() {
 		SmartDashboard::PutString("State", "Autonomous Periodic");
 		//No list here beacause auto was always a bit more complicated
+		int x = 0;
+		if(robot.compare("ORYX")==0)
+		{
+		stepBase *command = &auton->at(x);
+		if(command != NULL){
+			bool result = sensorControl->AutonomousPeriodic(command);
+			if(result){
+				x += 1;
+				command = &auton->at(x);
+			}
+		}
+		}
+
+
+
 	}
 
 	void TeleopInit() {

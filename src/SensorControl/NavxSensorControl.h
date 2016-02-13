@@ -37,6 +37,13 @@ public:
 
 	void TeleopInit();
 	void TeleopPeriodic();
+	void AutonomousInit();
+	bool AutonomousPeriodic(stepBase *step);
+	void InitDriveStraight(driveStep *step);
+	bool ExecDriveStraight(driveStep *step);
+	void InitTurn(turnStep *step);
+	bool ExecTurn(turnStep *step);
+
 
 protected:
 	TargetingState targetState;
@@ -44,6 +51,8 @@ protected:
 	double visionTargetAngle;
 	double visionAngleTolerance;
 	float turnSpeed;
+	int currentStep;
+	bool inAutonomous;
 
 	void PIDWrite(float output);
 	void TargetingStateMachine();

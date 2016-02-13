@@ -9,13 +9,14 @@
 #include "IControl.h"
 #include "Motor/Motor.h"
 #include "Xbox/IXbox.h"
+#include "Profile/IProfile.h"
 
 #ifndef SRC_SHOOTER_SHOOTER_H_
 #define SRC_SHOOTER_SHOOTER_H_
 
 class Shooter: public IControl {
 public:
-	Shooter(Motor *motor, IXbox *xbox);
+	Shooter(Motor *motor, IXbox *xbox, IProfile *p);
 	virtual ~Shooter();
 
 	//IControl
@@ -25,19 +26,22 @@ public:
 private:
 	//Input from Xbox Controller
 	void readXbox();
-	void setAngle();
-	void updateMotor1();
-	void updateMotor2();
+	void setPnumatics();
+	void updateMotor1(); // w/ encoders
+	void updateMotor2(); // w/o encoders
 
 	bool runShoot; //True if shooting motors should be running
-	int angle;
+	bool runIntake;
+	bool runTrigger;
+	bool angle;
 	float leftSpeed, rightSpeed;
 
 	IXbox *xbox;
 	Motor *motor;
 	Compressor *c;
-	DoubleSolenoid *s1, *s2;
-	Encoder *encSLF, *encSRF, *encSLB, *encSRB; //Shooter Encoders
+	DoubleSolenoid *s1;
+	DoubleSolenoid *trigger;
+	Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
 };
 
 #endif /* SRC_SHOOTER_SHOOTER_H_ */

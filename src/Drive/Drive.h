@@ -8,7 +8,6 @@
 #include "WPILib.h"
 #include "IControl.h"
 #include "IDrive.h"
-#include "Profile/IProfile.h"
 #include "Motor/Motor.h"
 #include "Xbox/IXbox.h"
 #include "SensorControl/ISensorControl.h"
@@ -19,7 +18,7 @@
 
 class Drive: public IDrive, public IControl {
 public:
-	Drive(IProfile *np, Motor *motor, IXbox *xbox, ISensorControl *nav);
+	Drive(Motor *motor, IXbox *xbox, ISensorControl *nav);
 	virtual ~Drive();
 
 	//IControl
@@ -29,14 +28,12 @@ public:
 private:
 	//Different Control Methods - pick one and call it in TeleopPeriodic
 	void readXboxTank();
-	void readXboxArcadeT();
-	void readXboxArcadeD();
+	void readXboxArcadeT(); //Tommy
+	void readXboxArcadeD(); //Daniel - Works
 	void updateMotors();
 
 	//Acceleration for the drives
 	float acceleration(float newS, float oldS);
-
-	IProfile *profile;
 
 	Motor *motor;
 	IXbox *xbox;

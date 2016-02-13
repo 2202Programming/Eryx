@@ -7,7 +7,8 @@
 
 #include <SensorControl/NavxSensorControl.h>
 
-NavxSensorControl::NavxSensorControl(IXbox *xboxInstance, IProfile *profileInstance, IVision *visionInstance) {
+NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
+		IProfile *profileInstance, IVision *visionInstance) {
 	// TODO Auto-generated constructor stub
 	xbox = xboxInstance;
 	profile = profileInstance;
@@ -20,49 +21,49 @@ NavxSensorControl::~NavxSensorControl() {
 	// TODO Auto-generated destructor stub
 }
 
-MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed, float rightMotorSpeed){\
-	switch (targetState)
-	{
-	case TargetingState::driveToAngle:
-		break;
-	default:
-		updateMotorSpeedResponse.leftMotorSpeed = leftMotorSpeed;
-		updateMotorSpeedResponse.rightMotorSpeed = rightMotorSpeed;
-		break;
+MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
+		float rightMotorSpeed) {
+	if (!inAutonomous) {
+
+		switch (targetState) {
+		case TargetingState::driveToAngle:
+			break;
+		default:
+			updateMotorSpeedResponse.leftMotorSpeed = leftMotorSpeed;
+			updateMotorSpeedResponse.rightMotorSpeed = rightMotorSpeed;
+			break;
+		}
 	}
 	return &updateMotorSpeedResponse;
 }
 
-NavxSensorControl::DriveSystemState NavxSensorControl::DriveSystemControlUpdate(DriveSystemState currentState, DriveSystemState requestedState){
+NavxSensorControl::DriveSystemState NavxSensorControl::DriveSystemControlUpdate(
+		DriveSystemState currentState, DriveSystemState requestedState) {
 	// Drive system tells you what it's doing
 	currentDriveState = currentState;
 	// Requests a drive system state change
 	return commandDriveState;
 }
 
-void NavxSensorControl::TargetingStateMachine(){
+void NavxSensorControl::TargetingStateMachine() {
 	float motorSpeed = 0;
-	switch (targetState)
-	{
+	switch (targetState) {
 	case TargetingState::waitForButtonPress:
-		if (xbox->getLeftTriggerPressed())
-		{
+		if (xbox->getLeftTriggerPressed()) {
 			commandDriveState = DriveSystemState::stopped;
 			targetState = TargetingState::waitForStopped;
 		}
 
 		break;
 	case TargetingState::waitForStopped:
-		if (currentDriveState == DriveSystemState::stopped)
-		{
+		if (currentDriveState == DriveSystemState::stopped) {
 			// Tell Vision to take a picture
 			vision->startAiming();
 			targetState = TargetingState::waitForPicResult;
 		}
 		break;
 	case TargetingState::waitForPicResult:
-		if (vision->getDoneAiming())
-		{
+		if (vision->getDoneAiming()) {
 			visionTargetAngle = vision->getDegreesToTurn();
 			turnController->SetSetpoint(visionTargetAngle);
 			turnController->SetOutputRange(-1, 1);
@@ -74,8 +75,7 @@ void NavxSensorControl::TargetingStateMachine(){
 		break;
 	case TargetingState::driveToAngle:
 		// Go to that angle
-		if (abs(turnController->GetError()) < visionAngleTolerance)
-		{
+		if (abs(turnController->GetError()) < visionAngleTolerance) {
 			turnController->Disable();
 			targetState = TargetingState::waitForButtonPress;
 			commandDriveState = DriveSystemState::running;
@@ -95,19 +95,96 @@ void NavxSensorControl::TargetingStateMachine(){
 	}
 }
 
-void NavxSensorControl::PIDWrite(float output)
-{
+void NavxSensorControl::PIDWrite(float output) {
 	turnSpeed = output;
 }
 
-void NavxSensorControl::TeleopInit(){
+void NavxSensorControl::TeleopInit() {
 	turnSpeed = 0;
 	targetState = TargetingState::waitForButtonPress;
 	currentDriveState = DriveSystemState::running;
 	commandDriveState = DriveSystemState::running;
 }
 
-void NavxSensorControl::TeleopPeriodic(){
-
+void NavxSensorControl::TeleopPeriodic() {
+	inAutonomous = false;
 	TargetingStateMachine();
+}
+
+void NavxSensorControl::AutonomousInit() {
+	currentStep = -1;
+	inAutonomous = true;
+}
+
+/*
+ * Initialize parameters for a straight drive
+ */
+
+void NavxSensorControl::InitDriveStraight(driveStep *step) {
+	SmartDashboard::PutNumber("Displacement", step->distance);
+}
+
+/*
+ * Execute one driveStraight step
+ * return true if target reached
+ */
+bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
+	SmartDashboard::PutNumber("Displacement", ahrs->GetDisplacementX());
+
+	if (ahrs->GetDisplacementX() < step->distance) {
+		// Check these motor speed values
+		updateMotorSpeedResponse.leftMotorSpeed = step->speed;
+		updateMotorSpeedResponse.rightMotorSpeed = step->speed;
+		return false;
+	} else {
+		// Set speeds to zero
+		updateMotorSpeedResponse.leftMotorSpeed = 0;
+		updateMotorSpeedResponse.rightMotorSpeed = 0;
+	}
+	return true;
+}
+
+void NavxSensorControl::InitTurn(turnStep *step) {
+
+}
+
+/*
+ * Execute one turn step
+ * return true if target reached
+ */
+
+bool NavxSensorControl::ExecTurn(turnStep *step) {
+	return true;
+}
+
+bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
+	updateMotorSpeedResponse.leftMotorSpeed = 0;
+	updateMotorSpeedResponse.rightMotorSpeed = 0;
+
+	switch (step->command) {
+	case step->driveStraight:
+		if (currentStep != step->stepNum) {
+			currentStep = step->stepNum;
+			InitDriveStraight((driveStep *) step);
+		}
+		return ExecDriveStraight((driveStep *) step);
+		break;
+	case step->turn:
+		if (currentStep != step->stepNum) {
+			currentStep = step->stepNum;
+			InitTurn((turnStep *) step);
+		}
+		return ExecTurn((turnStep *) step);
+		break;
+
+	case step->stop:
+		// Stop all autonomous execution
+		return false;
+
+	default:
+		// We don't support this command; skip
+		return true;
+	}
+	// If we get here, we're lost and we give up
+	return false;
 }

@@ -10,7 +10,11 @@ X - Lower Arm Back
 Y - Upper Arm Forward
 
 Left Trigger - Take Picture (Arm)
-Right Trigger - Turn on shooter (Shoot)
+Right Trigger - Shooting
+
+Push Right Stick - Toggle shooter (on/off)
+
+Back - Intake
 
 Left Bumper - Increment Angle
 Right Bumper - Decrement Angle
