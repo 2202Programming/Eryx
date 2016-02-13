@@ -72,7 +72,30 @@ protected:
 
 };
 
+class stepBase{
+public:
 
+	enum step{
+		driveStraight,
+		turn,
+		target,
+		shoot,
+		stop,
+	};
 
+	int stepNum;
+	step command;
+};
+
+class driveStep: public stepBase{
+	float distance;
+	float speed;
+
+};
+
+class turnStep:public stepBase{
+	float speed;
+	float angle;
+};
 
 #endif /* SRC_ICONTROL_H_ */
