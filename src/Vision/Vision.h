@@ -9,12 +9,16 @@ public:
 	std::shared_ptr<NetworkTable> table;
 
 	void startAiming();
+
+	//This will return true exactly one time. The vision state machine will then be ready to aim again.
 	bool getDoneAiming();
 	float getDegreesToTurn();
 
 
 private:
 	void visionUpdate();
+	void setState(int newState);
+	int getState();
 };
 
 #endif
