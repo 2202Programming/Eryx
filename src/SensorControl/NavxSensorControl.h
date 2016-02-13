@@ -41,6 +41,9 @@ public:
 	bool AutonomousPeriodic(stepBase *step);
 	void InitDriveStraight(driveStep *step);
 	bool ExecDriveStraight(driveStep *step);
+	void InitTurn(turnStep *step);
+	bool ExecTurn(turnStep *step);
+
 
 protected:
 	TargetingState targetState;
