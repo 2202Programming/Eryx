@@ -1,9 +1,9 @@
 Drive
 
-DRIVEFL -int
-DRIVEFR -int
-DRIVEBL -int
-DRIVEBR -int
+DRIVEFL -int - 1
+DRIVEFR -int - 2
+DRIVEBL -int - 3
+DRIVEBR -int - 4
 DRIVEFL_INVERT -bool
 DRIVEFR_INVERT -bool
 DRIVEBL_INVERT -bool

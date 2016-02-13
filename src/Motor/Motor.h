@@ -11,7 +11,6 @@
 #include "WPILib.h"
 #include "Math.h"
 
-
 class Motor: public IControl {
 public:
 	Motor(IProfile *np);
@@ -30,10 +29,10 @@ public:
 private:
 	Talon *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
-	Talon *shootLeftF, *shootRightF, *shootLeftB, *shootRightB; //Shooter Motors
+	Talon *shootFrontLeft, *shootFrontRight, *shootBackLeft, *shootBackRight; //Shooter Motors
 
 	Talon *armLower, *armUpper; //Arm Motors
-	Encoder *encALower, *encAUpper; //Arm Encoders
+	Encoder *encArmLower, *encArmUpper; //Arm Encoders
 
 	Talon *intake;
 

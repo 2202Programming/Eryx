@@ -23,16 +23,18 @@ Motor::Motor(IProfile *np) {
 	backRight->SetInverted(np->getBool("DRIVEBR_INVERT"));
 
 	//Shooter
-	shootLeftF = new Talon(np->getInt("SHOOTFL"));
-	shootRightF = new Talon(np->getInt("SHOOTFR"));
-	shootLeftB = new Talon(np->getInt("SHOOTBL"));
-	shootRightB = new Talon(np->getInt("SHOOTBR"));
+	shootFrontLeft = new Talon(np->getInt("SHOOTFL"));
+	shootFrontRight = new Talon(np->getInt("SHOOTFR"));
+	shootBackLeft = new Talon(np->getInt("SHOOTBL"));
+	shootBackRight = new Talon(np->getInt("SHOOTBR"));
 
 	//Arm
 	armLower = new Talon(np->getInt("ARM_LOWER"));
 	armUpper = new Talon(np->getInt("ARM_UPPER"));
-	encALower = new Encoder(np->getInt("ARM_LOWER_ENC1"), np->getInt("ARM_LOWER_ENC2"));
-	encAUpper = new Encoder(np->getInt("ARM_UPPER_ENC1"), np->getInt("ARM_UPPER_ENC2"));
+	encArmLower = new Encoder(np->getInt("ARM_LOWER_ENC1"),
+			np->getInt("ARM_LOWER_ENC2"));
+	encArmUpper = new Encoder(np->getInt("ARM_UPPER_ENC1"),
+			np->getInt("ARM_UPPER_ENC2"));
 
 	//Intake
 	intake = new Talon(np->getInt("INTAKE"));
@@ -58,10 +60,10 @@ void Motor::TeleopInit() {
 	backRight->Set(0);
 
 	//Shooter
-	shootLeftF->Set(0.0);
-	shootRightF->Set(0.0);
-	shootLeftB->Set(0.0);
-	shootRightB->Set(0.0);
+	shootFrontLeft->Set(0.0);
+	shootFrontRight->Set(0.0);
+	shootBackLeft->Set(0.0);
+	shootBackRight->Set(0.0);
 
 	//Arm
 	armLower->Set(0.0);
@@ -77,10 +79,10 @@ void Motor::TeleopPeriodic() { //Update all motors every loop
 	backRight->Set(rightSpeed);
 
 	//Shooter
-	shootLeftF->Set(sLeftSpeed);
-	shootRightF->Set(sRightSpeed);
-	shootLeftB->Set(sLeftSpeed);
-	shootRightB->Set(sRightSpeed);
+	shootFrontLeft->Set(sLeftSpeed);
+	shootFrontRight->Set(sRightSpeed);
+	shootBackLeft->Set(sLeftSpeed);
+	shootBackRight->Set(sRightSpeed);
 
 	//Arm
 	armLower->Set(aLowerSpeed);
@@ -111,7 +113,7 @@ void Motor::setArm(float aLowerSPeed, float aUpperSpeed) { //Called from the arm
 	this->aUpperSpeed = aUpperSpeed;
 }
 
-void Motor::setIntake(float intakeSpeed){
+void Motor::setIntake(float intakeSpeed) {
 	this->intakeSpeed = intakeSpeed;
 }
 

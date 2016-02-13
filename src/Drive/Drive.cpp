@@ -7,8 +7,7 @@
 
 #include "Drive/Drive.h"
 
-Drive::Drive(IProfile *np, Motor *motor, IXbox *xbox, ISensorControl *nav) {
-	profile = np;
+Drive::Drive(Motor *motor, IXbox *xbox, ISensorControl *nav) {
 	this->motor = motor;
 	this->xbox = xbox;
 	this->nav = nav;
@@ -19,7 +18,7 @@ Drive::Drive(IProfile *np, Motor *motor, IXbox *xbox, ISensorControl *nav) {
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
 	state = nav->stopped;
-	requestedState = NULL;
+	requestedState = nav->running;
 	userControl = false;
 }
 
@@ -67,7 +66,7 @@ void Drive::readXboxArcadeT() { // Doesn't work with NAV right now
 void Drive::readXboxArcadeD() {
 	float x, y;
 
-	if (requestedState == nav->running) {  //When the state is running xbox controls other wise start to stop
+	if (requestedState == nav->running) { //When the state is running xbox controls other wise start to stop
 		x = xbox->getAxisLeftX();
 		y = xbox->getAxisLeftY();
 		userControl = true;
@@ -91,7 +90,8 @@ void Drive::readXboxArcadeD() {
 
 	// For Nav states
 	if (requestedState == nav->stopped) {
-		if (!(fabs(leftSpeed) <= 0.05 && fabs(rightSpeed) <= 0.05) && userControl) {
+		if (!(fabs(leftSpeed) <= 0.05 && fabs(rightSpeed) <= 0.05)
+				&& userControl) {
 			state = nav->stopping;
 		} else {
 			state = nav->stopped;
@@ -104,7 +104,6 @@ void Drive::readXboxArcadeD() {
 		leftSpeed = acceleration(y - x, leftSpeed);
 		rightSpeed = acceleration(y + x, rightSpeed);
 	}
-
 
 	SmartDashboard::PutNumber("XOut Value", rightSpeed);
 	SmartDashboard::PutNumber("YOut Value", leftSpeed);

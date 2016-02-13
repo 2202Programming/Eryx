@@ -27,8 +27,8 @@ private:
 	//Input from Xbox Controller
 	void readXbox();
 	void setPnumatics();
-	void updateMotor1();
-	void updateMotor2();
+	void updateMotor1(); // w/ encoders
+	void updateMotor2(); // w/o encoders
 
 	bool runShoot; //True if shooting motors should be running
 	bool runIntake;
@@ -41,7 +41,7 @@ private:
 	Compressor *c;
 	DoubleSolenoid *s1;
 	DoubleSolenoid *trigger;
-	Encoder *encSLF, *encSRF, *encSLB, *encSRB; //Shooter Encoders
+	Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
 };
 
 #endif /* SRC_SHOOTER_SHOOTER_H_ */

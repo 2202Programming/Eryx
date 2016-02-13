@@ -13,16 +13,22 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	this->xbox = xbox;
 	this->motor = motor;
 	c = new Compressor();
-	s1 = new DoubleSolenoid(p->getInt("SHOOTER_SOL1_1"), p->getInt("SHOOTER_SOL1_2"));
-	trigger = new DoubleSolenoid(p->getInt("SHOOTER_SOL2_1"), p->getInt("SHOOTER_SOL2_2"));
-	encSLF = new Encoder(p->getInt("SHOOTERFL_ENC1"), p->getInt("SHOOTERFL_ENC2"));
-	encSRF = new Encoder(p->getInt("SHOOTEFR_ENC1"), p->getInt("SHOOTERLR_ENC2"));
-	encSLB = new Encoder(p->getInt("SHOOTERBL_ENC1"), p->getInt("SHOOTERBL_ENC2"));
-	encSRB = new Encoder(p->getInt("SHOOTERBR_ENC1"), p->getInt("SHOOTERBR_ENC2"));
-	encSLF->SetReverseDirection(p->getBool("SHOOTERFL_ENC1_INVERT")); //For test board
-	encSRF->SetReverseDirection(p->getBool("SHOOTERFR_ENC1_INVERT")); //For test board
-	encSLB->SetReverseDirection(p->getBool("SHOOTERBL_ENC1_INVERT")); //For test board
-	encSRB->SetReverseDirection(p->getBool("SHOOTERBR_ENC1_INVERT")); //For test board
+	s1 = new DoubleSolenoid(p->getInt("SHOOTER_SOL1_1"),
+			p->getInt("SHOOTER_SOL1_2"));
+	trigger = new DoubleSolenoid(p->getInt("SHOOTER_SOL2_1"),
+			p->getInt("SHOOTER_SOL2_2"));
+	encFrontLeft = new Encoder(p->getInt("SHOOTERFL_ENC1"),
+			p->getInt("SHOOTERFL_ENC2"));
+	encFrontRight = new Encoder(p->getInt("SHOOTEFR_ENC1"),
+			p->getInt("SHOOTERLR_ENC2"));
+	encBackLeft = new Encoder(p->getInt("SHOOTERBL_ENC1"),
+			p->getInt("SHOOTERBL_ENC2"));
+	encBackRight = new Encoder(p->getInt("SHOOTERBR_ENC1"),
+			p->getInt("SHOOTERBR_ENC2"));
+	encFrontLeft->SetReverseDirection(p->getBool("SHOOTERFL_ENC1_INVERT")); //For test board
+	encFrontRight->SetReverseDirection(p->getBool("SHOOTERFR_ENC1_INVERT")); //For test board
+	encBackLeft->SetReverseDirection(p->getBool("SHOOTERBL_ENC1_INVERT")); //For test board
+	encBackRight->SetReverseDirection(p->getBool("SHOOTERBR_ENC1_INVERT")); //For test board
 
 	runShoot = false;
 	runIntake = false;
