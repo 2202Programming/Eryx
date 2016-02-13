@@ -56,7 +56,7 @@ public:
 	virtual void TestInit(){}
 
 	virtual void DisabledPeriodic(){}
-	virtual int AutonomousPeriodic(int input) {
+	virtual bool AutonomousPeriodic(int input) {
 		return 1;
 	}
 	virtual void AutonomousExecute(){}
