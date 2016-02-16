@@ -46,31 +46,31 @@ public:
 
 		master->addNode(xbox, "Xbox");
 
-		 if (robot.compare("PROTO") == 0) {
+		if (robot.compare("PROTO") == 0) {
 
-		 master->addNode(new SimpleDrive(profile, xbox), "drive");
+			master->addNode(new SimpleDrive(profile, xbox), "drive");
 
-		 } else if (robot.compare("TIM") == 0) {
+		} else if (robot.compare("TIM") == 0) {
 
-		 master->addNode(new SimpleDrive(profile, xbox), "drive");
-		 master->addNode(new TimShooter(profile, xbox), "shooter");
+			master->addNode(new SimpleDrive(profile, xbox), "drive");
+			master->addNode(new TimShooter(profile, xbox), "shooter");
 
-		 }else if (robot.compare("ORYX") == 0) {
+		} else if (robot.compare("ORYX") == 0) {
 
-		vision = new Vision();
-		m = new Motor(profile);
-		sensorControl = new NavxSensorControl(xbox, profile, vision);
-		drive = new Drive(m, xbox, sensorControl);
-		arm = new Arm(m, xbox);
+			vision = new Vision();
+			m = new Motor(profile);
+			sensorControl = new NavxSensorControl(xbox, profile, vision);
+			drive = new Drive(m, xbox, sensorControl);
+			arm = new Arm(m, xbox);
 
-		master->addNode(sensorControl, "Sensor Control");
-		master->addNode(vision, "Vision");
-		master->addNode(drive, "Drive");
-		//master->addNode(arm, "ARM");
+			master->addNode(sensorControl, "Sensor Control");
+			master->addNode(vision, "Vision");
+			master->addNode(drive, "Drive");
+			//master->addNode(arm, "ARM");
 
-		//MUST BE CALLED LAST
-		master->addNode(m, "Motor");
-		 }
+			//MUST BE CALLED LAST
+			master->addNode(m, "Motor");
+		}
 
 		std::string autonID = profile->getValue("AUTOLIST");
 
