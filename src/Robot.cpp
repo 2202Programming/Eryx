@@ -73,6 +73,7 @@ public:
 	Drive *drive;
 	Arm *arm;
 
+
 	std::string robot;
 
 	Robot() {
@@ -141,6 +142,8 @@ void RobotInit() {
 	SmartDashboard::PutString("MOTORFL", profile->getValue("MOTORFL"));
 	SmartDashboard::PutString("State", "Robot Init");
 	nLNode* test = master->head;
+
+	CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 	while (test != NULL) {
 		test->value->RobotInit();
 		test = test->parent;
