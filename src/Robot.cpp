@@ -15,17 +15,10 @@
 #include "Drive/SimpleDrive.h"
 #include "Arm/Arm.h"
 #include "Profile/DProfile.h"
+#include "Autonomous/CommandListMaker.h"
 
 #define debug 1
-#define RAMPARTS 0
-#define LOWBAR 1
-#define ROCKWALL 2
-#define DEBRIS 3
-#define MOAT 4
-#define DRAW 5
-#define CHEVAL 6
-#define SALLY 7
-#define PORTI 8
+
 
 struct nLNode {
 	IControl* value;
@@ -81,14 +74,15 @@ public:
 	IVision* vision;
 	Drive *drive;
 	Arm *arm;
+	CommandListMaker *clMaker;
 
 	std::string robot;
 
 	Robot() {
 		master = new noList();
 		profile = new DProfile();
-
 		xbox = MasterXboxController::getInstance();
+		clMaker = new CommandListMaker(profile);
 
 		robot = profile->getValue("ROBOT");
 
@@ -119,129 +113,17 @@ public:
 		//MUST BE CALLED LAST
 		master->addNode(m, "Motor");
 
+
+
 		std::string autonID = profile->getValue("AUTOLIST");
 
-		auton = new std::vector<stepBase>();
 
 		if (autonID.compare("BASIC") == 0) {
-			driveStep step1 = driveStep();
-			step1.command = stepBase::driveStraight;
-			step1.distance = 5;
-			step1.stepNum = 0;
-			step1.speed = .5;
-			auton->push_back(step1);
-
-			stepBase fin = stepBase();
-			fin.command = stepBase::stop;
-			fin.stepNum = 1;
-			auton->push_back(fin);
+			clMaker->makeBasic();
 		} else if (autonID.compare("ADVANCED") == 0) {
-			int def = profile->getInt("AUTO_DEF");
-			int pos = profile->getInt("AUTO_POS");
-			bool basic = true;
-
-			driveStep drive = driveStep();
-			switch (def) {
-			case DEBRIS:
-				drive.stepNum = 0;
-				drive.command = stepBase::driveStraight;
-				drive.distance = 2.0;
-				drive.speed = .75;
-				auton->push_back(drive);
-				break; //TODO
-			case RAMPARTS:
-				drive.stepNum = 0;
-				drive.command = stepBase::driveStraight;
-				drive.distance = 2.0;
-				drive.speed = .75;
-				auton->push_back(drive);
-				break; //TODO
-			case LOWBAR:
-				drive.stepNum = 0;
-				drive.command = stepBase::driveStraight;
-				drive.distance = 2.0;
-				drive.speed = .75;
-				auton->push_back(drive);
-				break; //TODO
-			case MOAT:
-				drive.stepNum = 0;
-				drive.command = stepBase::driveStraight;
-				drive.distance = 2.0;
-				drive.speed = .75;
-				auton->push_back(drive);
-				break; //TODO
-			case ROCKWALL:
-				drive.stepNum = 0;
-				drive.command = stepBase::driveStraight;
-				drive.distance = 2.0;
-				drive.speed = .75;
-				auton->push_back(drive);
-				break; //TODO
-			case PORTI:
-				drive.stepNum = 0;
-				drive.command = stepBase::driveStraight;
-				drive.distance = 2.0;
-				drive.speed = .75;
-				auton->push_back(drive);
-				break; //TODO
-			}
-
-			turnStep turn = turnStep();
-
-			switch (pos) {
-			case 1:
-				turn.stepNum = 1;
-				turn.command = stepBase::turn;
-				turn.angle = 45.0;
-				turn.speed = .5;
-				auton->push_back(turn);
-
-				break; //TODO
-			case 2:
-				turn.stepNum = 1;
-				turn.command = stepBase::turn;
-				turn.angle = 45.0;
-				turn.speed = .5;
-				auton->push_back(turn);
-				break; //TODO
-			case 3:
-				turn.stepNum = 1;
-				turn.command = stepBase::turn;
-				turn.angle = 45.0;
-				turn.speed = .5;
-				auton->push_back(turn);
-				break; //TODO
-			case 4:
-				turn.stepNum = 1;
-				turn.command = stepBase::turn;
-				turn.angle = 45.0;
-				turn.speed = .5;
-				auton->push_back(turn);
-				break; //TODO
-			case 5:
-				turn.stepNum = 1;
-				turn.command = stepBase::turn;
-				turn.angle = 45.0;
-				turn.speed = .5;
-				auton->push_back(turn);
-				break; //TODO
-			}
-
-			stepBase prepareShot = stepBase();
-			prepareShot.stepNum = 2;
-			prepareShot.command = stepBase::target;
-			auton->push_back(prepareShot);
-
-			stepBase shoot = stepBase();
-			shoot.stepNum = 3;
-			shoot.command = stepBase::shoot;
-			auton->push_back(shoot);
-
-			stepBase stop = stepBase();
-			stop.stepNum = 4;
-			stop.command = stepBase::stop;
-			auton->push_back(stop);
+			clMaker->makeDefenceBreaker();
 		}
+		auton = clMaker->getList();
 	}
 
 private:
@@ -277,13 +159,14 @@ private:
 		if (robot.compare("ORYX") == 0) {
 			stepBase *command = &auton->at(x);
 			if (command != NULL) {
-				bool result = sensorControl->AutonomousPeriodic(command);
-				if (result) {
+				if (sensorControl->AutonomousPeriodic(command)) {
 					x += 1;
 					command = &auton->at(x);
 				}
 			}
 		}
+
+
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->AutonomousPeriodic();
