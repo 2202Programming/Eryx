@@ -103,7 +103,7 @@ public:
 		arm = new Arm(m, xbox);
 
 		master->addNode(sensorControl, "Sensor Control");
-		//master->addNode(vision, "Vision");
+		master->addNode(vision, "Vision");
 		master->addNode(drive, "Drive");
 		//master->addNode(arm, "ARM");
 
