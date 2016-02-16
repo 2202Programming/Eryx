@@ -45,7 +45,7 @@ public:
 		robot = profile->getValue("ROBOT");
 
 		master->addNode(xbox, "Xbox");
-		/*
+
 		 if (robot.compare("PROTO") == 0) {
 
 		 master->addNode(new SimpleDrive(profile, xbox), "drive");
@@ -55,8 +55,8 @@ public:
 		 master->addNode(new SimpleDrive(profile, xbox), "drive");
 		 master->addNode(new TimShooter(profile, xbox), "shooter");
 
-		 }// else if (robot.compare("ORYX") == 0) {
-		 */
+		 }else if (robot.compare("ORYX") == 0) {
+
 		vision = new Vision();
 		m = new Motor(profile);
 		sensorControl = new NavxSensorControl(xbox, profile, vision);
@@ -70,11 +70,9 @@ public:
 
 		//MUST BE CALLED LAST
 		master->addNode(m, "Motor");
-
-
+		 }
 
 		std::string autonID = profile->getValue("AUTOLIST");
-
 
 		if (autonID.compare("BASIC") == 0) {
 			clMaker->makeBasic();
@@ -116,14 +114,12 @@ private:
 		int x = 0;
 		if (robot.compare("ORYX") == 0) {
 			stepBase *command = &auton->at(x);
-			if (command != NULL) {
-				if (sensorControl->AutonomousPeriodic(command)) {
-					x += 1;
-					command = &auton->at(x);
-				}
+			if (sensorControl->AutonomousPeriodic(command) && command != NULL) {
+				x += 1;
+				command = &auton->at(x);
 			}
-		}
 
+		}
 
 		nLNode* test = master->head;
 		while (test != NULL) {
