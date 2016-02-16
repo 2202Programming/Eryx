@@ -54,11 +54,15 @@ protected:
 	float turnSpeed;
 	int currentStep;
 	bool inAutonomous;
+	bool time;
+	float angleTime;
+	Timer *t;
 
 	void PIDWrite(float output);
 	void TargetingStateMachine();
 	void InitializeVisionAlignment(double commandedAngle);
 	bool ExecuteVisionAlignment();
+	int getTime();
 
 };
 

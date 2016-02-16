@@ -112,7 +112,7 @@ public:
 		arm = new Arm(m, xbox);
 
 		master->addNode(sensorControl, "Sensor Control");
-		//master->addNode(vision, "Vision");
+		master->addNode(vision, "Vision");
 		master->addNode(drive, "Drive");
 		//master->addNode(arm, "ARM");
 
@@ -135,123 +135,113 @@ public:
 			fin.command = stepBase::stop;
 			fin.stepNum = 1;
 			auton->push_back(fin);
-		}
+		} else if (autonID.compare("ADVANCED") == 0) {
+			int def = profile->getInt("AUTO_DEF");
+			int pos = profile->getInt("AUTO_POS");
+			bool basic = true;
 
-		int def = profile->getInt("AUTO_DEF");
-		int pos = profile->getInt("AUTO_POS");
-		bool basic = true;
+			driveStep drive = driveStep();
+			switch (def) {
+			case DEBRIS:
+				drive.stepNum = 0;
+				drive.command = stepBase::driveStraight;
+				drive.distance = 2.0;
+				drive.speed = .75;
+				auton->push_back(drive);
+				break; //TODO
+			case RAMPARTS:
+				drive.stepNum = 0;
+				drive.command = stepBase::driveStraight;
+				drive.distance = 2.0;
+				drive.speed = .75;
+				auton->push_back(drive);
+				break; //TODO
+			case LOWBAR:
+				drive.stepNum = 0;
+				drive.command = stepBase::driveStraight;
+				drive.distance = 2.0;
+				drive.speed = .75;
+				auton->push_back(drive);
+				break; //TODO
+			case MOAT:
+				drive.stepNum = 0;
+				drive.command = stepBase::driveStraight;
+				drive.distance = 2.0;
+				drive.speed = .75;
+				auton->push_back(drive);
+				break; //TODO
+			case ROCKWALL:
+				drive.stepNum = 0;
+				drive.command = stepBase::driveStraight;
+				drive.distance = 2.0;
+				drive.speed = .75;
+				auton->push_back(drive);
+				break; //TODO
+			case PORTI:
+				drive.stepNum = 0;
+				drive.command = stepBase::driveStraight;
+				drive.distance = 2.0;
+				drive.speed = .75;
+				auton->push_back(drive);
+				break; //TODO
+			}
 
-		switch (def) {
-		case DEBRIS:
-			driveStep drive = driveStep();
-			drive.stepNum = 0;
-			drive.command = stepBase::driveStraight;
-			drive.distance = 2.0;
-			drive.speed = .75;
-			auton->push_back(drive);
-			break; //TODO
-		case RAMPARTS:
-			driveStep drive = driveStep();
-			drive.stepNum = 0;
-			drive.command = stepBase::driveStraight;
-			drive.distance = 2.0;
-			drive.speed = .75;
-			auton->push_back(drive);
-			break; //TODO
-		case LOWBAR:
-			driveStep drive = driveStep();
-			drive.stepNum = 0;
-			drive.command = stepBase::driveStraight;
-			drive.distance = 2.0;
-			drive.speed = .75;
-			auton->push_back(drive);
-			break; //TODO
-		case MOAT:
-			driveStep drive = driveStep();
-			drive.stepNum = 0;
-			drive.command = stepBase::driveStraight;
-			drive.distance = 2.0;
-			drive.speed = .75;
-			auton->push_back(drive);
-			break; //TODO
-		case ROCKWALL:
-			driveStep drive = driveStep();
-			drive.stepNum = 0;
-			drive.command = stepBase::driveStraight;
-			drive.distance = 2.0;
-			drive.speed = .75;
-			auton->push_back(drive);
-			break; //TODO
-		case PORTI:
-			driveStep drive = driveStep();
-			drive.stepNum = 0;
-			drive.command = stepBase::driveStraight;
-			drive.distance = 2.0;
-			drive.speed = .75;
-			auton->push_back(drive);
-			break; //TODO
-		default:
-			basic = false;
-			break;
-		}
-
-		switch (pos) {
-		case 1:
 			turnStep turn = turnStep();
-			turn.stepNum = 1;
-			turn.command = stepBase::turn;
-			turn.angle = 45.0;
-			turn.speed = .5;
-			auton->push_back(turn);
 
-			break; //TODO
-		case 2:
-			turn.stepNum = 1;
-			turn.command = stepBase::turn;
-			turn.angle = 45.0;
-			turn.speed = .5;
-			auton->push_back(turn);
-			break; //TODO
-		case 3:
-			turn.stepNum = 1;
-			turn.command = stepBase::turn;
-			turn.angle = 45.0;
-			turn.speed = .5;
-			auton->push_back(turn);
-			break; //TODO
-		case 4:
-			turn.stepNum = 1;
-			turn.command = stepBase::turn;
-			turn.angle = 45.0;
-			turn.speed = .5;
-			auton->push_back(turn);
-			break; //TODO
-		case 5:
-			turn.stepNum = 1;
-			turn.command = stepBase::turn;
-			turn.angle = 45.0;
-			turn.speed = .5;
-			auton->push_back(turn);
-			break; //TODO
-		default:
-			break; //TODO
+			switch (pos) {
+			case 1:
+				turn.stepNum = 1;
+				turn.command = stepBase::turn;
+				turn.angle = 45.0;
+				turn.speed = .5;
+				auton->push_back(turn);
+
+				break; //TODO
+			case 2:
+				turn.stepNum = 1;
+				turn.command = stepBase::turn;
+				turn.angle = 45.0;
+				turn.speed = .5;
+				auton->push_back(turn);
+				break; //TODO
+			case 3:
+				turn.stepNum = 1;
+				turn.command = stepBase::turn;
+				turn.angle = 45.0;
+				turn.speed = .5;
+				auton->push_back(turn);
+				break; //TODO
+			case 4:
+				turn.stepNum = 1;
+				turn.command = stepBase::turn;
+				turn.angle = 45.0;
+				turn.speed = .5;
+				auton->push_back(turn);
+				break; //TODO
+			case 5:
+				turn.stepNum = 1;
+				turn.command = stepBase::turn;
+				turn.angle = 45.0;
+				turn.speed = .5;
+				auton->push_back(turn);
+				break; //TODO
+			}
+
+			stepBase prepareShot = stepBase();
+			prepareShot.stepNum = 2;
+			prepareShot.command = stepBase::target;
+			auton->push_back(prepareShot);
+
+			stepBase shoot = stepBase();
+			shoot.stepNum = 3;
+			shoot.command = stepBase::shoot;
+			auton->push_back(shoot);
+
+			stepBase stop = stepBase();
+			stop.stepNum = 4;
+			stop.command = stepBase::stop;
+			auton->push_back(stop);
 		}
-
-		stepBase prepareShot = stepBase();
-		prepareShot.stepNum = 2;
-		prepareShot.command = stepBase::target;
-		auton->push_back(prepareShot);
-
-		stepBase shoot = stepBase();
-		shoot.stepNum = 3;
-		shoot.command = stepBase::shoot;
-		auton->push_back(shoot);
-
-		stepBase stop = stepBase();
-		stop.stepNum = 4;
-		stop.command = stepBase::stop;
-		auton->push_back(stop);
-
 	}
 
 private:
