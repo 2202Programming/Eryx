@@ -13,14 +13,14 @@
 Motor::Motor(IProfile *np) {
 
 	//Drive
-	frontLeft = new Talon(np->getInt("DRIVEFL"));
-	frontRight = new Talon(np->getInt("DRIVEFR"));
-	backLeft = new Talon(np->getInt("DRIVEBL"));
-	backRight = new Talon(np->getInt("DRIVEBR"));
-	frontLeft->SetInverted(np->getBool("DRIVEFL_INVERT"));
+	frontLeft = new Spark(2);
+	frontRight = new Spark(4);
+	backLeft = new Spark(1);
+	backRight = new Spark(3);
+	/*frontLeft->SetInverted(np->getBool("DRIVEFL_INVERT"));
 	frontRight->SetInverted(np->getBool("DRIVEFR_INVERT"));
 	backLeft->SetInverted(np->getBool("DRIVEBL_INVERT"));
-	backRight->SetInverted(np->getBool("DRIVEBR_INVERT"));
+	backRight->SetInverted(np->getBool("DRIVEBR_INVERT"));*/
 
 	//Shooter
 	shootFrontLeft = new Talon(np->getInt("SHOOTFL"));
@@ -72,8 +72,8 @@ void Motor::AutonomousInit() {
 
 void Motor::AutonomousPeriodic() {
 	//Drive
-	frontLeft->Set(leftSpeed);
-	backLeft->Set(leftSpeed);
+	frontLeft->Set(-leftSpeed);
+	backLeft->Set(-leftSpeed);
 	frontRight->Set(rightSpeed);
 	backRight->Set(rightSpeed);
 
@@ -112,8 +112,8 @@ void Motor::TeleopInit() {
 
 void Motor::TeleopPeriodic() { //Update all motors every loop
 	//Drive
-	frontLeft->Set(leftSpeed);
-	backLeft->Set(leftSpeed);
+	frontLeft->Set(-leftSpeed);
+	backLeft->Set(-leftSpeed);
 	frontRight->Set(rightSpeed);
 	backRight->Set(rightSpeed);
 
@@ -131,10 +131,10 @@ void Motor::TeleopPeriodic() { //Update all motors every loop
 	intake->Set(intakeSpeed);
 
 	//Date Feeds
-	SmartDashboard::PutNumber("Left Speed", leftSpeed);
+	/*SmartDashboard::PutNumber("Left Speed", leftSpeed);
 	SmartDashboard::PutNumber("Right Speed", rightSpeed);
 	SmartDashboard::PutNumber("Left Motor", sRightSpeed);
-	SmartDashboard::PutNumber("Right Motor", sLeftSpeed);
+	SmartDashboard::PutNumber("Right Motor", sLeftSpeed);*/
 }
 
 void Motor::setDrive(float speedL, float speedR) { //Called from drive class

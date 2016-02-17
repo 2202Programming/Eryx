@@ -17,7 +17,7 @@ Drive::Drive(Motor *motor, IXbox *xbox, ISensorControl *nav) {
 	//init floats, state, and userControl
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
-	state = nav->stopped;
+	state = nav->running;
 
 	requestedState = nav->running;
 	userControl = false;
@@ -42,6 +42,8 @@ void Drive::TeleopInit() {
 	SmartDashboard::PutNumber("Accel", 0.1); //Acceleration curve Value 0.1 - 0.05 is good
 
 	userControl = true; //Start with user control
+	state = nav->running;
+	requestedState = nav->running;
 }
 
 void Drive::TeleopPeriodic() {
@@ -62,8 +64,8 @@ void Drive::readXboxArcadeT() { // Doesn't work with NAV right now
 	x = xbox->getAxisLeftX();
 	y = xbox->getAxisLeftY();
 
-	SmartDashboard::PutNumber("X Value", x);
-	SmartDashboard::PutNumber("Y Value", y);
+	//SmartDashboard::PutNumber("X Value", x);
+	//SmartDashboard::PutNumber("Y Value", y);
 
 	x *= .5;
 
@@ -85,8 +87,8 @@ void Drive::readXboxArcadeD() {
 		x = 0.0;
 		y = 0.0;
 	}
-	SmartDashboard::PutNumber("X Value", x);
-	SmartDashboard::PutNumber("Y Value", y);
+	//SmartDashboard::PutNumber("X Value", x);
+	//SmartDashboard::PutNumber("Y Value", y);
 
 	//x*x + y*y is >= 1
 	if (y > 0)
@@ -112,12 +114,12 @@ void Drive::readXboxArcadeD() {
 		state = nav->running;
 
 	if (state == nav->running || state == nav->stopping) { //If running or stopping update speeds here
-		leftSpeed = acceleration(y - x, leftSpeed);
-		rightSpeed = acceleration(y + x, rightSpeed);
+		leftSpeed = acceleration(y + x, leftSpeed);
+		rightSpeed = acceleration(y - x, rightSpeed);
 	}
 
-	SmartDashboard::PutNumber("XOut Value", rightSpeed);
-	SmartDashboard::PutNumber("YOut Value", leftSpeed);
+	//SmartDashboard::PutNumber("RightOut Value", rightSpeed);
+	//SmartDashboard::PutNumber("LeftOut Value", leftSpeed);
 }
 //Compare requested speed with last speed, if difference greater than accel value only change by accel value
 float Drive::acceleration(float newS, float oldS) {
@@ -137,6 +139,7 @@ void Drive::updateMotors() {
 	if (requestedState == nav->stopped && state == nav->stopped) { //Update speeds here if nav is controlling
 		leftSpeed = navSpeed->leftMotorSpeed;
 		rightSpeed = navSpeed->rightMotorSpeed;
+		SmartDashboard::PutBoolean("Nav", true);
 	}
 
 	//Update motors

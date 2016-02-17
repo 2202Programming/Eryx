@@ -11,6 +11,7 @@
 #include <Profile/IProfile.h>
 #include <AHRS.h>
 #include <Vision/IVision.h>
+#include "WPILib.h"
 
 #include <SensorControl/ISensorControl.h>
 
@@ -53,11 +54,16 @@ protected:
 	float turnSpeed;
 	int currentStep;
 	bool inAutonomous;
+	bool time;
+	float angleTime;
+	int timesCalled = 0;
+	Timer *t;
 
 	void PIDWrite(float output);
 	void TargetingStateMachine();
 	void InitializeVisionAlignment(double commandedAngle);
 	bool ExecuteVisionAlignment();
+	int getTime();
 
 };
 

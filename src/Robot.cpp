@@ -15,75 +15,38 @@
 #include "Drive/SimpleDrive.h"
 #include "Arm/Arm.h"
 #include "Profile/DProfile.h"
+#include "Autonomous/CommandListMaker.h"
+#include "noList.cpp"
 
 #define debug 1
 
-struct nLNode {
-	IControl* value;
-	std::string id;
-	nLNode* parent;
-
-	nLNode(IControl* val, std::string nid) {
-		value = val;
-		id = nid;
-		parent = NULL;
-	}
-};
-
-struct noList {
-	nLNode* head;
-	int length = 0;
-
-	noList() {
-		head = NULL;
-	}
-	nLNode* getComponent(std::string id) {
-		nLNode* test = head;
-		while (test != NULL) {
-			std::string tid = test->id;
-			if (id.compare(id) == 0) {
-				return test;
-			} else {
-				test = test->parent;
-			}
-		}
-		if (debug) {
-			printf("noList: No Element Found in the Array");
-		}
-		return NULL;
-	}
-
-	void addNode(IControl* obj, std::string nid) {
-		nLNode* object = new nLNode(obj, nid);
-		object->parent = head;
-		head = object;
-	}
-};
-
 class Robot: public IterativeRobot {
 public:
+
 	noList* master;
+	IProfile* profile;
+	std::vector<stepBase*> *auton;
 	Motor *m;
 	IXbox *xbox;
-	IProfile* profile;
 	ISensorControl* sensorControl;
 	IVision* vision;
 	Drive *drive;
+	Arm *arm;
+	CommandListMaker *clMaker;
 
-	std::vector<stepBase> *auton;
 	std::string robot;
 
-
 	Robot() {
-
-		xbox = MasterXboxController::getInstance();
-		profile = new DProfile();
 		master = new noList();
-		profile = new SProfile();
+		profile = new DProfile();
+		xbox = MasterXboxController::getInstance();
+		clMaker = new CommandListMaker(profile);
 
 		robot = profile->getValue("ROBOT");
+		robot = "ORYX";
 
 		master->addNode(xbox, "Xbox");
+
 
 		if (robot.compare("PROTO") == 0) {
 
@@ -99,34 +62,26 @@ public:
 			vision = new Vision();
 			m = new Motor(profile);
 			sensorControl = new NavxSensorControl(xbox, profile, vision);
-			drive = new Drive( m, xbox, sensorControl);
+			drive = new Drive(m, xbox, sensorControl);
+			arm = new Arm(m, xbox);
 
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
 			master->addNode(drive, "Drive");
-			master->addNode(new Arm(m, xbox), "ARM");
+			//master->addNode(arm, "ARM");
 
 			//MUST BE CALLED LAST
 			master->addNode(m, "Motor");
 		}
 
 		std::string autonID = profile->getValue("AUTOLIST");
-
-		auton = new std::vector<stepBase>();
-
-		if(autonID.compare("BASIC")==0){
-			driveStep step1 = driveStep();
-			step1.command = stepBase::driveStraight;
-			step1.distance = 5;
-			step1.stepNum = 0;
-			step1.speed = .5;
-			auton->push_back(step1);
-
-			stepBase fin = stepBase();
-			fin.command = stepBase::stop;
-			fin.stepNum = 1;
-			auton->push_back(fin);
+		autonID = "BASIC";
+		if (autonID.compare("BASIC") == 0) {
+			clMaker->makeBasic();
+		} else if (autonID.compare("ADVANCED") == 0) {
+		//	clMaker->makeDefenceBreaker();
 		}
+		auton = clMaker->getList();
 	}
 
 private:
@@ -134,8 +89,10 @@ private:
 
 	void RobotInit() {
 		lw = LiveWindow::GetInstance();
-		SmartDashboard::PutString("Profile",robot);
+		//SmartDashboard::PutString("Profile",robot);
+		SmartDashboard::PutString("MOTORFL", profile->getValue("MOTORFL"));
 		SmartDashboard::PutString("State", "Robot Init");
+		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->RobotInit();
@@ -156,20 +113,22 @@ private:
 	void AutonomousPeriodic() {
 		SmartDashboard::PutString("State", "Autonomous Periodic");
 		//No list here beacause auto was always a bit more complicated
+
 		int x = 0;
-		if(robot.compare("ORYX")==0)
-		{
-		stepBase *command = &auton->at(x);
-		if(command != NULL){
-			bool result = sensorControl->AutonomousPeriodic(command);
-			if(result){
+		if (robot.compare("ORYX") == 0) {
+			stepBase *command = auton->at(x);
+			if (sensorControl->AutonomousPeriodic(command) && command != NULL) {
 				x += 1;
-				command = &auton->at(x);
+				command = auton->at(x);
 			}
-		}
+
 		}
 
-
+		nLNode* test = master->head;
+		while (test != NULL) {
+			test->value->AutonomousPeriodic();
+			test = test->parent;
+		}
 
 	}
 
