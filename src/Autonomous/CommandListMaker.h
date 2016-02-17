@@ -20,10 +20,10 @@ public:
 	void makeBasic();
 	void makeDefenceBreaker();
 
-	vector<stepBase>* getList();
+	vector<stepBase*>* getList();
 
 private:
-	vector<stepBase>* storage;
+	vector<stepBase*>* storage;
 	IProfile *profile;
 };
 

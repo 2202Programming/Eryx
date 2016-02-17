@@ -54,8 +54,8 @@ void Drive::readXboxArcadeT() { // Doesn't work with NAV right now
 	x = xbox->getAxisLeftX();
 	y = xbox->getAxisLeftY();
 
-	SmartDashboard::PutNumber("X Value", x);
-	SmartDashboard::PutNumber("Y Value", y);
+	//SmartDashboard::PutNumber("X Value", x);
+	//SmartDashboard::PutNumber("Y Value", y);
 
 	x *= .5;
 
@@ -77,8 +77,8 @@ void Drive::readXboxArcadeD() {
 		x = 0.0;
 		y = 0.0;
 	}
-	SmartDashboard::PutNumber("X Value", x);
-	SmartDashboard::PutNumber("Y Value", y);
+	//SmartDashboard::PutNumber("X Value", x);
+	//SmartDashboard::PutNumber("Y Value", y);
 
 	//x*x + y*y is >= 1
 	if (y > 0)
@@ -108,8 +108,8 @@ void Drive::readXboxArcadeD() {
 		rightSpeed = acceleration(y - x, rightSpeed);
 	}
 
-	SmartDashboard::PutNumber("RightOut Value", rightSpeed);
-	SmartDashboard::PutNumber("LeftOut Value", leftSpeed);
+	//SmartDashboard::PutNumber("RightOut Value", rightSpeed);
+	//SmartDashboard::PutNumber("LeftOut Value", leftSpeed);
 }
 //Compare requested speed with last speed, if difference greater than accel value only change by accel value
 float Drive::acceleration(float newS, float oldS) {

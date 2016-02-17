@@ -18,7 +18,7 @@
 
 CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
-	storage = new std::vector<stepBase>();
+	storage = new std::vector<stepBase*>();
 	// TODO Auto-generated constructor stub
 
 }
@@ -29,19 +29,20 @@ CommandListMaker::~CommandListMaker() {
 }
 
 void CommandListMaker::makeBasic() {
-	driveStep step1 = driveStep();
-	step1.command = stepBase::driveStraight;
-	step1.distance = 5;
-	step1.stepNum = 0;
-	step1.speed = .5;
+	driveStep* step1 = new driveStep();
+	step1->command = stepBase::driveStraight;
+	step1->distance = 1;
+	step1->stepNum = 0;
+	step1->speed = .5;
 	storage->push_back(step1);
 
-	stepBase fin = stepBase();
-	fin.command = stepBase::stop;
-	fin.stepNum = 1;
+	stepBase *fin =  new stepBase();
+	fin->command = stepBase::stop;
+	fin->stepNum = 1;
 	storage->push_back(fin);
 }
 
+#if 0
 void CommandListMaker::makeDefenceBreaker() {
 	int def = profile->getInt("AUTO_DEF");
 	int pos = profile->getInt("AUTO_POS");
@@ -149,7 +150,8 @@ void CommandListMaker::makeDefenceBreaker() {
 	stop.command = stepBase::stop;
 	storage->push_back(stop);
 }
+#endif
 
-vector<stepBase>* CommandListMaker::getList() {
+vector<stepBase*>* CommandListMaker::getList() {
 	return storage;
 }

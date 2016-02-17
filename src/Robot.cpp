@@ -25,7 +25,7 @@ public:
 
 	noList* master;
 	IProfile* profile;
-	std::vector<stepBase> *auton;
+	std::vector<stepBase*> *auton;
 	Motor *m;
 	IXbox *xbox;
 	ISensorControl* sensorControl;
@@ -43,8 +43,10 @@ public:
 		clMaker = new CommandListMaker(profile);
 
 		robot = profile->getValue("ROBOT");
+		robot = "ORYX";
 
 		master->addNode(xbox, "Xbox");
+
 
 		if (robot.compare("PROTO") == 0) {
 
@@ -73,11 +75,11 @@ public:
 		}
 
 		std::string autonID = profile->getValue("AUTOLIST");
-
+		autonID = "BASIC";
 		if (autonID.compare("BASIC") == 0) {
 			clMaker->makeBasic();
 		} else if (autonID.compare("ADVANCED") == 0) {
-			clMaker->makeDefenceBreaker();
+		//	clMaker->makeDefenceBreaker();
 		}
 		auton = clMaker->getList();
 	}
@@ -90,6 +92,7 @@ private:
 		//SmartDashboard::PutString("Profile",robot);
 		SmartDashboard::PutString("MOTORFL", profile->getValue("MOTORFL"));
 		SmartDashboard::PutString("State", "Robot Init");
+		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->RobotInit();
@@ -113,10 +116,10 @@ private:
 
 		int x = 0;
 		if (robot.compare("ORYX") == 0) {
-			stepBase *command = &auton->at(x);
+			stepBase *command = auton->at(x);
 			if (sensorControl->AutonomousPeriodic(command) && command != NULL) {
 				x += 1;
-				command = &auton->at(x);
+				command = auton->at(x);
 			}
 
 		}

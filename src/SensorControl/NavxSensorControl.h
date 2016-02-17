@@ -56,6 +56,7 @@ protected:
 	bool inAutonomous;
 	bool time;
 	float angleTime;
+	int timesCalled = 0;
 	Timer *t;
 
 	void PIDWrite(float output);
