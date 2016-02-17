@@ -37,7 +37,7 @@ private:
 
 	Talon *shootFrontLeft, *shootFrontRight, *shootBackLeft, *shootBackRight; //Shooter Motors
 
-	Talon *armLower, *armUpper; //Arm Motors
+	Talon *armLower; //, *armUpper; // Arm Motors
 	Encoder *encArmLower, *encArmUpper; //Arm Encoders
 
 	Talon *intake;

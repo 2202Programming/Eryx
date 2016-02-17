@@ -38,14 +38,16 @@ private:
 	bool runIntake;
 	bool runTrigger;
 	bool angle;
+	bool intakePos;
 	float leftSpeed, rightSpeed;
 	bool shot;
 
 	IXbox *xbox;
 	Motor *motor;
 	Compressor *c;
-	DoubleSolenoid *s1;
-	DoubleSolenoid *trigger;
+	DoubleSolenoid *angleSol;
+	Solenoid *trigger;
+	DoubleSolenoid *intakeSol;
 	Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
 };
 

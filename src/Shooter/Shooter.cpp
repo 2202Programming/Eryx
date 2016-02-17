@@ -13,10 +13,12 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	this->xbox = xbox;
 	this->motor = motor;
 	c = new Compressor();
-	s1 = new DoubleSolenoid(p->getInt("SHOOTER_SOL1_1"),
+	angleSol = new DoubleSolenoid(p->getInt("SHOOTER_SOL1_1"),
 			p->getInt("SHOOTER_SOL1_2"));
-	trigger = new DoubleSolenoid(p->getInt("SHOOTER_SOL2_1"),
+	trigger = new Solenoid(p->getInt("SHOOTER_SOL2_1"),
 			p->getInt("SHOOTER_SOL2_2"));
+	intakeSol = new DoubleSolenoid(p->getInt("SHOOTER_SOL3_1"),
+			p->getInt("SHOOTER_SOL3_2"));
 	encFrontLeft = new Encoder(p->getInt("SHOOTERFL_ENC1"),
 			p->getInt("SHOOTERFL_ENC2"));
 	encFrontRight = new Encoder(p->getInt("SHOOTEFR_ENC1"),
@@ -35,6 +37,7 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	runTrigger = false;
 	angle = false;
 	shot = false;
+	intakePos = false;
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
 
@@ -44,7 +47,12 @@ Shooter::~Shooter() {
 }
 
 void Shooter::AutonomousInit() {
-	angle = true;
+	angleSol->Set(angleSol->kReverse);
+	angle = false;
+	trigger->Set(trigger->kReverse);
+	runTrigger = false;
+	intakeSol->Set(intakeSol->kReverse);
+	intakePos = false;
 }
 
 void Shooter::AutonomousPeriodic() {
@@ -60,6 +68,7 @@ void Shooter::AutonomousPeriodic() {
 
 void Shooter::shoot() {
 	runShoot = true;
+	angle = true;
 }
 
 bool Shooter::hasShot() {
@@ -72,14 +81,15 @@ bool Shooter::hasShot() {
 }
 
 void Shooter::TeleopInit() {
-	//Shooter starts stopped
 	motor->setShoot(0.0, 0.0);
 	runShoot = false;
 	c->Start();
-	s1->Set(s1->kReverse);
+	angleSol->Set(angleSol->kReverse);
 	angle = false;
-	trigger->Set(trigger->kForward);
+	trigger->Set(trigger->kReverse);
 	runTrigger = false;
+	intakeSol->Set(intakeSol->kReverse);
+	intakePos = false;
 }
 
 void Shooter::TeleopPeriodic() {
@@ -111,13 +121,15 @@ void Shooter::readXbox() {
 		runTrigger = !runTrigger;
 	}
 
-	if (xbox->getRightBumperHeld()) { //Up
-		angle = true;
-	} else if (xbox->getLeftBumperHeld()) { //Down
-		angle = false;
+	if (xbox->getRightBumperPressed()) { //Up
+		angle = !angle;
 	}
 
-	if (xbox->getBackHeld()) {
+	if (xbox->getLeftBumperPressed()) {	//Reverse Intake
+		intakePos = !intakePos;
+	}
+
+	if (xbox->getBackHeld()) {	//Activate Piston
 		runIntake = true;
 	} else {
 		runIntake = false;
@@ -127,15 +139,21 @@ void Shooter::readXbox() {
 void Shooter::setPnumatics() {
 
 	if (angle) {
-		s1->Set(s1->kForward); //Up
+		angleSol->Set(angleSol->kForward); //Up
 	} else {
-		s1->Set(s1->kReverse); //Down
+		angleSol->Set(angleSol->kReverse); //Down
 	}
 
 	if (runTrigger) {
-		trigger->Set(trigger->kForward);
+		trigger->Set(trigger->kForward);	//In
 	} else {
-		trigger->Set(trigger->kReverse);
+		trigger->Set(trigger->kReverse);	//Out
+	}
+
+	if (intakePos) {
+		intakeSol->Set(intakeSol->kForward);	//Out
+	} else {
+		intakeSol->Set(intakeSol->kReverse);	//In
 	}
 }
 

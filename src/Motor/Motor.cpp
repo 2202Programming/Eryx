@@ -30,7 +30,7 @@ Motor::Motor(IProfile *np) {
 
 	//Arm
 	armLower = new Talon(np->getInt("ARM_LOWER"));
-	armUpper = new Talon(np->getInt("ARM_UPPER"));
+	//armUpper = new Talon(np->getInt("ARM_UPPER"));
 	encArmLower = new Encoder(np->getInt("ARM_LOWER_ENC1"),
 			np->getInt("ARM_LOWER_ENC2"));
 	encArmUpper = new Encoder(np->getInt("ARM_UPPER_ENC1"),
@@ -66,7 +66,7 @@ void Motor::AutonomousInit() {
 
 	//Arm
 	armLower->Set(0.0);
-	armUpper->Set(0.0);
+	//armUpper->Set(0.0);
 	intake->Set(0.0);
 }
 
@@ -85,7 +85,7 @@ void Motor::AutonomousPeriodic() {
 
 	//Arm
 	armLower->Set(aLowerSpeed);
-	armUpper->Set(aUpperSpeed);
+	//armUpper->Set(aUpperSpeed);
 
 	//Intake
 	intake->Set(intakeSpeed);
@@ -125,7 +125,7 @@ void Motor::TeleopPeriodic() { //Update all motors every loop
 
 	//Arm
 	armLower->Set(aLowerSpeed);
-	armUpper->Set(aUpperSpeed);
+	//armUpper->Set(aUpperSpeed);
 
 	//Intake
 	intake->Set(intakeSpeed);
