@@ -182,12 +182,14 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
  */
 
 bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
-	SmartDashboard::PutNumber("Displacement", ahrs->GetDisplacementX());
+	SmartDashboard::PutNumber("Displacement Y", ahrs->GetDisplacementY());
+	SmartDashboard::PutNumber("Displacement X", ahrs->GetDisplacementX());
+	SmartDashboard::PutNumber("Displacement Z", ahrs->GetDisplacementZ());
 	SmartDashboard::PutString("AUTO STATE", "Exec Drive Straight");
 	SmartDashboard::PutNumber("Time Called Auto", timesCalled);
 	SmartDashboard::PutNumber("Step Speed", step->speed);
 	timesCalled += 1;
-	if (ahrs->GetDisplacementX() < step->distance) {
+	if (ahrs->GetDisplacementY() < step->distance) {
 		// Check these motor speed values
 		updateMotorSpeedResponse.leftMotorSpeed = step->speed;
 		updateMotorSpeedResponse.rightMotorSpeed = step->speed;

@@ -50,3 +50,4 @@ Debug/src/Robot.o
 *.o
 *.o
 .cproject
+.settings/language.settings.xml

@@ -52,6 +52,45 @@ Motor::Motor(IProfile *np) {
 Motor::~Motor() {
 }
 
+void Motor::AutonomousInit() {
+	frontLeft->Set(0);
+	frontRight->Set(0);
+	backLeft->Set(0);
+	backRight->Set(0);
+
+	//Shooter
+	shootFrontLeft->Set(0.0);
+	shootFrontRight->Set(0.0);
+	shootBackLeft->Set(0.0);
+	shootBackRight->Set(0.0);
+
+	//Arm
+	armLower->Set(0.0);
+	armUpper->Set(0.0);
+	intake->Set(0.0);
+}
+
+void Motor::AutonomousPeriodic() {
+	//Drive
+	frontLeft->Set(-leftSpeed);
+	backLeft->Set(-leftSpeed);
+	frontRight->Set(rightSpeed);
+	backRight->Set(rightSpeed);
+
+	//Shooter
+	shootFrontLeft->Set(sLeftSpeed);
+	shootFrontRight->Set(sRightSpeed);
+	shootBackLeft->Set(sLeftSpeed);
+	shootBackRight->Set(sRightSpeed);
+
+	//Arm
+	armLower->Set(aLowerSpeed);
+	armUpper->Set(aUpperSpeed);
+
+	//Intake
+	intake->Set(intakeSpeed);
+}
+
 void Motor::TeleopInit() {
 	//Drive
 	frontLeft->Set(0);
