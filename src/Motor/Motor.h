@@ -35,9 +35,10 @@ public:
 private:
 	Spark *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
-	Talon *shootFrontLeft, *shootFrontRight, *shootBackLeft, *shootBackRight; //Shooter Motors
+	//Talon *shootFrontLeft, *shootFrontRight, *shootBackLeft, *shootBackRight; //Shooter Motors
+	Talon *shootLeft, *shootRight;
 
-	Talon *armLower, *armUpper; //Arm Motors
+	Talon *armLower; //, *armUpper; // Arm Motors
 	Encoder *encArmLower, *encArmUpper; //Arm Encoders
 
 	Talon *intake;
