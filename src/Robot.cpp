@@ -18,7 +18,6 @@
 #include "Autonomous/CommandListMaker.h"
 #include "noList.cpp"
 
-#define debug 1
 
 class Robot: public IterativeRobot {
 public:
@@ -33,6 +32,7 @@ public:
 	Drive *drive;
 	Arm *arm;
 	CommandListMaker *clMaker;
+	bool DEBUG = false;
 
 	std::string robot;
 
@@ -76,6 +76,7 @@ public:
 
 		std::string autonID = profile->getValue("AUTOLIST");
 		autonID = "BASIC";
+
 		if (autonID.compare("BASIC") == 0) {
 			clMaker->makeBasic();
 		} else if (autonID.compare("ADVANCED") == 0) {
@@ -89,9 +90,8 @@ private:
 
 	void RobotInit() {
 		lw = LiveWindow::GetInstance();
-		//SmartDashboard::PutString("Profile",robot);
-		SmartDashboard::PutString("MOTORFL", profile->getValue("MOTORFL"));
 		SmartDashboard::PutString("State", "Robot Init");
+
 		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 		nLNode* test = master->head;
 		while (test != NULL) {
