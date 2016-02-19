@@ -8,8 +8,8 @@
 #include <Shooter/Shooter.h>
 
 #define RPM 2500
-#define SOL_ACTIVATE DoubleSolinoid::kForward
-#define SOL_DEACTIVATED DoubleSolinoid::kReverse
+#define SOL_ACTIVATE DoubleSolenoid::kForward
+#define SOL_DEACTIVATED DoubleSolenoid::kReverse
 
 Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	this->xbox = xbox;
@@ -70,10 +70,10 @@ void Shooter::AutonomousPeriodic() {
 	setPnumatics();
 	motor->setShoot(leftSpeed, rightSpeed);
 
-	if (encFrontLeft->GetRate() > RPM) {
+	/*if (encFrontLeft->GetRate() > RPM) {
 		runTrigger = true;
 		shot = true;
-	}
+	}*/
 }
 
 void Shooter::shoot() {
@@ -91,6 +91,7 @@ bool Shooter::hasShot() {
 }
 
 void Shooter::TeleopInit() {
+	SmartDashboard::PutNumber("ShooterSpeed", 1.0);
 	motor->setShoot(0.0, 0.0);
 	motor->setIntake(0.0);
 	runShoot = false;
@@ -99,7 +100,7 @@ void Shooter::TeleopInit() {
 
 	angleSol->Set(SOL_DEACTIVATED);
 	angle = false;
-	trigger->Set(SOL_DEACTIVATED);
+	trigger->Set(SOL_ACTIVATE);
 	runTrigger = false;
 	intakeSol->Set(SOL_DEACTIVATED);
 	intakePos = false;
@@ -115,6 +116,7 @@ void Shooter::TeleopPeriodic() {
 
 	SmartDashboard::PutNumber("Shoot Left", leftSpeed);
 	SmartDashboard::PutNumber("Shoot Right", rightSpeed);
+	SmartDashboard::PutNumber("Intake Speed", intakeSpeed);
 
 	SmartDashboard::PutBoolean("Angle", angle);
 	SmartDashboard::PutBoolean("Trigger", trigger);
@@ -160,9 +162,9 @@ void Shooter::setPnumatics() {
 	}
 
 	if (runTrigger) {
-		trigger->Set(SOL_ACTIVATE);	//In
+		trigger->Set(SOL_DEACTIVATED);	//In
 	} else {
-		trigger->Set(SOL_DEACTIVATED);	//Out
+		trigger->Set(SOL_ACTIVATE);	//Out
 	}
 
 	if (intakePos) {
@@ -210,23 +212,25 @@ void Shooter::setPnumatics() {
  rightSpeed -= 0.005;
  }
  } else {
- leftSpeed = 0.0;
+ leftSpeed = 0.0;\
+
  rightSpeed = 0.0;
  }
  } */
 
 void Shooter::updateMotor2() {
+	float appliedSpeed = SmartDashboard::GetNumber("ShooterSpeed", 1.0);
 	if (runShoot) {
-		leftSpeed = 1.0;
-		rightSpeed = 1.0;
+		leftSpeed = appliedSpeed;
+		rightSpeed = appliedSpeed;
 	} else {
 		leftSpeed = 0.0;
 		rightSpeed = 0.0;
 	}
 
 	if (runIntake) {
-		intakeSpeed = 1.0;
+		intakeSpeed = -0.88;
 	} else {
-		intakeSpeed = 1.0;
+		intakeSpeed = 0.0;
 	}
 }
