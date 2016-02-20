@@ -45,7 +45,7 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	rightSpeed = 0.0;
 	intakeSpeed = 0.0;
 	shootPercent = 0.5;
-	shootPercentState = 1;
+	shootPercentState = 0;
 
 	t = NULL;
 	time = false;
@@ -118,23 +118,23 @@ void Shooter::TeleopInit() {
 }
 
 void Shooter::TeleopPeriodic() {
-	readXbox();
+	readXboxState();
 	updateMotor2();
 	setPnumatics();
 
 	switch (shootPercentState) {
 	case 0:
-		shootPercent = 1.0;
-		break;
-	case 1:
 		shootPercent = 0.5;
 		break;
+	case 1:
+		shootPercent = 0.4;
+		break;
 	case 2:
-		shootPercent = 0.2;
+		shootPercent = 0.3;
 		break;
 	}
 
-	motor->setShoot(-leftSpeed, rightSpeed);
+	motor->setShoot(-leftSpeed, -rightSpeed);
 	motor->setIntake(intakeSpeed);
 
 	//Motors
@@ -142,6 +142,7 @@ void Shooter::TeleopPeriodic() {
 	SmartDashboard::PutNumber("Shoot Right", rightSpeed);
 	SmartDashboard::PutNumber("Intake Speed", intakeSpeed);
 	SmartDashboard::PutNumber("Shoot Percent", shootPercent);
+	SmartDashboard::PutNumber("Shoot Percent State", shootPercentState);
 
 	// Pistons
 	SmartDashboard::PutBoolean("Angle", angle);
@@ -184,13 +185,6 @@ void Shooter::readXbox() {
 		runIntake = !runIntake;
 	}
 
-	if (xbox->getYPressed()) {
-		if (shootPercentState < 2) {
-			shootPercentState++;
-		} else {
-			shootPercentState = 0;
-		}
-	}
 }
 
 void Shooter::readXboxState() {
@@ -275,6 +269,15 @@ void Shooter::readXboxState() {
 		}
 		break;
 	}
+
+	if (xbox->getYPressed()) {
+		if (shootPercentState < 2) {
+			shootPercentState++;
+		} else {
+			shootPercentState = 0;
+		}
+	}
+
 }
 
 void Shooter::setPnumatics() {
