@@ -8,8 +8,8 @@
 #include <Shooter/Shooter.h>
 
 #define RPM 2500
-#define SOL_ACTIVATE DoubleSolinoid::kForward
-#define SOL_DEACTIVATED DoubleSolinoid::kReverse
+#define SOL_ACTIVATE DoubleSolenoid::kForward
+#define SOL_DEACTIVATED DoubleSolenoid::kReverse
 
 Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	this->xbox = xbox;
@@ -70,10 +70,10 @@ void Shooter::AutonomousPeriodic() {
 	setPnumatics();
 	motor->setShoot(leftSpeed, rightSpeed);
 
-	if (encFrontLeft->GetRate() > RPM) {
+	/*if (encFrontLeft->GetRate() > RPM) {
 		runTrigger = true;
 		shot = true;
-	}
+	}*/
 }
 
 void Shooter::shoot() {
@@ -91,6 +91,8 @@ bool Shooter::hasShot() {
 }
 
 void Shooter::TeleopInit() {
+	sState = ready;
+	SmartDashboard::PutNumber("ShooterSpeed", 1.0);
 	motor->setShoot(0.0, 0.0);
 	motor->setIntake(0.0);
 	runShoot = false;
@@ -99,7 +101,7 @@ void Shooter::TeleopInit() {
 
 	angleSol->Set(SOL_DEACTIVATED);
 	angle = false;
-	trigger->Set(SOL_DEACTIVATED);
+	trigger->Set(SOL_ACTIVATE);
 	runTrigger = false;
 	intakeSol->Set(SOL_DEACTIVATED);
 	intakePos = false;
@@ -110,11 +112,12 @@ void Shooter::TeleopPeriodic() {
 	updateMotor2();
 	setPnumatics();
 
-	motor->setShoot(leftSpeed, rightSpeed);
+	motor->setShoot(-leftSpeed, rightSpeed);
 	motor->setIntake(intakeSpeed);
 
 	SmartDashboard::PutNumber("Shoot Left", leftSpeed);
 	SmartDashboard::PutNumber("Shoot Right", rightSpeed);
+	SmartDashboard::PutNumber("Intake Speed", intakeSpeed);
 
 	SmartDashboard::PutBoolean("Angle", angle);
 	SmartDashboard::PutBoolean("Trigger", trigger);
@@ -128,7 +131,7 @@ void Shooter::TeleopPeriodic() {
 
 void Shooter::readXbox() {
 	//Toggle - not hold
-	if (xbox->getR3Pressed()) { //Turn shooter on/off
+	if (xbox->getRightBumperPressed()) { //Turn shooter on/off
 		runShoot = !runShoot;
 	}
 
@@ -136,7 +139,7 @@ void Shooter::readXbox() {
 		runTrigger = !runTrigger;
 	}
 
-	if (xbox->getRightBumperPressed()) { //Up
+	if (xbox->getR3Pressed()) { //Up
 		angle = !angle;
 	}
 
@@ -144,10 +147,8 @@ void Shooter::readXbox() {
 		intakePos = !intakePos;
 	}
 
-	if (xbox->getBackHeld()) {	//Activate Piston
-		runIntake = true;
-	} else {
-		runIntake = false;
+	if (xbox->getBackPressed()) {	//Activate Piston
+		runIntake = !runIntake;
 	}
 }
 
@@ -160,9 +161,9 @@ void Shooter::setPnumatics() {
 	}
 
 	if (runTrigger) {
-		trigger->Set(SOL_ACTIVATE);	//In
+		trigger->Set(SOL_DEACTIVATED);	//In
 	} else {
-		trigger->Set(SOL_DEACTIVATED);	//Out maybe should be kOff
+		trigger->Set(SOL_ACTIVATE);	//Out
 	}
 
 	if (intakePos) {
@@ -170,6 +171,59 @@ void Shooter::setPnumatics() {
 	} else {
 		intakeSol->Set(SOL_DEACTIVATED);	//In
 	}
+}
+
+void Shooter::updateMotor2() {
+	//float appliedSpeed = SmartDashboard::GetNumber("ShooterSpeed", 1.0);
+	if (runShoot) {
+		leftSpeed = acceleration(1.0, leftSpeed);
+		rightSpeed = acceleration(1.0, rightSpeed);
+	} else {
+		leftSpeed = 0.0;
+		rightSpeed = 0.0;
+	}
+
+	if (runIntake) {
+		intakeSpeed = -0.9;
+	} else {
+		intakeSpeed = 0.0;
+	}
+}
+
+/* void Shooter::stateMachine() {
+	switch (sState) {
+	case ready:
+		if (xbox->getRightTriggerHeld()) {
+			sState = windup;
+		}
+ 		break;
+	case windup:
+		leftSpeed = 1.0;
+		rightSpeed = 1.0;
+		if (!xbox->getRightTriggerPressed()) {
+			sState = goShoot;
+		}
+		break;
+	case goShoot:
+		trigger->Set(SOL_DEACTIVATED);
+		sState = winddown;
+		break;
+	case winddown:
+		break;
+	}
+} */
+
+float Shooter::acceleration(float newS, float oldS) {
+	float accel = 0.005;
+
+	if (fabs(newS - oldS) > accel) {
+		if (oldS > newS)
+			return oldS - accel;
+		else
+			return oldS + accel;
+	}
+
+	return newS;
 }
 
 /*void Shooter::updateMotor1() {
@@ -210,23 +264,8 @@ void Shooter::setPnumatics() {
  rightSpeed -= 0.005;
  }
  } else {
- leftSpeed = 0.0;
+ leftSpeed = 0.0;\
+
  rightSpeed = 0.0;
  }
  } */
-
-void Shooter::updateMotor2() {
-	if (runShoot) {
-		leftSpeed = 1.0;
-		rightSpeed = 1.0;
-	} else {
-		leftSpeed = 0.0;
-		rightSpeed = 0.0;
-	}
-
-	if (runIntake) {
-		intakeSpeed = 1.0;
-	} else {
-		intakeSpeed = 1.0;
-	}
-}

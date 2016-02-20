@@ -33,6 +33,8 @@ private:
 	void updateMotor2(); // w/o encoders
 	void shoot();
 	bool hasShot();
+	void stateMachine();
+	float acceleration(float newS, float oldS);
 
 	bool runShoot; //True if shooting motors should be running
 	bool runIntake;
@@ -42,6 +44,14 @@ private:
 	float leftSpeed, rightSpeed;
 	float intakeSpeed;
 	bool shot;
+
+	enum shootState {
+		ready,
+		windup,
+		goShoot,
+		winddown
+	};
+	shootState sState;
 
 	IXbox *xbox;
 	Motor *motor;

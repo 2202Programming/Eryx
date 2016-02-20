@@ -30,8 +30,7 @@ private:
 	IXbox *xbox;
 	DoubleSolenoid *armSol;
 
-	bool armExtend;
-
+	bool armPos;
 	float lowerSpeed, upperSpeed;
 };
 

@@ -16,7 +16,7 @@ Arm::Arm(Motor *motor, IXbox *xbox) {
 	//init floats
 	upperSpeed = 0.0;
 	lowerSpeed = 0.0;
-	armExtend = false;
+	armPos = false;
 }
 
 Arm::~Arm() {
@@ -25,16 +25,16 @@ Arm::~Arm() {
 
 void Arm::TeleopInit() {
 	//Init Motors
-	motor->setArm(0.0, 0.0);
 	armSol->Set(DoubleSolenoid::kReverse);
-	armExtend = false;
+	armPos = false;
+	motor->setArm(0.0);
 }
 
 void Arm::TeleopPeriodic() {
 	readXbox();
-	motor->setArm(lowerSpeed, upperSpeed); //Set motor speeds
+	motor->setArm(lowerSpeed); //Set motor speeds
 
-	if (armExtend) {
+	if (armPos) {
 		armSol->Set(DoubleSolenoid::kForward);
 	} else {
 		armSol->Set(DoubleSolenoid::kReverse);
@@ -51,17 +51,8 @@ void Arm::readXbox() {
 		lowerSpeed = 0.0;
 	}
 
-	//Upper arm
-	if (xbox->getAHeld()) {
-		upperSpeed = 1.0; //Move Back
-	} else if (xbox->getYHeld()) {
-		upperSpeed = -1.0; //Move forward
-	} else {
-		upperSpeed = 0.0;
-	}
-
-	if (xbox->getL3Pressed()) {
-		armExtend = !armExtend;
+	if (xbox->getAPressed()) {
+		armPos = !armPos;
 	}
 }
 
