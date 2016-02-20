@@ -34,6 +34,7 @@ private:
 	void shoot();
 	bool hasShot();
 	void stateMachine();
+	float acceleration(float newS, float oldS);
 
 	bool runShoot; //True if shooting motors should be running
 	bool runIntake;
@@ -50,6 +51,7 @@ private:
 		goShoot,
 		winddown
 	};
+	shootState sState;
 
 	IXbox *xbox;
 	Motor *motor;

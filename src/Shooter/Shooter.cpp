@@ -91,7 +91,7 @@ bool Shooter::hasShot() {
 }
 
 void Shooter::TeleopInit() {
-	//shootState = ready;
+	sState = ready;
 	SmartDashboard::PutNumber("ShooterSpeed", 1.0);
 	motor->setShoot(0.0, 0.0);
 	motor->setIntake(0.0);
@@ -131,7 +131,7 @@ void Shooter::TeleopPeriodic() {
 
 void Shooter::readXbox() {
 	//Toggle - not hold
-	if (xbox->getR3Pressed()) { //Turn shooter on/off
+	if (xbox->getRightBumperPressed()) { //Turn shooter on/off
 		runShoot = !runShoot;
 	}
 
@@ -139,7 +139,7 @@ void Shooter::readXbox() {
 		runTrigger = !runTrigger;
 	}
 
-	if (xbox->getRightBumperPressed()) { //Up
+	if (xbox->getR3Pressed()) { //Up
 		angle = !angle;
 	}
 
@@ -171,6 +171,59 @@ void Shooter::setPnumatics() {
 	} else {
 		intakeSol->Set(SOL_DEACTIVATED);	//In
 	}
+}
+
+void Shooter::updateMotor2() {
+	//float appliedSpeed = SmartDashboard::GetNumber("ShooterSpeed", 1.0);
+	if (runShoot) {
+		leftSpeed = acceleration(1.0, leftSpeed);
+		rightSpeed = acceleration(1.0, rightSpeed);
+	} else {
+		leftSpeed = 0.0;
+		rightSpeed = 0.0;
+	}
+
+	if (runIntake) {
+		intakeSpeed = -0.9;
+	} else {
+		intakeSpeed = 0.0;
+	}
+}
+
+/* void Shooter::stateMachine() {
+	switch (sState) {
+	case ready:
+		if (xbox->getRightTriggerHeld()) {
+			sState = windup;
+		}
+ 		break;
+	case windup:
+		leftSpeed = 1.0;
+		rightSpeed = 1.0;
+		if (!xbox->getRightTriggerPressed()) {
+			sState = goShoot;
+		}
+		break;
+	case goShoot:
+		trigger->Set(SOL_DEACTIVATED);
+		sState = winddown;
+		break;
+	case winddown:
+		break;
+	}
+} */
+
+float Shooter::acceleration(float newS, float oldS) {
+	float accel = 0.005;
+
+	if (fabs(newS - oldS) > accel) {
+		if (oldS > newS)
+			return oldS - accel;
+		else
+			return oldS + accel;
+	}
+
+	return newS;
 }
 
 /*void Shooter::updateMotor1() {
@@ -216,43 +269,3 @@ void Shooter::setPnumatics() {
  rightSpeed = 0.0;
  }
  } */
-
-void Shooter::updateMotor2() {
-	float appliedSpeed = SmartDashboard::GetNumber("ShooterSpeed", 1.0);
-	if (runShoot) {
-		leftSpeed = appliedSpeed;
-		rightSpeed = appliedSpeed;
-	} else {
-		leftSpeed = 0.0;
-		rightSpeed = 0.0;
-	}
-
-	if (runIntake) {
-		intakeSpeed = -0.9;
-	} else {
-		intakeSpeed = 0.0;
-	}
-}
-
-/*void Shooter::stateMachine() {
-	switch (shootState) {
-	case ready:
-		if (xbox->getRightTriggerHeld()) {
-			shootState = windup;
-		}
- 		break;
-	case windup:
-		leftSpeed = 1.0;
-		rightSpeed = 1.0;
-		if (!xbox->getRightTriggerPressed()) {
-			shootState = goShoot;
-		}
-		break;
-	case goShoot:
-		trigger->Set(SOL_DEACTIVATED);
-
-		break;
-	case winddown:
-		break;
-	}
-} */
