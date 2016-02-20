@@ -91,6 +91,7 @@ bool Shooter::hasShot() {
 }
 
 void Shooter::TeleopInit() {
+	//shootState = ready;
 	SmartDashboard::PutNumber("ShooterSpeed", 1.0);
 	motor->setShoot(0.0, 0.0);
 	motor->setIntake(0.0);
@@ -111,7 +112,7 @@ void Shooter::TeleopPeriodic() {
 	updateMotor2();
 	setPnumatics();
 
-	motor->setShoot(leftSpeed, rightSpeed);
+	motor->setShoot(-leftSpeed, rightSpeed);
 	motor->setIntake(intakeSpeed);
 
 	SmartDashboard::PutNumber("Shoot Left", leftSpeed);
@@ -232,3 +233,26 @@ void Shooter::updateMotor2() {
 		intakeSpeed = 0.0;
 	}
 }
+
+/*void Shooter::stateMachine() {
+	switch (shootState) {
+	case ready:
+		if (xbox->getRightTriggerHeld()) {
+			shootState = windup;
+		}
+ 		break;
+	case windup:
+		leftSpeed = 1.0;
+		rightSpeed = 1.0;
+		if (!xbox->getRightTriggerPressed()) {
+			shootState = goShoot;
+		}
+		break;
+	case goShoot:
+		trigger->Set(SOL_DEACTIVATED);
+
+		break;
+	case winddown:
+		break;
+	}
+} */
