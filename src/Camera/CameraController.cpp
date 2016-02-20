@@ -5,7 +5,6 @@
  *      Author: lazar
  */
 
-#include "WPILib.h"
 #include <Camera/CameraController.h>
 
 
