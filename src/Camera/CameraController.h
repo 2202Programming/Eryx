@@ -12,16 +12,14 @@
 #include "Xbox/IXbox.h"
 
 
-class LHSVision : public IControl
+class CameraController
 {
 public:
-	LHSVision(IXbox*); //Constructor
-	~LHSVision();	//Destructor
-
-	void ToggleCamera();
+	CameraController(); //Constructor
+	~CameraController();	//Destructor
 
 	void SendToDashboard(Image*); //Send Image to Dashboard
-	void UpdateVision();	//Toggle and Display Camera
+	void UpdateVision(bool x);	//Toggle and Display Camera
 	void StopCamera(int);	//Close Specified Camera
 	void StartCamera(int);	//Start Specified Camera
 
@@ -31,8 +29,6 @@ private:
 
 	IMAQdxSession session2;
 	Image* frame2;
-
-	IXbox* xbox;
 
 	int send = 1;
 };
