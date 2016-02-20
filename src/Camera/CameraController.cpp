@@ -82,6 +82,7 @@ void CameraController::SendToDashboard(Image *image) {
 
 void CameraController::UpdateVision(bool x) //by Michael
 {
+	SmartDashboard::PutNumber("Vision Updated: ", x);
 	if(x){
 	if (send == 1) {
 		StopCamera(1);	//Stop Cam 1

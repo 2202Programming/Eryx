@@ -25,7 +25,7 @@ void DynamicCameraServer::AutonomousPeriodic(){
 	controller->UpdateVision(false);
 }
 void DynamicCameraServer::TeleopPeriodic(){
-	controller->UpdateVision(xbox->getStartPressed());
+	controller->UpdateVision(xbox->getStartHeld());
 }
 void DynamicCameraServer::TestPeriodic(){
 	controller->UpdateVision(false);

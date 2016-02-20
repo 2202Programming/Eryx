@@ -18,6 +18,7 @@
 #include "Autonomous/CommandListMaker.h"
 #include "noList.cpp"
 #include "Shooter/Shooter.h"
+#include "Camera/DynamicCameraServer.h"
 
 
 class Robot: public IterativeRobot {
@@ -46,14 +47,14 @@ public:
 		clMaker = new CommandListMaker(profile);
 
 		robot = profile->getValue("ROBOT");
-		robot = "ORYX";
+		robot = "PROTO";
 
 		master->addNode(xbox, "Xbox");
 
 
 		if (robot.compare("PROTO") == 0) {
 
-			master->addNode(new SimpleDrive(profile, xbox), "drive");
+			master->addNode(new DynamicCameraServer(xbox), "camera");
 
 		} else if (robot.compare("TIM") == 0) {
 
