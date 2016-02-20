@@ -19,6 +19,7 @@
 #include "noList.cpp"
 #include "Shooter/Shooter.h"
 #include "Camera/DynamicCameraServer.h"
+#include "Components/RelayController.h"
 
 
 class Robot: public IterativeRobot {
@@ -34,6 +35,8 @@ public:
 	Drive *drive;
 	Arm *arm;
 	CommandListMaker *clMaker;
+	RelayController* rc;
+
 	bool DEBUG = false;
 
 	Shooter *shooter;
@@ -69,12 +72,14 @@ public:
 			drive = new Drive(m, xbox, sensorControl);
 			arm = new Arm(m, xbox);
 			shooter = new Shooter(m, xbox, profile);
+			rc = new RelayController();
 
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
 			master->addNode(drive, "Drive");
 			master->addNode(shooter ,"Shooter");
 			master->addNode(arm, "ARM");
+			master->addNode(rc, "relay");
 
 			//MUST BE CALLED LAST
 			master->addNode(m, "Motor");
