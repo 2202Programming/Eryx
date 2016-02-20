@@ -168,7 +168,6 @@ void NavxSensorControl::TeleopPeriodic() {
 void NavxSensorControl::AutonomousInit() {
 	currentStep = -1;
 	inAutonomous = true;
-
 }
 
 /*
@@ -199,6 +198,8 @@ bool NavxSensorControl::GetDriveStraightContinue(float value){
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
 		return false; //TODO Once we Attach the Encoders
+	case hardTimer:
+		return t->Get() < 6000;
 	default:
 		return false;
 	}
