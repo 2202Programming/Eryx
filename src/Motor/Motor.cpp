@@ -23,21 +23,18 @@ Motor::Motor(IProfile *np) {
 	backRight->SetInverted(np->getBool("DRIVEBR_INVERT"));*/
 
 	//Shooter
-	shootFrontLeft = new Talon(np->getInt("SHOOTFL"));
-	shootFrontRight = new Talon(np->getInt("SHOOTFR"));
-	shootBackLeft = new Talon(np->getInt("SHOOTBL"));
-	shootBackRight = new Talon(np->getInt("SHOOTBR"));
+	shootLeft = new Spark(6);
+	shootRight = new Spark(7);
 
 	//Arm
-	armLower = new Talon(np->getInt("ARM_LOWER"));
-	armUpper = new Talon(np->getInt("ARM_UPPER"));
-	encArmLower = new Encoder(np->getInt("ARM_LOWER_ENC1"),
+	armLower = new Spark(8);
+	/*encArmLower = new Encoder(np->getInt("ARM_LOWER_ENC1"),
 			np->getInt("ARM_LOWER_ENC2"));
 	encArmUpper = new Encoder(np->getInt("ARM_UPPER_ENC1"),
-			np->getInt("ARM_UPPER_ENC2"));
+			np->getInt("ARM_UPPER_ENC2")); */
 
 	//Intake
-	intake = new Talon(np->getInt("INTAKE"));
+	intake = new Spark(5);
 
 	//Init Floats
 	leftSpeed = 0.0;
@@ -59,14 +56,12 @@ void Motor::AutonomousInit() {
 	backRight->Set(0);
 
 	//Shooter
-	shootFrontLeft->Set(0.0);
-	shootFrontRight->Set(0.0);
-	shootBackLeft->Set(0.0);
-	shootBackRight->Set(0.0);
+	shootLeft->Set(0.0);
+	shootRight->Set(0.0);
 
 	//Arm
 	armLower->Set(0.0);
-	armUpper->Set(0.0);
+	//armUpper->Set(0.0);
 	intake->Set(0.0);
 }
 
@@ -78,14 +73,11 @@ void Motor::AutonomousPeriodic() {
 	backRight->Set(rightSpeed);
 
 	//Shooter
-	shootFrontLeft->Set(sLeftSpeed);
-	shootFrontRight->Set(sRightSpeed);
-	shootBackLeft->Set(sLeftSpeed);
-	shootBackRight->Set(sRightSpeed);
+	shootLeft->Set(sLeftSpeed);
+	shootRight->Set(sRightSpeed);
 
 	//Arm
 	armLower->Set(aLowerSpeed);
-	armUpper->Set(aUpperSpeed);
 
 	//Intake
 	intake->Set(intakeSpeed);
@@ -99,14 +91,11 @@ void Motor::TeleopInit() {
 	backRight->Set(0);
 
 	//Shooter
-	shootFrontLeft->Set(0.0);
-	shootFrontRight->Set(0.0);
-	shootBackLeft->Set(0.0);
-	shootBackRight->Set(0.0);
+	shootLeft->Set(0.0);
+	shootRight->Set(0.0);
 
 	//Arm
 	armLower->Set(0.0);
-	armUpper->Set(0.0);
 	intake->Set(0.0);
 }
 
@@ -118,19 +107,17 @@ void Motor::TeleopPeriodic() { //Update all motors every loop
 	backRight->Set(rightSpeed);
 
 	//Shooter
-	shootFrontLeft->Set(sLeftSpeed);
-	shootFrontRight->Set(sRightSpeed);
-	shootBackLeft->Set(sLeftSpeed);
-	shootBackRight->Set(sRightSpeed);
+	shootLeft->Set(sLeftSpeed);
+	shootRight->Set(sRightSpeed);
 
 	//Arm
 	armLower->Set(aLowerSpeed);
-	armUpper->Set(aUpperSpeed);
 
 	//Intake
 	intake->Set(intakeSpeed);
 
 	//Date Feeds
+	SmartDashboard::PutNumber("Arm Speed", aLowerSpeed);
 	/*SmartDashboard::PutNumber("Left Speed", leftSpeed);
 	SmartDashboard::PutNumber("Right Speed", rightSpeed);
 	SmartDashboard::PutNumber("Left Motor", sRightSpeed);
@@ -147,9 +134,8 @@ void Motor::setShoot(float speedL, float speedR) { //Called from the shooter cla
 	sRightSpeed = speedR;
 }
 
-void Motor::setArm(float aLowerSPeed, float aUpperSpeed) { //Called from the arm class
-	this->aLowerSpeed = aLowerSpeed;
-	this->aUpperSpeed = aUpperSpeed;
+void Motor::setArm(float armSpeed) { //Called from the arm class
+	this->aLowerSpeed = armSpeed;
 }
 
 void Motor::setIntake(float intakeSpeed) {

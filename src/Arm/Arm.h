@@ -28,7 +28,9 @@ private:
 
 	Motor *motor;
 	IXbox *xbox;
+	DoubleSolenoid *armSol;
 
+	bool armPos;
 	float lowerSpeed, upperSpeed;
 };
 

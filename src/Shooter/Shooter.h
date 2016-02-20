@@ -28,25 +28,40 @@ public:
 private:
 	//Input from Xbox Controller
 	void readXbox();
+	void readXboxState();
 	void setPnumatics();
 	void updateMotor1(); // w/ encoders
 	void updateMotor2(); // w/o encoders
 	void shoot();
 	bool hasShot();
+	float acceleration(float newS, float oldS);
 
 	bool runShoot; //True if shooting motors should be running
 	bool runIntake;
 	bool runTrigger;
 	bool angle;
+	bool intakePos;
 	float leftSpeed, rightSpeed;
+	float intakeSpeed;
 	bool shot;
+	bool time;
+
+	enum shootState {
+		ready,
+		windup,
+		goShoot,
+		winddown
+	};
+	shootState sState;
 
 	IXbox *xbox;
 	Motor *motor;
 	Compressor *c;
-	DoubleSolenoid *s1;
+	Timer *t;
+	DoubleSolenoid *angleSol;
 	DoubleSolenoid *trigger;
-	Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
+	DoubleSolenoid *intakeSol;
+	//Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
 };
 
 #endif /* SRC_SHOOTER_SHOOTER_H_ */
