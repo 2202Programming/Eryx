@@ -24,7 +24,7 @@
 class Robot: public IterativeRobot {
 public:
 
-	noList* master;
+		noList* master;
 	IProfile* profile;
 	std::vector<stepBase*> *auton;
 	Motor *m;
