@@ -83,6 +83,25 @@ void RelayController::TeleopPeriodic()
 	}
 }
 
+void RelayController::RobotInit()
+{
+	setColor(red);
+}
+
+void RelayController::DisabledPeriodic()
+{
+	int x = SmartDashboard::GetNumber("LED", 0);
+	RelayColor test;
+
+	if(x == 0)test = RelayColor::blue;
+	else if(x == 1)test = RelayColor::red;
+
+	if (currnet != test)
+	{
+		setColor(test);
+	}
+}
+
 /*
  * 	void ToggleColor();	//Swithchs the current color if it is set to neither it does nothing
  void setColor(RelayColor, bool); 	//Sets the selected color to the value

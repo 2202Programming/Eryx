@@ -18,6 +18,8 @@ public:
 	RelayController();
 	virtual ~RelayController();
 
+	void RobotInit();
+	void DisabledPeriodic();
 	void TeleopInit();
 	void TeleopPeriodic();
 
@@ -36,9 +38,9 @@ protected:
 	Relay* Blue;
 	Relay* Red;
 
-	void ToggleColor();	//Swithchs the current color if it is set to neither it does nothing
+	void ToggleColor();	//Switches the current color if it is set to neither it does nothing
 	void setColor(RelayColor); 	//Sets the selected color to the value
-	void relayBlink(int); //Blinks the leds at a certain speed the int describle the number of cycles before it switchs
+	void relayBlink(int); //Blinks the LEDs at a certain speed; the int describes the number of cycles before it switches
 
 	void burnUp(); //Speed ups the frequency for 2s // Extra Credit
 	void stopBlink(); //Stops Blinking

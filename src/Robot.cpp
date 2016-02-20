@@ -21,11 +21,10 @@
 #include "Camera/DynamicCameraServer.h"
 #include "Components/RelayController.h"
 
-
 class Robot: public IterativeRobot {
 public:
 
-		noList* master;
+	noList* master;
 	IProfile* profile;
 	std::vector<stepBase*> *auton;
 	Motor *m;
@@ -54,7 +53,6 @@ public:
 
 		master->addNode(xbox, "Xbox");
 
-
 		if (robot.compare("PROTO") == 0) {
 
 			master->addNode(new DynamicCameraServer(xbox), "camera");
@@ -77,7 +75,7 @@ public:
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
 			master->addNode(drive, "Drive");
-			master->addNode(shooter ,"Shooter");
+			master->addNode(shooter, "Shooter");
 			master->addNode(arm, "ARM");
 			master->addNode(rc, "relay");
 
@@ -91,7 +89,7 @@ public:
 		if (autonID.compare("BASIC") == 0) {
 			clMaker->makeBasic();
 		} else if (autonID.compare("ADVANCED") == 0) {
-		//	clMaker->makeDefenceBreaker();
+			//	clMaker->makeDefenceBreaker();
 		}
 		auton = clMaker->getList();
 	}
@@ -176,6 +174,24 @@ private:
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->TestPeriodic();
+			test = test->parent;
+		}
+	}
+
+	void DisabledInit() {
+		SmartDashboard::PutString("State", "Disabled Init");
+		nLNode* test = master->head;
+		while (test != NULL) {
+			test->value->DisabledInit();
+			test = test->parent;
+		}
+	}
+
+	void DisabledPeriodic() {
+		SmartDashboard::PutString("State", "Disabled Periodic");
+		nLNode* test = master->head;
+		while (test != NULL) {
+			test->value->DisabledPeriodic();
 			test = test->parent;
 		}
 	}
