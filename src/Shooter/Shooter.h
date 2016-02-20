@@ -28,12 +28,12 @@ public:
 private:
 	//Input from Xbox Controller
 	void readXbox();
+	void readXboxState();
 	void setPnumatics();
 	void updateMotor1(); // w/ encoders
 	void updateMotor2(); // w/o encoders
 	void shoot();
 	bool hasShot();
-	void stateMachine();
 	float acceleration(float newS, float oldS);
 
 	bool runShoot; //True if shooting motors should be running
@@ -44,6 +44,7 @@ private:
 	float leftSpeed, rightSpeed;
 	float intakeSpeed;
 	bool shot;
+	bool time;
 
 	enum shootState {
 		ready,
@@ -56,6 +57,7 @@ private:
 	IXbox *xbox;
 	Motor *motor;
 	Compressor *c;
+	Timer *t;
 	DoubleSolenoid *angleSol;
 	DoubleSolenoid *trigger;
 	DoubleSolenoid *intakeSol;
