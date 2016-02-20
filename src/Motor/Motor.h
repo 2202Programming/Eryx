@@ -25,7 +25,7 @@ public:
 	//Methods for Components
 	void setDrive(float speedL, float speedR);
 	void setShoot(float speedL, float speedR);
-	void setArm(float aLowerSpeed, float aUpperSpeed);
+	void setArm(float armSpeed);
 	void setIntake(float intakeSpeed);
 
 	//TODO What
@@ -36,12 +36,12 @@ private:
 	Spark *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
 	//Talon *shootFrontLeft, *shootFrontRight, *shootBackLeft, *shootBackRight; //Shooter Motors
-	Talon *shootLeft, *shootRight;
+	Spark *shootLeft, *shootRight;
 
-	Talon *armLower; //, *armUpper; // Arm Motors
+	Spark *armLower; //, *armUpper; // Arm Motors
 	Encoder *encArmLower, *encArmUpper; //Arm Encoders
 
-	Talon *intake;
+	Spark *intake;
 
 	float leftSpeed, rightSpeed; //Drive variables
 	float sLeftSpeed, sRightSpeed; //Shooter variables

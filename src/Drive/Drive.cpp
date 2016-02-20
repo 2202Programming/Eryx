@@ -18,10 +18,6 @@ Drive::Drive(Motor *motor, IXbox *xbox, ISensorControl *nav) {
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
 	state = nav->running;
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 	requestedState = nav->running;
 	userControl = false;
 }
@@ -47,10 +43,6 @@ void Drive::TeleopInit() {
 	userControl = true; //Start with user control
 	state = nav->running;
 	requestedState = nav->running;
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 }
 
 void Drive::TeleopPeriodic() {

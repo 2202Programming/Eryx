@@ -17,6 +17,7 @@
 #include "Profile/DProfile.h"
 #include "Autonomous/CommandListMaker.h"
 #include "noList.cpp"
+#include "Shooter/Shooter.h"
 
 
 class Robot: public IterativeRobot {
@@ -33,6 +34,8 @@ public:
 	Arm *arm;
 	CommandListMaker *clMaker;
 	bool DEBUG = false;
+
+	Shooter *shooter;
 
 	std::string robot;
 
@@ -64,11 +67,13 @@ public:
 			sensorControl = new NavxSensorControl(xbox, profile, vision);
 			drive = new Drive(m, xbox, sensorControl);
 			arm = new Arm(m, xbox);
+			shooter = new Shooter(m, xbox, profile);
 
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
 			master->addNode(drive, "Drive");
-			//master->addNode(arm, "ARM");
+			master->addNode(shooter ,"Shooter");
+			master->addNode(arm, "ARM");
 
 			//MUST BE CALLED LAST
 			master->addNode(m, "Motor");
