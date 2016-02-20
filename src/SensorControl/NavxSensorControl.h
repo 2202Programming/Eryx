@@ -26,12 +26,25 @@ public:
 	PIDController *turnController;      // PID Controller
 	IVision *vision;
 
+	bool DEBUG = false;
+
 	enum TargetingState{
 		waitForButtonPress,
 		waitForStopped,
 		waitForPicResult,
 		driveToAngle,
 	};
+
+	enum AutoStratagy{
+		null,
+		timer,
+		distance,
+		encoder,
+		hardTimer,
+	};
+
+
+	AutoStratagy strat = hardTimer;
 
 	MotorCommand *UpdateMotorSpeeds(float leftMotorSpeed, float rightMotorSpeed);
 	DriveSystemState DriveSystemControlUpdate(DriveSystemState currentState, DriveSystemState requestedState);
@@ -58,6 +71,11 @@ protected:
 	float angleTime;
 	int timesCalled = 0;
 	Timer *t;
+
+	double motorConstant = 1.5;
+	double DriveStraitTime;
+
+	bool GetDriveStraightContinue(float value);
 
 	void PIDWrite(float output);
 	void TargetingStateMachine();
