@@ -45,6 +45,10 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	rightSpeed = 0.0;
 	intakeSpeed = 0.0;
 
+	t = NULL;
+	time = false;
+
+	sState = ready;
 }
 
 Shooter::~Shooter() {
@@ -71,9 +75,9 @@ void Shooter::AutonomousPeriodic() {
 	motor->setShoot(leftSpeed, rightSpeed);
 
 	/*if (encFrontLeft->GetRate() > RPM) {
-		runTrigger = true;
-		shot = true;
-	}*/
+	 runTrigger = true;
+	 shot = true;
+	 }*/
 }
 
 void Shooter::shoot() {
@@ -104,6 +108,11 @@ void Shooter::TeleopInit() {
 	runTrigger = false;
 	intakeSol->Set(SOL_DEACTIVATED);
 	intakePos = false;
+
+	t = NULL;
+	time = false;
+
+	sState = ready;
 }
 
 void Shooter::TeleopPeriodic() {
@@ -111,7 +120,7 @@ void Shooter::TeleopPeriodic() {
 	updateMotor2();
 	setPnumatics();
 
-	motor->setShoot(leftSpeed, rightSpeed);
+	motor->setShoot(-leftSpeed, rightSpeed);
 	motor->setIntake(intakeSpeed);
 
 	SmartDashboard::PutNumber("Shoot Left", leftSpeed);
@@ -121,16 +130,11 @@ void Shooter::TeleopPeriodic() {
 	SmartDashboard::PutBoolean("Angle", angle);
 	SmartDashboard::PutBoolean("Trigger", trigger);
 	SmartDashboard::PutBoolean("Intake", intakePos);
-
-	/*SmartDashboard::PutNumber("Left Shoot Speed", encFrontLeft->GetRate());
-	 SmartDashboard::PutNumber("Right Shoot Speed", encFrontRight->GetRate());
-	 SmartDashboard::PutNumber("Left Shoot Speed", encBackLeft->GetRate());
-	 SmartDashboard::PutNumber("Right Shoot Speed", encBackRight->GetRate()); */
 }
 
 void Shooter::readXbox() {
 	//Toggle - not hold
-	if (xbox->getR3Pressed()) { //Turn shooter on/off
+	if (xbox->getRightBumperPressed()) { //Turn shooter on/off
 		runShoot = !runShoot;
 	}
 
@@ -138,16 +142,81 @@ void Shooter::readXbox() {
 		runTrigger = !runTrigger;
 	}
 
-	if (xbox->getRightBumperPressed()) { //Up
+	if (xbox->getR3Pressed()) { //Up
 		angle = !angle;
 	}
 
-	if (xbox->getLeftBumperPressed()) {	//Reverse Intake
+	if (xbox->getLeftBumperPressed()) {
 		intakePos = !intakePos;
+		runIntake = !runIntake;
+	}
+}
+
+void Shooter::readXboxState() {
+	if (xbox->getR3Pressed()) { //Up
+		angle = !angle;
 	}
 
-	if (xbox->getBackPressed()) {	//Activate Piston
+	if (xbox->getLeftBumperPressed()) {
+		intakePos = !intakePos;
 		runIntake = !runIntake;
+	}
+
+	switch (sState) {
+	case ready:
+		if (xbox->getRightTriggerPressed()) {
+			sState = windup;
+		}
+		break;
+	case windup:
+		runShoot = true;
+		if (xbox->getRightTriggerPressed()) {
+			sState = goShoot;
+		}
+		if (xbox->getRightBumperPressed()) {
+			sState = winddown;
+		}
+		break;
+	case goShoot:
+		runTrigger = true;
+
+		if (t == NULL) {
+			t = new Timer();
+			t->Start();
+		} else {
+			if (t->Get() > 1) {
+				time = true;
+			}
+		}
+
+		if (time) {
+			sState = winddown;
+			time = false;
+			delete t;
+			t = NULL;
+		}
+
+		break;
+	case winddown:
+		runShoot = false;
+		runTrigger = false;
+
+		if (t == NULL) {
+			t = new Timer();
+			t->Start();
+		} else {
+			if (t->Get() > 1) {
+				time = true;
+			}
+		}
+
+		if (time) {
+			sState = ready;
+			time = false;
+			delete t;
+			t = NULL;
+		}
+		break;
 	}
 }
 
@@ -170,6 +239,36 @@ void Shooter::setPnumatics() {
 	} else {
 		intakeSol->Set(SOL_DEACTIVATED);	//In
 	}
+}
+
+void Shooter::updateMotor2() {
+	//float appliedSpeed = SmartDashboard::GetNumber("ShooterSpeed", 1.0);
+	if (runShoot) {
+		leftSpeed = acceleration(1.0, leftSpeed);
+		rightSpeed = acceleration(1.0, rightSpeed);
+	} else {
+		leftSpeed = 0.0;
+		rightSpeed = 0.0;
+	}
+
+	if (runIntake) {
+		intakeSpeed = -0.9;
+	} else {
+		intakeSpeed = 0.0;
+	}
+}
+
+float Shooter::acceleration(float newS, float oldS) {
+	float accel = 0.005;
+
+	if (fabs(newS - oldS) > accel) {
+		if (oldS > newS)
+			return oldS - accel;
+		else
+			return oldS + accel;
+	}
+
+	return newS;
 }
 
 /*void Shooter::updateMotor1() {
@@ -210,25 +309,7 @@ void Shooter::setPnumatics() {
  rightSpeed -= 0.005;
  }
  } else {
- leftSpeed = 0.0;\
-
+ leftSpeed = 0.0;
  rightSpeed = 0.0;
  }
  } */
-
-void Shooter::updateMotor2() {
-	float appliedSpeed = SmartDashboard::GetNumber("ShooterSpeed", 1.0);
-	if (runShoot) {
-		leftSpeed = appliedSpeed;
-		rightSpeed = appliedSpeed;
-	} else {
-		leftSpeed = 0.0;
-		rightSpeed = 0.0;
-	}
-
-	if (runIntake) {
-		intakeSpeed = -0.9;
-	} else {
-		intakeSpeed = 0.0;
-	}
-}

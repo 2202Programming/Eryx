@@ -25,8 +25,9 @@ Arm::~Arm() {
 
 void Arm::TeleopInit() {
 	//Init Motors
-	motor->setArm(0.0);
 	armSol->Set(DoubleSolenoid::kReverse);
+	armPos = false;
+	motor->setArm(0.0);
 }
 
 void Arm::TeleopPeriodic() {
