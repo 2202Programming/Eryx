@@ -25,7 +25,7 @@ public:
 	//Methods for Components
 	void setDrive(float speedL, float speedR);
 	void setShoot(float speedL, float speedR);
-	void setArm(float aLowerSpeed, float aUpperSpeed);
+	void setArm(float armSpeed);
 	void setIntake(float intakeSpeed);
 
 	//TODO What

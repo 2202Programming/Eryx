@@ -146,10 +146,8 @@ void Shooter::readXbox() {
 		intakePos = !intakePos;
 	}
 
-	if (xbox->getBackHeld()) {	//Activate Piston
-		runIntake = true;
-	} else {
-		runIntake = false;
+	if (xbox->getBackPressed()) {	//Activate Piston
+		runIntake = !runIntake;
 	}
 }
 
@@ -229,7 +227,7 @@ void Shooter::updateMotor2() {
 	}
 
 	if (runIntake) {
-		intakeSpeed = -0.88;
+		intakeSpeed = -0.9;
 	} else {
 		intakeSpeed = 0.0;
 	}

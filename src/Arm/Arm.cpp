@@ -25,13 +25,13 @@ Arm::~Arm() {
 
 void Arm::TeleopInit() {
 	//Init Motors
-	motor->setArm(0.0, 0.0);
+	motor->setArm(0.0);
 	armSol->Set(DoubleSolenoid::kReverse);
 }
 
 void Arm::TeleopPeriodic() {
 	readXbox();
-	motor->setArm(lowerSpeed, 0.0); //Set motor speeds
+	motor->setArm(lowerSpeed); //Set motor speeds
 
 	if (armPos) {
 		armSol->Set(DoubleSolenoid::kForward);

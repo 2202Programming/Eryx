@@ -134,9 +134,8 @@ void Motor::setShoot(float speedL, float speedR) { //Called from the shooter cla
 	sRightSpeed = speedR;
 }
 
-void Motor::setArm(float aLowerSPeed, float aUpperSpeed) { //Called from the arm class
-	this->aLowerSpeed = aLowerSpeed;
-	this->aUpperSpeed = aUpperSpeed;
+void Motor::setArm(float armSpeed) { //Called from the arm class
+	this->aLowerSpeed = armSpeed;
 }
 
 void Motor::setIntake(float intakeSpeed) {
