@@ -58,7 +58,7 @@ void Vision::visionUpdate() {
 
 void Vision::startAiming() {
 	int shootingState = getState();
-	if (shootingState == WAITING) {
+	if (shootingState == WAITING||shootingState==JAVA_ERROR) {
 		setState(START);
 	}
 }
