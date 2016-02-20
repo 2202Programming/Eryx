@@ -162,7 +162,7 @@ void Shooter::setPnumatics() {
 	if (runTrigger) {
 		trigger->Set(SOL_ACTIVATE);	//In
 	} else {
-		trigger->Set(SOL_DEACTIVATED);	//Out
+		trigger->Set(SOL_DEACTIVATED);	//Out maybe should be kOff
 	}
 
 	if (intakePos) {

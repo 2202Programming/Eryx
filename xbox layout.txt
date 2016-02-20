@@ -13,8 +13,10 @@ Left Trigger - Take Picture (Arm)
 Right Trigger - Activate Trigger (shoot)
 
 Push Right Stick - Toggle shooter (on/off)
+Push Left Stick - Toggle Arm Extention
 
 Back - Intake
+start - exit vision
 
 Left Bumper - Toggle Intake Piston
 Right Bumper - Toggle Angle
