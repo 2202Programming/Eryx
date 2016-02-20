@@ -40,8 +40,13 @@ MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
 			break;
 		}
 	}
-	SmartDashboard::PutNumber("Update Motor Left", updateMotorSpeedResponse.leftMotorSpeed);
-	SmartDashboard::PutNumber("Update Motor right", updateMotorSpeedResponse.rightMotorSpeed);
+
+	if(DEBUG){
+	SmartDashboard::PutNumber("Update Motor Left",
+			updateMotorSpeedResponse.leftMotorSpeed);
+	SmartDashboard::PutNumber("Update Motor right",
+			updateMotorSpeedResponse.rightMotorSpeed);
+	}
 
 	return &updateMotorSpeedResponse;
 }
@@ -73,7 +78,7 @@ void NavxSensorControl::TargetingStateMachine() {
 		break;
 	case TargetingState::waitForPicResult:
 		if (vision->getDoneAiming()) {
-		//if (true) {
+			//if (true) {
 			visionTargetAngle = vision->getDegreesToTurn();
 			//visionTargetAngle = 42;
 			ahrs->ZeroYaw();
@@ -155,7 +160,6 @@ void NavxSensorControl::TeleopPeriodic() {
 	inAutonomous = false;
 	TargetingStateMachine();
 
-
 	SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
 	//SmartDashboard::PutNumber("Roll", ahrs->GetRoll());
 	//SmartDashboard::PutNumber("Pitch", ahrs->GetPitch());
@@ -172,8 +176,12 @@ void NavxSensorControl::AutonomousInit() {
  */
 
 void NavxSensorControl::InitDriveStraight(driveStep *step) {
-	SmartDashboard::PutNumber("Displacement", step->distance);
-	ahrs->ResetDisplacement();
+	if(strat == AutoStratagy::timer){
+		t->Stop();
+		t->Reset();
+		t->Start();
+		DriveStraitTime = (step->distance / (step->speed * motorConstant));
+	}
 }
 
 /*
@@ -181,15 +189,35 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
  * return true if target reached
  */
 
+bool NavxSensorControl::GetDriveStraightContinue(float value){
+	switch(strat){
+	case null:
+		return false;
+	case timer:
+		return t->Get() < DriveStraitTime; //TODO
+	case distance:
+		return ahrs->GetDisplacementX() < value;
+	case encoder:
+		return false; //TODO Once we Attach the Encoders
+	default:
+		return false;
+	}
+
+}
+
 bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
-	SmartDashboard::PutNumber("Displacement Y", ahrs->GetDisplacementY());
-	SmartDashboard::PutNumber("Displacement X", ahrs->GetDisplacementX());
-	SmartDashboard::PutNumber("Displacement Z", ahrs->GetDisplacementZ());
-	SmartDashboard::PutString("AUTO STATE", "Exec Drive Straight");
-	SmartDashboard::PutNumber("Time Called Auto", timesCalled);
-	SmartDashboard::PutNumber("Step Speed", step->speed);
-	timesCalled += 1;
-	if (ahrs->GetDisplacementY() < step->distance) {
+
+	if (DEBUG) {
+		SmartDashboard::PutNumber("Displacement Y", ahrs->GetDisplacementY());
+		SmartDashboard::PutNumber("Displacement X", ahrs->GetDisplacementX());
+		SmartDashboard::PutNumber("Displacement Z", ahrs->GetDisplacementZ());
+		SmartDashboard::PutString("AUTO STATE", "Exec Drive Straight");
+		SmartDashboard::PutNumber("Time Called Auto", timesCalled);
+		SmartDashboard::PutNumber("Step Speed", step->speed);
+		timesCalled += 1;
+	}
+
+	if (GetDriveStraightContinue(step->distance)) {
 		// Check these motor speed values
 		updateMotorSpeedResponse.leftMotorSpeed = step->speed;
 		updateMotorSpeedResponse.rightMotorSpeed = step->speed;
@@ -238,6 +266,7 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 
 	case step->stop:
 		// Stop all autonomous execution
+		t->Stop();
 		return false;
 
 	default:

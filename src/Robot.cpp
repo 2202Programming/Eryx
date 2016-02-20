@@ -18,6 +18,7 @@
 #include "Autonomous/CommandListMaker.h"
 #include "noList.cpp"
 #include "Shooter/Shooter.h"
+#include "Camera/DynamicCameraServer.h"
 
 
 class Robot: public IterativeRobot {
@@ -33,6 +34,8 @@ public:
 	Drive *drive;
 	Arm *arm;
 	CommandListMaker *clMaker;
+	bool DEBUG = false;
+
 	Shooter *shooter;
 
 	std::string robot;
@@ -44,14 +47,14 @@ public:
 		clMaker = new CommandListMaker(profile);
 
 		robot = profile->getValue("ROBOT");
-		robot = "ORYX";
+		robot = "PROTO";
 
 		master->addNode(xbox, "Xbox");
 
 
 		if (robot.compare("PROTO") == 0) {
 
-			master->addNode(new SimpleDrive(profile, xbox), "drive");
+			master->addNode(new DynamicCameraServer(xbox), "camera");
 
 		} else if (robot.compare("TIM") == 0) {
 
@@ -79,6 +82,7 @@ public:
 
 		std::string autonID = profile->getValue("AUTOLIST");
 		autonID = "BASIC";
+
 		if (autonID.compare("BASIC") == 0) {
 			clMaker->makeBasic();
 		} else if (autonID.compare("ADVANCED") == 0) {
@@ -92,9 +96,8 @@ private:
 
 	void RobotInit() {
 		lw = LiveWindow::GetInstance();
-		//SmartDashboard::PutString("Profile",robot);
-		SmartDashboard::PutString("MOTORFL", profile->getValue("MOTORFL"));
 		SmartDashboard::PutString("State", "Robot Init");
+
 		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 		nLNode* test = master->head;
 		while (test != NULL) {
