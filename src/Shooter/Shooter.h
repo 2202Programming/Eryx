@@ -42,6 +42,8 @@ private:
 	bool angle;
 	bool intakePos;
 	float leftSpeed, rightSpeed;
+	int shootPercentState; // 0 is 1.0, 1 is 0.5, 2 is 0.2
+	float shootPercent;
 	float intakeSpeed;
 	bool shot;
 	bool time;
