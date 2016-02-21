@@ -44,6 +44,8 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
 	intakeSpeed = 0.0;
+	shootPercent = 0.5;
+	shootPercentState = 0;
 
 	t = NULL;
 	time = false;
@@ -101,6 +103,7 @@ void Shooter::TeleopInit() {
 	runShoot = false;
 
 	c->Start();
+	c->SetClosedLoopControl(true);
 
 	angleSol->Set(SOL_DEACTIVATED);
 	angle = false;
@@ -116,20 +119,53 @@ void Shooter::TeleopInit() {
 }
 
 void Shooter::TeleopPeriodic() {
-	readXbox();
+	readXboxState();
 	updateMotor2();
 	setPnumatics();
+
+	switch (shootPercentState) {
+	case 0:
+		shootPercent = 0.5;
+		break;
+	case 1:
+		shootPercent = 0.48;
+		break;
+	case 2:
+		shootPercent = 0.3;
+		break;
+	}
+
 
 	motor->setShoot(leftSpeed, rightSpeed);
 	motor->setIntake(intakeSpeed);
 
+	//Motors
 	SmartDashboard::PutNumber("Shoot Left", leftSpeed);
 	SmartDashboard::PutNumber("Shoot Right", rightSpeed);
 	SmartDashboard::PutNumber("Intake Speed", intakeSpeed);
+	SmartDashboard::PutNumber("Shoot Percent", shootPercent);
+	SmartDashboard::PutNumber("Shoot Percent State", shootPercentState);
 
+	// Pistons
 	SmartDashboard::PutBoolean("Angle", angle);
 	SmartDashboard::PutBoolean("Trigger", trigger);
 	SmartDashboard::PutBoolean("Intake", intakePos);
+
+	switch (sState) {
+	case ready:
+		SmartDashboard::PutString("Shoot State", "Ready");
+		break;
+	case windup:
+		SmartDashboard::PutString("Shoot State", "Wind Up");
+		break;
+	case goShoot:
+		SmartDashboard::PutString("Shoot State", "Go Shoot");
+		break;
+	case winddown:
+		SmartDashboard::PutString("Shoot State", "Wind Down");
+		break;
+	}
+
 }
 
 void Shooter::readXbox() {
@@ -150,6 +186,7 @@ void Shooter::readXbox() {
 		intakePos = !intakePos;
 		runIntake = !runIntake;
 	}
+
 }
 
 void Shooter::readXboxState() {
@@ -170,11 +207,27 @@ void Shooter::readXboxState() {
 		break;
 	case windup:
 		runShoot = true;
+
+		if (t == NULL) {
+			t = new Timer();
+			t->Start();
+		} else {
+			if (t->Get() > 1) {
+				time = true;
+			}
+		}
+
 		if (xbox->getRightTriggerPressed()) {
 			sState = goShoot;
+			time = false;
+			delete t;
+			t = NULL;
 		}
 		if (xbox->getRightBumperPressed()) {
 			sState = winddown;
+			time = false;
+			delete t;
+			t = NULL;
 		}
 		break;
 	case goShoot:
@@ -218,6 +271,15 @@ void Shooter::readXboxState() {
 		}
 		break;
 	}
+
+	if (xbox->getYPressed()) {
+		if (shootPercentState < 2) {
+			shootPercentState++;
+		} else {
+			shootPercentState = 0;
+		}
+	}
+
 }
 
 void Shooter::setPnumatics() {
@@ -244,8 +306,8 @@ void Shooter::setPnumatics() {
 void Shooter::updateMotor2() {
 	//float appliedSpeed = SmartDashboard::GetNumber("ShooterSpeed", 1.0);
 	if (runShoot) {
-		leftSpeed = acceleration(1.0, leftSpeed);
-		rightSpeed = acceleration(1.0, rightSpeed);
+		leftSpeed = acceleration(shootPercent, leftSpeed);
+		rightSpeed = acceleration(shootPercent, rightSpeed);
 	} else {
 		leftSpeed = 0.0;
 		rightSpeed = 0.0;

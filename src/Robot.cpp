@@ -100,7 +100,7 @@ private:
 	void RobotInit() {
 		lw = LiveWindow::GetInstance();
 		SmartDashboard::PutString("State", "Robot Init");
-		//CameraServer::GetInstance()->StartAutomaticCapture("cam1");
+
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->RobotInit();
