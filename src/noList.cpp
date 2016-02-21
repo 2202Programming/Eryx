@@ -6,8 +6,6 @@
  */
 #include <string>
 #include "IControl.h"
-#define debug 0
-
 
 
 struct nLNode {
@@ -39,9 +37,7 @@ struct noList {
 				test = test->parent;
 			}
 		}
-		if (debug) {
-			printf("noList: No Element Found in the Array");
-		}
+
 		return NULL;
 	}
 

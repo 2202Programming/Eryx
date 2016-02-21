@@ -135,7 +135,8 @@ void Shooter::TeleopPeriodic() {
 		break;
 	}
 
-	motor->setShoot(-leftSpeed, -rightSpeed);
+
+	motor->setShoot(leftSpeed, rightSpeed);
 	motor->setIntake(intakeSpeed);
 
 	//Motors
