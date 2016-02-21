@@ -1,25 +1,4 @@
-#include <string>
-#include "Profile/IProfile.h"
-#include "Profile/SProfile.h"
-#include "Xbox/IXbox.h"
-#include "Xbox/MasterXboxController.h"
-#include "WPILib.h"
-#include "Drive/Drive.h"
-#include "Components/TimShooter.h"
-#include "Shooter/Shooter.h"
-#include "Vision/IVision.h"
-#include "SensorControl/ISensorControl.h"
-#include "Vision/Vision.h"
-#include "SensorControl/NavxSensorControl.h"
-#include "Motor/Motor.h"
-#include "Drive/SimpleDrive.h"
-#include "Arm/Arm.h"
-#include "Profile/DProfile.h"
-#include "Autonomous/CommandListMaker.h"
-#include "noList.cpp"
-#include "Shooter/Shooter.h"
-#include "Camera/DynamicCameraServer.h"
-#include "Components/RelayController.h"
+#include "targetGiver.h"
 
 class Robot: public IterativeRobot {
 public:
