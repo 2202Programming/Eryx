@@ -95,7 +95,7 @@ private:
 		//SmartDashboard::PutString("Profile",robot);
 		SmartDashboard::PutString("MOTORFL", profile->getValue("MOTORFL"));
 		SmartDashboard::PutString("State", "Robot Init");
-		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
+		//CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->RobotInit();

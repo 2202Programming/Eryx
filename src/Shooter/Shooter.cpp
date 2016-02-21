@@ -103,6 +103,7 @@ void Shooter::TeleopInit() {
 	runShoot = false;
 
 	c->Start();
+	c->SetClosedLoopControl(true);
 
 	angleSol->Set(SOL_DEACTIVATED);
 	angle = false;
@@ -127,7 +128,7 @@ void Shooter::TeleopPeriodic() {
 		shootPercent = 0.5;
 		break;
 	case 1:
-		shootPercent = 0.4;
+		shootPercent = 0.48;
 		break;
 	case 2:
 		shootPercent = 0.3;
