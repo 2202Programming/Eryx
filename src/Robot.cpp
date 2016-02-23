@@ -34,7 +34,7 @@ public:
 
 		if (robot.compare("PROTO") == 0) {
 
-			master->addNode(new DynamicCameraServer(xbox), "camera");
+
 
 		} else if (robot.compare("TIM") == 0) {
 
