@@ -60,6 +60,7 @@ public:
 
 			//MUST BE CALLED LAST
 			master->addNode(m, "Motor");
+
 		}
 
 		std::string autonID = profile->getValue("AUTOLIST");
@@ -79,7 +80,7 @@ private:
 	void RobotInit() {
 		lw = LiveWindow::GetInstance();
 		SmartDashboard::PutString("State", "Robot Init");
-
+		//CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->RobotInit();

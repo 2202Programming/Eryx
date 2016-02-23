@@ -34,7 +34,7 @@ void CommandListMaker::makeBasic() {
 	step1->command = stepBase::driveStraight;
 	step1->distance = 1;
 	step1->stepNum = 0;
-	step1->speed = 0.6;
+	step1->speed = 1.0;
 	storage->push_back(step1);
 
 	stepBase *fin =  new stepBase();

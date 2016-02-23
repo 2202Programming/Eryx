@@ -1,4 +1,5 @@
 /*
+
  * Shooter.cpp
  *
  *  Created on: Feb 5, 2016
@@ -128,15 +129,17 @@ void Shooter::TeleopPeriodic() {
 		shootPercent = 0.5;
 		break;
 	case 1:
-		shootPercent = 0.48;
+		shootPercent = 0.45;
 		break;
 	case 2:
+		shootPercent = 0.4;
+		break;
+	case 3:
 		shootPercent = 0.3;
 		break;
 	}
 
-
-	motor->setShoot(leftSpeed, rightSpeed);
+	motor->setShoot(-leftSpeed, -rightSpeed);
 	motor->setIntake(intakeSpeed);
 
 	//Motors
@@ -182,11 +185,6 @@ void Shooter::readXbox() {
 		angle = !angle;
 	}
 
-	if (xbox->getLeftBumperPressed()) {
-		intakePos = !intakePos;
-		runIntake = !runIntake;
-	}
-
 }
 
 void Shooter::readXboxState() {
@@ -195,8 +193,11 @@ void Shooter::readXboxState() {
 	}
 
 	if (xbox->getLeftBumperPressed()) {
-		intakePos = !intakePos;
 		runIntake = !runIntake;
+	}
+
+	if (xbox->getL3Pressed()) {
+		intakePos = !intakePos;
 	}
 
 	switch (sState) {
@@ -273,7 +274,7 @@ void Shooter::readXboxState() {
 	}
 
 	if (xbox->getYPressed()) {
-		if (shootPercentState < 2) {
+		if (shootPercentState < 3) {
 			shootPercentState++;
 		} else {
 			shootPercentState = 0;
@@ -314,7 +315,7 @@ void Shooter::updateMotor2() {
 	}
 
 	if (runIntake) {
-		intakeSpeed = -0.9;
+		intakeSpeed = -0.7;
 	} else {
 		intakeSpeed = 0.0;
 	}
