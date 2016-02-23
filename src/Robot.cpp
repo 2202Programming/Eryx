@@ -80,7 +80,16 @@ private:
 	void RobotInit() {
 		lw = LiveWindow::GetInstance();
 		SmartDashboard::PutString("State", "Robot Init");
-		//CameraServer::GetInstance()->StartAutomaticCapture("cam0");
+		CameraServer::GetInstance()->StartAutomaticCapture("cam1");
+
+		//added by David
+		USBCamera *camera=new USBCamera("cam1", true);
+		//NIVision.Image frame=NIVision.imagCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+		camera->OpenCamera();
+		camera->StartCapture();
+
+		//
+9
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->RobotInit();
@@ -94,7 +103,7 @@ private:
 		SmartDashboard::PutString("State", "Autonomous Init");
 		nLNode* test = master->head;
 		while (test != NULL) {
-			test->value->AutonomousInit();
+			test->value->AutonomousInit();3
 			test = test->parent;
 		}
 	}
@@ -133,6 +142,10 @@ private:
 
 	void TeleopPeriodic() {
 		SmartDashboard::PutString("State", "Teleop Periodic");
+
+		//Added by David
+		//
+
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->TeleopPeriodic();
