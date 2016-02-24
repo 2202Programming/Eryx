@@ -89,7 +89,7 @@ private:
 		camera->StartCapture();
 
 		//
-9
+
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->RobotInit();
@@ -103,7 +103,7 @@ private:
 		SmartDashboard::PutString("State", "Autonomous Init");
 		nLNode* test = master->head;
 		while (test != NULL) {
-			test->value->AutonomousInit();3
+			test->value->AutonomousInit();
 			test = test->parent;
 		}
 	}
