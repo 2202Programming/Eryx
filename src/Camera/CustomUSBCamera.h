@@ -11,10 +11,6 @@
 #include "IControl.h"
 #include "WPILib.h"
 
-namespace CamerIO{
-	std::string camera = "cam0";
-	const bool debug = true;
-}
 
 class CustomUSBCamera: public IControl {
 public:
@@ -38,7 +34,6 @@ private:
 	void remake();
 	std::shared_ptr<USBCamera> Pointy;
 	USBCamera *Cam;
-	CameraServer *CamServer = CameraServer::GetInstance();
 };
 
 #endif /* SRC_CAMERA_CUSTOMUSBCAMERA_H_ */

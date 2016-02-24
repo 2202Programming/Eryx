@@ -7,6 +7,12 @@
 
 #include <Camera/CustomUSBCamera.h>
 
+namespace CamerIO{
+	std::string camera = "cam0";
+	const bool debug = true;
+}
+
+
 CustomUSBCamera::CustomUSBCamera() {
 	// TODO Auto-generated constructor stub
 	remake();
@@ -15,17 +21,14 @@ CustomUSBCamera::CustomUSBCamera() {
 CustomUSBCamera::~CustomUSBCamera() {
 	// TODO Auto-generated destructor stub
 	delete Cam;
-	Cam = NULL;
+	Cam = 0;
 }
 
 void CustomUSBCamera::remake()
 {
-	delete Cam;
-	Cam = NULL;
-
-	Cam = new USBCamera(CamerIO::camera,true);
+	Cam = new USBCamera(CamerIO::camera,false);
 	Pointy = std::shared_ptr<USBCamera>(Cam);
-	CamServer->StartAutomaticCapture(Pointy);
+	CameraServer::GetInstance()->StartAutomaticCapture(Pointy);
 }
 
 void CustomUSBCamera::setCameraName(std::string nn){
