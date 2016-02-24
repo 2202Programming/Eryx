@@ -51,9 +51,9 @@ void Vision::TeleopPeriodic() {
 
 void Vision::visionUpdate() {
 	int shootingState = getState();
-	if (shootingState == NOT_SET||shootingState==JAVA_ERROR) {
+	/*if (shootingState == NOT_SET||shootingState==JAVA_ERROR) {
 		setState(WAITING);
-	}
+	}*/
 }
 
 void Vision::startAiming() {
@@ -69,6 +69,11 @@ float Vision::getDegreesToTurn() {
 
 bool Vision::getDoneAiming() {
 	int shootingState = getState();
+	if(shootingState == JAVA_ERROR|| shootingState == NOT_SET){
+		setState(WAITING);
+		table->PutNumber("degreesToTurn", 0);
+		return true;
+	}
 	if (shootingState == DONE) {
 		setState(WAITING);
 		return true;
