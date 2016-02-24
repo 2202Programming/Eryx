@@ -19,9 +19,9 @@ public:
 	virtual ~RelayController();
 
 	void RobotInit();
-	void DisabledPeriodic();
+	void DisabledInit();
 	void TeleopInit();
-	void TeleopPeriodic();
+	void AutonomousInit();
 
 protected:
 	enum  RelayColor{

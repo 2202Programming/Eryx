@@ -56,7 +56,18 @@ void RelayController::relayBlink(int speed) {
 }
 
 void RelayController::burnUp() {
-
+	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
+	switch(alligent){
+	case DriverStation::kBlue:
+		setColor(blue);
+		break;
+	case DriverStation::kRed:
+		setColor(red);
+		break;
+	case DriverStation::kInvalid:
+		setColor(red);
+		break;
+	}
 }
 
 void RelayController::stopBlink() {
@@ -65,41 +76,22 @@ void RelayController::stopBlink() {
 
 void RelayController::TeleopInit()
 {
-	SmartDashboard::PutNumber("LED", 0);
-	setColor(RelayColor::blue);
+	burnUp();
 }
 
-void RelayController::TeleopPeriodic()
+void RelayController::AutonomousInit()
 {
-	int x = SmartDashboard::GetNumber("LED", 0);
-	RelayColor test;
-
-	if(x == 0)test = RelayColor::blue;
-	else if(x == 1)test = RelayColor::red;
-
-	if (currnet != test)
-	{
-		setColor(test);
-	}
+	burnUp();
 }
 
 void RelayController::RobotInit()
 {
-	setColor(red);
+	burnUp();
 }
 
-void RelayController::DisabledPeriodic()
+void RelayController::DisabledInit()
 {
-	int x = SmartDashboard::GetNumber("LED", 0);
-	RelayColor test;
-
-	if(x == 0)test = RelayColor::blue;
-	else if(x == 1)test = RelayColor::red;
-
-	if (currnet != test)
-	{
-		setColor(test);
-	}
+	burnUp();
 }
 
 /*
