@@ -28,11 +28,13 @@ public:
 private:
 	//Input from Xbox Controller
 	void readXbox();
+	void readXboxState();
 	void setPnumatics();
 	void updateMotor1(); // w/ encoders
 	void updateMotor2(); // w/o encoders
 	void shoot();
 	bool hasShot();
+	float acceleration(float newS, float oldS);
 
 	bool runShoot; //True if shooting motors should be running
 	bool runIntake;
@@ -40,12 +42,24 @@ private:
 	bool angle;
 	bool intakePos;
 	float leftSpeed, rightSpeed;
+	int shootPercentState; // 0 is 1.0, 1 is 0.5, 2 is 0.2
+	float shootPercent;
 	float intakeSpeed;
 	bool shot;
+	bool time;
+
+	enum shootState {
+		ready,
+		windup,
+		goShoot,
+		winddown
+	};
+	shootState sState;
 
 	IXbox *xbox;
 	Motor *motor;
 	Compressor *c;
+	Timer *t;
 	DoubleSolenoid *angleSol;
 	DoubleSolenoid *trigger;
 	DoubleSolenoid *intakeSol;

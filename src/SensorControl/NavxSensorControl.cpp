@@ -168,7 +168,6 @@ void NavxSensorControl::TeleopPeriodic() {
 void NavxSensorControl::AutonomousInit() {
 	currentStep = -1;
 	inAutonomous = true;
-
 }
 
 /*
@@ -176,12 +175,13 @@ void NavxSensorControl::AutonomousInit() {
  */
 
 void NavxSensorControl::InitDriveStraight(driveStep *step) {
-	if(strat == AutoStratagy::timer){
+	t = new Timer();
+
 		t->Stop();
 		t->Reset();
 		t->Start();
 		DriveStraitTime = (step->distance / (step->speed * motorConstant));
-	}
+
 }
 
 /*
@@ -199,6 +199,9 @@ bool NavxSensorControl::GetDriveStraightContinue(float value){
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
 		return false; //TODO Once we Attach the Encoders
+	case hardTimer:
+		SmartDashboard::PutNumber("Timer", t->Get());
+		return t->Get() < 3;
 	default:
 		return false;
 	}
@@ -227,6 +230,8 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 		updateMotorSpeedResponse.leftMotorSpeed = 0;
 		updateMotorSpeedResponse.rightMotorSpeed = 0;
 	}
+	delete t;
+	t = NULL;
 	SmartDashboard::PutString("AUTO STATE", "Exec Drive Straight END");
 	return true;
 }
@@ -266,7 +271,10 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 
 	case step->stop:
 		// Stop all autonomous execution
-		t->Stop();
+		if(t != NULL) delete t;
+		t = NULL;
+		updateMotorSpeedResponse.leftMotorSpeed = 0;
+		updateMotorSpeedResponse.rightMotorSpeed = 0;
 		return false;
 
 	default:

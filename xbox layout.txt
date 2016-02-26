@@ -4,17 +4,19 @@ left Stick - Arcade Drive
 Right Stick - Tank Drive
 
 Arm Controls
-A - Upper Arm Back
+A - Toggle arm piston
 B - Lower Arm Forward
 X - Lower Arm Back
-Y - Upper Arm Forward
+Y - 
 
 Left Trigger - Take Picture (Arm)
-Right Trigger - Activate Trigger (shoot)
+Right Trigger - Activate Trigger (shoot) - state layout - runs trigger and shooter
 
-Push Right Stick - Toggle shooter (on/off)
+Push Left Stick - Toggle Arm Extention
+Push Right Stick - Toggle Angle
 
-Back - Intake
+start - exit vision
 
-Left Bumper - Toggle Intake Piston
-Right Bumper - Toggle Angle
+Left Bumper - Toggle Intake Piston and intake running
+Right Bumper - Toggle shooter (on/off) - state layout does nothing
+

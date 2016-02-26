@@ -1,5 +1,5 @@
 /*
- * CommandListMaker.cpp
+ * CommandListMaker->cpp
  *
  *  Created on: Feb 16, 2016
  *      Author: lazar
@@ -15,6 +15,7 @@
 #define PORTI 8
 
 #include <Autonomous/CommandListMaker.h>
+#include "WPILib.h"
 
 CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
@@ -33,7 +34,7 @@ void CommandListMaker::makeBasic() {
 	step1->command = stepBase::driveStraight;
 	step1->distance = 1;
 	step1->stepNum = 0;
-	step1->speed = .5;
+	step1->speed = 0.6;
 	storage->push_back(step1);
 
 	stepBase *fin =  new stepBase();
@@ -42,115 +43,118 @@ void CommandListMaker::makeBasic() {
 	storage->push_back(fin);
 }
 
-#if 0
+
 void CommandListMaker::makeDefenceBreaker() {
-	int def = profile->getInt("AUTO_DEF");
-	int pos = profile->getInt("AUTO_POS");
+	int def = SmartDashboard::GetNumber("AUTO DEFENCE", 0);
+	int pos = SmartDashboard::GetNumber("AUTO POSITION", 0);
 	bool basic = true;
 
-	driveStep drive = driveStep();
+	driveStep* drive = new driveStep();
 	switch (def) {
 	case DEBRIS:
-		drive.stepNum = 0;
-		drive.command = stepBase::driveStraight;
-		drive.distance = 2.0;
-		drive.speed = .75;
+		drive->stepNum = 0;
+		drive->command = stepBase::driveStraight;
+		drive->distance = 2.0;
+		drive->speed = .75;
 		storage->push_back(drive);
 		break; //TODO
 	case RAMPARTS:
-		drive.stepNum = 0;
-		drive.command = stepBase::driveStraight;
-		drive.distance = 2.0;
-		drive.speed = .75;
+		drive->stepNum = 0;
+		drive->command = stepBase::driveStraight;
+		drive->distance = 2.0;
+		drive->speed = .75;
 		storage->push_back(drive);
 		break; //TODO
 	case LOWBAR:
-		drive.stepNum = 0;
-		drive.command = stepBase::driveStraight;
-		drive.distance = 2.0;
-		drive.speed = .75;
+		drive->stepNum = 0;
+		drive->command = stepBase::driveStraight;
+		drive->distance = 2.0;
+		drive->speed = .75;
 		storage->push_back(drive);
 		break; //TODO
 	case MOAT:
-		drive.stepNum = 0;
-		drive.command = stepBase::driveStraight;
-		drive.distance = 2.0;
-		drive.speed = .75;
+		drive->stepNum = 0;
+		drive->command = stepBase::driveStraight;
+		drive->distance = 2.0;
+		drive->speed = .75;
 		storage->push_back(drive);
 		break; //TODO
 	case ROCKWALL:
-		drive.stepNum = 0;
-		drive.command = stepBase::driveStraight;
-		drive.distance = 2.0;
-		drive.speed = .75;
+		drive->stepNum = 0;
+		drive->command = stepBase::driveStraight;
+		drive->distance = 2.0;
+		drive->speed = .75;
 		storage->push_back(drive);
 		break; //TODO
 	case PORTI:
-		drive.stepNum = 0;
-		drive.command = stepBase::driveStraight;
-		drive.distance = 2.0;
-		drive.speed = .75;
+		drive->stepNum = 0;
+		drive->command = stepBase::driveStraight;
+		drive->distance = 2.0;
+		drive->speed = .75;
 		storage->push_back(drive);
 		break; //TODO
 	}
 
-	turnStep turn = turnStep();
+	turnStep *turn = new turnStep();
 
 	switch (pos) {
 	case 1:
-		turn.stepNum = 1;
-		turn.command = stepBase::turn;
-		turn.angle = 45.0;
-		turn.speed = .5;
+		turn->stepNum = 1;
+		turn->command = stepBase::turn;
+		turn->angle = 45.0;
+		turn->speed = .5;
 		storage->push_back(turn);
 
 		break; //TODO
 	case 2:
-		turn.stepNum = 1;
-		turn.command = stepBase::turn;
-		turn.angle = 45.0;
-		turn.speed = .5;
+		turn->stepNum = 1;
+		turn->command = stepBase::turn;
+		turn->angle = 45.0;
+		turn->speed = .5;
 		storage->push_back(turn);
+
 		break; //TODO
 	case 3:
-		turn.stepNum = 1;
-		turn.command = stepBase::turn;
-		turn.angle = 45.0;
-		turn.speed = .5;
+		turn->stepNum = 1;
+		turn->command = stepBase::turn;
+		turn->angle = 45.0;
+		turn->speed = .5;
 		storage->push_back(turn);
+
 		break; //TODO
 	case 4:
-		turn.stepNum = 1;
-		turn.command = stepBase::turn;
-		turn.angle = 45.0;
-		turn.speed = .5;
+		turn->stepNum = 1;
+		turn->command = stepBase::turn;
+		turn->angle = 45.0;
+		turn->speed = .5;
 		storage->push_back(turn);
+
 		break; //TODO
 	case 5:
-		turn.stepNum = 1;
-		turn.command = stepBase::turn;
-		turn.angle = 45.0;
-		turn.speed = .5;
+		turn->stepNum = 1;
+		turn->command = stepBase::turn;
+		turn->angle = 45.0;
+		turn->speed = .5;
 		storage->push_back(turn);
+
 		break; //TODO
 	}
 
-	stepBase prepareShot = stepBase();
-	prepareShot.stepNum = 2;
-	prepareShot.command = stepBase::target;
+	stepBase* prepareShot = new stepBase();
+	prepareShot->stepNum = 2;
+	prepareShot->command = stepBase::target;
 	storage->push_back(prepareShot);
 
-	stepBase shoot = stepBase();
-	shoot.stepNum = 3;
-	shoot.command = stepBase::shoot;
+	stepBase* shoot = new stepBase();
+	shoot->stepNum = 3;
+	shoot->command = stepBase::shoot;
 	storage->push_back(shoot);
 
-	stepBase stop = stepBase();
-	stop.stepNum = 4;
-	stop.command = stepBase::stop;
+	stepBase* stop = new stepBase();
+	stop->stepNum = 4;
+	stop->command = stepBase::stop;
 	storage->push_back(stop);
 }
-#endif
 
 vector<stepBase*>* CommandListMaker::getList() {
 	return storage;

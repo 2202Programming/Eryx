@@ -1,29 +1,8 @@
-#include <string>
-#include "Profile/IProfile.h"
-#include "Profile/SProfile.h"
-#include "Xbox/IXbox.h"
-#include "Xbox/MasterXboxController.h"
-#include "WPILib.h"
-#include "Drive/Drive.h"
-#include "Components/TimShooter.h"
-#include "Shooter/Shooter.h"
-#include "Vision/IVision.h"
-#include "SensorControl/ISensorControl.h"
-#include "Vision/Vision.h"
-#include "SensorControl/NavxSensorControl.h"
-#include "Motor/Motor.h"
-#include "Drive/SimpleDrive.h"
-#include "Arm/Arm.h"
-#include "Profile/DProfile.h"
-#include "Autonomous/CommandListMaker.h"
-#include "noList.cpp"
-#include "Shooter/Shooter.h"
-#include "Camera/DynamicCameraServer.h"
-
+#include "targetGiver.h"
 
 class Robot: public IterativeRobot {
 public:
-
+	unsigned int x = 0;
 	noList* master;
 	IProfile* profile;
 	std::vector<stepBase*> *auton;
@@ -34,6 +13,8 @@ public:
 	Drive *drive;
 	Arm *arm;
 	CommandListMaker *clMaker;
+	RelayController* rc;
+
 	bool DEBUG = false;
 
 	Shooter *shooter;
@@ -47,14 +28,13 @@ public:
 		clMaker = new CommandListMaker(profile);
 
 		robot = profile->getValue("ROBOT");
-		robot = "PROTO";
+		robot = "ORYX";
 
 		master->addNode(xbox, "Xbox");
 
-
 		if (robot.compare("PROTO") == 0) {
 
-			master->addNode(new DynamicCameraServer(xbox), "camera");
+
 
 		} else if (robot.compare("TIM") == 0) {
 
@@ -69,12 +49,14 @@ public:
 			drive = new Drive(m, xbox, sensorControl);
 			arm = new Arm(m, xbox);
 			shooter = new Shooter(m, xbox, profile);
+			rc = new RelayController();
 
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
 			master->addNode(drive, "Drive");
-			master->addNode(shooter ,"Shooter");
+			master->addNode(shooter, "Shooter");
 			master->addNode(arm, "ARM");
+			master->addNode(rc, "relay");
 
 			//MUST BE CALLED LAST
 			master->addNode(m, "Motor");
@@ -86,7 +68,7 @@ public:
 		if (autonID.compare("BASIC") == 0) {
 			clMaker->makeBasic();
 		} else if (autonID.compare("ADVANCED") == 0) {
-		//	clMaker->makeDefenceBreaker();
+			//	clMaker->makeDefenceBreaker();
 		}
 		auton = clMaker->getList();
 	}
@@ -98,7 +80,6 @@ private:
 		lw = LiveWindow::GetInstance();
 		SmartDashboard::PutString("State", "Robot Init");
 
-		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->RobotInit();
@@ -108,6 +89,7 @@ private:
 	}
 
 	void AutonomousInit() {
+		x = 0;
 		SmartDashboard::PutString("State", "Autonomous Init");
 		nLNode* test = master->head;
 		while (test != NULL) {
@@ -120,8 +102,9 @@ private:
 		SmartDashboard::PutString("State", "Autonomous Periodic");
 		//No list here beacause auto was always a bit more complicated
 
-		int x = 0;
-		if (robot.compare("ORYX") == 0) {
+		SmartDashboard::PutNumber("AUTO COMMAND", x);
+		SmartDashboard::PutNumber("Auton Size", auton->size());
+		if (robot.compare("ORYX") == 0 && x < auton->size()) {
 			stepBase *command = auton->at(x);
 			if (sensorControl->AutonomousPeriodic(command) && command != NULL) {
 				x += 1;
@@ -171,6 +154,24 @@ private:
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->TestPeriodic();
+			test = test->parent;
+		}
+	}
+
+	void DisabledInit() {
+		SmartDashboard::PutString("State", "Disabled Init");
+		nLNode* test = master->head;
+		while (test != NULL) {
+			test->value->DisabledInit();
+			test = test->parent;
+		}
+	}
+
+	void DisabledPeriodic() {
+		SmartDashboard::PutString("State", "Disabled Periodic");
+		nLNode* test = master->head;
+		while (test != NULL) {
+			test->value->DisabledPeriodic();
 			test = test->parent;
 		}
 	}

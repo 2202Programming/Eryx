@@ -51,14 +51,14 @@ void Vision::TeleopPeriodic() {
 
 void Vision::visionUpdate() {
 	int shootingState = getState();
-	if (shootingState == NOT_SET) {
+	if (shootingState == NOT_SET||shootingState==JAVA_ERROR) {
 		setState(WAITING);
 	}
 }
 
 void Vision::startAiming() {
 	int shootingState = getState();
-	if (shootingState == WAITING) {
+	if (shootingState == WAITING||shootingState==JAVA_ERROR) {
 		setState(START);
 	}
 }
