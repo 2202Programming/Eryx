@@ -21,10 +21,24 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 	time = false;
 	angleTime = 0.0;
 	t = NULL;
+
+	left = new Encoder(2, 3);
+	right = new Encoder(4, 5);
+	left2 = new Encoder(6, 7);
+	right2 = new Encoder(0, 1);
+
+	left->SetReverseDirection(true);
+	left2->SetReverseDirection(true);
 }
 
 NavxSensorControl::~NavxSensorControl() {
 	// TODO Auto-generated destructor stub
+	delete ahrs;
+	delete turnController;
+	delete vision;
+
+	delete left, right, left2, right2;
+	delete t;
 }
 
 MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
@@ -198,7 +212,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value){
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return false; //TODO Once we Attach the Encoders
+		return left->GetDistance() < value && left2->GetDistance() < value && right->GetDistance() < value && right->GetDistance() < value;
 	case hardTimer:
 		SmartDashboard::PutNumber("Timer", t->Get());
 		return t->Get() < 3;
@@ -276,7 +290,17 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 		updateMotorSpeedResponse.leftMotorSpeed = 0;
 		updateMotorSpeedResponse.rightMotorSpeed = 0;
 		return false;
+	case step->target:
+		if(t != NULL)delete t;
+		t = NULL;
 
+		if(currentStep != step->stepNum){
+			currentStep = step->stepNum;
+
+		}
+		break;
+	case step->shoot:
+		break;
 	default:
 		// We don't support this command; skip
 		return true;

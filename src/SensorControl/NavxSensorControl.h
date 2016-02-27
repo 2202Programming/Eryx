@@ -60,6 +60,11 @@ public:
 
 
 protected:
+	Encoder *left;
+	Encoder *right;
+	Encoder *left2;
+	Encoder *right2;
+
 	TargetingState targetState;
 	DriveSystemState currentDriveState, commandDriveState;
 	double visionTargetAngle;
@@ -74,6 +79,9 @@ protected:
 
 	double motorConstant = 1.5;
 	double DriveStraitTime;
+
+	void InitAutoTarget();
+	bool AutoTarget();
 
 	bool GetDriveStraightContinue(float value);
 
