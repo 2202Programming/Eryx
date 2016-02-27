@@ -14,7 +14,7 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 	profile = profileInstance;
 	vision = visionInstance;
 	ahrs = new AHRS(SPI::Port::kMXP);
-	turnController = new PIDController(0.01, 0.000, 0.00, ahrs, this);
+	turnController = new PIDController(0.055, 0.0004, 0.00, ahrs, this);
 	turnController->SetInputRange(-180.0, 180.0);
 	turnController->SetOutputRange(-1, 1);
 	turnController->SetContinuous(true);
@@ -79,8 +79,8 @@ void NavxSensorControl::TargetingStateMachine() {
 	case TargetingState::waitForPicResult:
 		if (vision->getDoneAiming()) {
 			//if (true) {
-			visionTargetAngle = vision->getDegreesToTurn();
-			//visionTargetAngle = 42;
+			//visionTargetAngle = vision->getDegreesToTurn();
+			visionTargetAngle = 15;
 			ahrs->ZeroYaw();
 			turnController->Reset();
 			turnController->SetSetpoint(visionTargetAngle);
@@ -90,13 +90,20 @@ void NavxSensorControl::TargetingStateMachine() {
 			updateMotorSpeedResponse.leftMotorSpeed = 0;
 			updateMotorSpeedResponse.rightMotorSpeed = 0;
 		}
+		else if (vision->getCrashed())
+		{
+			SmartDashboard::PutString("Oops! ", "Vision crashed");
+			targetState = TargetingState::waitForButtonPress;
+		}
 		break;
 	case TargetingState::driveToAngle:
-		if (fabs(turnController->GetError()) < 3) {
-			if (t == NULL) {
+		if (fabs(turnController->GetError()) < 1) {
+			if (t == NULL)
+			{
 				t = new Timer();
 				t->Start();
-			} else {
+			}
+			else {
 				if (t->Get() > 1) {
 					time = true;
 				}
@@ -153,7 +160,7 @@ void NavxSensorControl::TeleopInit() {
 	currentDriveState = DriveSystemState::running;
 	commandDriveState = DriveSystemState::running;
 	t = NULL;
-	turnController->SetPID(0.055, 0.0004, 0.0);
+	turnController->SetPID(0.05, 0.005, 0.0);
 }
 
 void NavxSensorControl::TeleopPeriodic() {

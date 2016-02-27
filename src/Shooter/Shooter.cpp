@@ -126,7 +126,7 @@ void Shooter::TeleopPeriodic() {
 
 	switch (shootPercentState) {
 	case 0:
-		shootPercent = 0.5;
+		shootPercent = 0.46;
 		break;
 	case 1:
 		shootPercent = 0.45;
@@ -218,7 +218,7 @@ void Shooter::readXboxState() {
 			}
 		}
 
-		if (xbox->getRightTriggerPressed()) {
+		if (t->Get() > 5) {
 			sState = goShoot;
 			time = false;
 			delete t;
