@@ -28,10 +28,6 @@ Motor::Motor(IProfile *np) {
 
 	//Arm
 	armLower = new Spark(8);
-	/*encArmLower = new Encoder(np->getInt("ARM_LOWER_ENC1"),
-			np->getInt("ARM_LOWER_ENC2"));
-	encArmUpper = new Encoder(np->getInt("ARM_UPPER_ENC1"),
-			np->getInt("ARM_UPPER_ENC2")); */
 
 	//Intake
 	intake = new Spark(5);
@@ -47,6 +43,23 @@ Motor::Motor(IProfile *np) {
 }
 
 Motor::~Motor() {
+	frontLeft = NULL;
+	delete frontLeft;
+	frontRight = NULL;
+	delete frontRight;
+	backLeft = NULL;
+	delete backLeft;
+	backRight = NULL;
+	delete backRight;
+	shootLeft = NULL;
+	delete shootLeft;
+	shootRight = NULL;
+	delete shootRight;
+	armLower = NULL;
+	delete armLower;
+	intake = NULL;
+	delete intake;
+
 }
 
 void Motor::AutonomousInit() {

@@ -20,7 +20,10 @@ Arm::Arm(Motor *motor, IXbox *xbox) {
 }
 
 Arm::~Arm() {
-
+	motor = NULL;
+	xbox = NULL;
+	armSol = NULL;
+	delete armSol;
 }
 
 void Arm::TeleopInit() {

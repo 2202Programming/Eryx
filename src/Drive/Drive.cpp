@@ -28,6 +28,19 @@ Drive::Drive(Motor *motor, IXbox *xbox, ISensorControl *nav) {
 }
 
 Drive::~Drive() {
+	motor = NULL;
+	xbox = NULL;
+	nav = NULL;
+	navSpeed = NULL;
+	delete navSpeed;
+	left = NULL;
+	delete left;
+	left2 = NULL;
+	delete left2;
+	right = NULL;
+	delete right;
+	right2 = NULL;
+	delete right2;
 }
 
 void Drive::AutonomousInit() {

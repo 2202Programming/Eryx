@@ -55,6 +55,18 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 }
 
 Shooter::~Shooter() {
+	xbox = NULL;
+	motor = NULL;
+	c = NULL;
+	delete c;
+	t = NULL;
+	delete t;
+	angleSol = NULL;
+	delete angleSol;
+	trigger = NULL;
+	delete trigger;
+	intakeSol = NULL;
+	delete intakeSol;
 }
 
 void Shooter::AutonomousInit() {
