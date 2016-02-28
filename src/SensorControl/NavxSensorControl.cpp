@@ -296,8 +296,9 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 
 		if(currentStep != step->stepNum){
 			currentStep = step->stepNum;
-
+			InitAutoTarget();
 		}
+		return AutoTarget();
 		break;
 	case step->shoot:
 		break;
@@ -306,5 +307,15 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 		return true;
 	}
 	// If we get here, we're lost and we give up
+	return false;
+}
+
+void NavxSensorControl::InitAutoTarget()
+{
+
+}
+
+bool NavxSensorControl::AutoTarget()
+{
 	return false;
 }
