@@ -14,17 +14,31 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 	profile = profileInstance;
 	vision = visionInstance;
 	ahrs = new AHRS(SPI::Port::kMXP);
-	turnController = new PIDController(0.055, 0.0004, 0.00, ahrs, this);
+	turnController = new PIDController(0.01, 0.000, 0.00, ahrs, this);
 	turnController->SetInputRange(-180.0, 180.0);
 	turnController->SetOutputRange(-1, 1);
 	turnController->SetContinuous(true);
 	time = false;
 	angleTime = 0.0;
 	t = NULL;
+
+	left = new Encoder(2, 3);
+	right = new Encoder(4, 5);
+	left2 = new Encoder(6, 7);
+	right2 = new Encoder(0, 1);
+
+	left->SetReverseDirection(true);
+	left2->SetReverseDirection(true);
 }
 
 NavxSensorControl::~NavxSensorControl() {
 	// TODO Auto-generated destructor stub
+	delete ahrs;
+	delete turnController;
+	delete vision;
+
+	delete left, right, left2, right2;
+	delete t;
 }
 
 MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
@@ -41,11 +55,11 @@ MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
 		}
 	}
 
-	if(DEBUG){
-	SmartDashboard::PutNumber("Update Motor Left",
-			updateMotorSpeedResponse.leftMotorSpeed);
-	SmartDashboard::PutNumber("Update Motor right",
-			updateMotorSpeedResponse.rightMotorSpeed);
+	if (DEBUG) {
+		SmartDashboard::PutNumber("Update Motor Left",
+				updateMotorSpeedResponse.leftMotorSpeed);
+		SmartDashboard::PutNumber("Update Motor right",
+				updateMotorSpeedResponse.rightMotorSpeed);
 	}
 
 	return &updateMotorSpeedResponse;
@@ -78,9 +92,9 @@ void NavxSensorControl::TargetingStateMachine() {
 		break;
 	case TargetingState::waitForPicResult:
 		if (vision->getDoneAiming()) {
-			//if (true) {
-			//visionTargetAngle = vision->getDegreesToTurn();
-			visionTargetAngle = 15;
+
+			visionTargetAngle = vision->getDegreesToTurn();
+
 			ahrs->ZeroYaw();
 			turnController->Reset();
 			turnController->SetSetpoint(visionTargetAngle);
@@ -90,20 +104,13 @@ void NavxSensorControl::TargetingStateMachine() {
 			updateMotorSpeedResponse.leftMotorSpeed = 0;
 			updateMotorSpeedResponse.rightMotorSpeed = 0;
 		}
-		else if (vision->getCrashed())
-		{
-			SmartDashboard::PutString("Oops! ", "Vision crashed");
-			targetState = TargetingState::waitForButtonPress;
-		}
 		break;
 	case TargetingState::driveToAngle:
-		if (fabs(turnController->GetError()) < 1) {
-			if (t == NULL)
-			{
+		if (fabs(turnController->GetError()) < 3) {
+			if (t == NULL) {
 				t = new Timer();
 				t->Start();
-			}
-			else {
+			} else {
 				if (t->Get() > 1) {
 					time = true;
 				}
@@ -160,7 +167,7 @@ void NavxSensorControl::TeleopInit() {
 	currentDriveState = DriveSystemState::running;
 	commandDriveState = DriveSystemState::running;
 	t = NULL;
-	turnController->SetPID(0.05, 0.005, 0.0);
+	turnController->SetPID(0.055, 0.0004, 0.0);
 }
 
 void NavxSensorControl::TeleopPeriodic() {
@@ -184,10 +191,10 @@ void NavxSensorControl::AutonomousInit() {
 void NavxSensorControl::InitDriveStraight(driveStep *step) {
 	t = new Timer();
 
-		t->Stop();
-		t->Reset();
-		t->Start();
-		DriveStraitTime = (step->distance / (step->speed * motorConstant));
+	t->Stop();
+	t->Reset();
+	t->Start();
+	DriveStraitTime = (step->distance / (step->speed * motorConstant));
 
 }
 
@@ -196,8 +203,8 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
  * return true if target reached
  */
 
-bool NavxSensorControl::GetDriveStraightContinue(float value){
-	switch(strat){
+bool NavxSensorControl::GetDriveStraightContinue(float value) {
+	switch (strat) {
 	case null:
 		return false;
 	case timer:
@@ -205,7 +212,8 @@ bool NavxSensorControl::GetDriveStraightContinue(float value){
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return false; //TODO Once we Attach the Encoders
+		return left->GetDistance() < value && left2->GetDistance() < value
+				&& right->GetDistance() < value && right->GetDistance() < value;
 	case hardTimer:
 		SmartDashboard::PutNumber("Timer", t->Get());
 		return t->Get() < 3;
@@ -243,18 +251,7 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 	return true;
 }
 
-void NavxSensorControl::InitTurn(turnStep *step) {
 
-}
-
-/*
- * Execute one turn step
- * return true if target reached
- */
-
-bool NavxSensorControl::ExecTurn(turnStep *step) {
-	return true;
-}
 
 bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 	updateMotorSpeedResponse.leftMotorSpeed = 0;
@@ -278,16 +275,85 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 
 	case step->stop:
 		// Stop all autonomous execution
-		if(t != NULL) delete t;
+		if (t != NULL)
+			delete t;
 		t = NULL;
 		updateMotorSpeedResponse.leftMotorSpeed = 0;
 		updateMotorSpeedResponse.rightMotorSpeed = 0;
 		return false;
+	case step->target:
+		if (t != NULL)
+			delete t;
+		t = NULL;
 
+		if (currentStep != step->stepNum) {
+			currentStep = step->stepNum;
+			InitAutoTarget();
+		}
+		return AutoTarget();
+		break;
+	case step->shoot:
+		break;
 	default:
 		// We don't support this command; skip
 		return true;
 	}
 	// If we get here, we're lost and we give up
 	return false;
+}
+
+void NavxSensorControl::InitAutoTarget() {
+	ahrs->ZeroYaw();
+	targetState = TargetingState::waitForStopped;
+}
+
+bool NavxSensorControl::AutoTarget() {
+	TargetingStateMachine();
+	return time;
+}
+
+void NavxSensorControl::InitTurn(turnStep *step) {
+	ahrs->ZeroYaw();
+	turnController->Reset();
+	turnController->SetSetpoint(step->angle);
+	autoTime = false;
+	turnController->Enable();
+	targetState = TargetingState::driveToAngle;
+	updateMotorSpeedResponse.leftMotorSpeed = 0;
+	updateMotorSpeedResponse.rightMotorSpeed = 0;
+}
+
+/*
+ * Execute one turn step
+ * return true if target reached
+ */
+
+bool NavxSensorControl::ExecTurn(turnStep *step) {
+	float motorSpeed;
+	if (fabs(turnController->GetError()) < 3) {
+		if (t == NULL) {
+			t = new Timer();
+			t->Start();
+		} else {
+			if (t->Get() > 1) {
+				time = autoTime;
+			}
+		}
+	} else {
+		delete t;
+		t = NULL;
+	}
+
+	if (xbox->getStartPressed() || autoTime) {
+		turnController->Disable();
+		commandDriveState = DriveSystemState::running;
+		delete t;
+		t = NULL;
+	} else {
+		motorSpeed = turnSpeed;
+	}
+
+	updateMotorSpeedResponse.leftMotorSpeed = -motorSpeed;
+	updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
+	return autoTime;
 }
