@@ -251,51 +251,7 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 	return true;
 }
 
-void NavxSensorControl::InitTurn(turnStep *step) {
-	ahrs->ZeroYaw();
-	turnController->Reset();
-	turnController->SetSetpoint(step->angle);
-	autoTime = false;
-	turnController->Enable();
-	targetState = TargetingState::driveToAngle;
-	updateMotorSpeedResponse.leftMotorSpeed = 0;
-	updateMotorSpeedResponse.rightMotorSpeed = 0;
-}
 
-/*
- * Execute one turn step
- * return true if target reached
- */
-
-bool NavxSensorControl::ExecTurn(turnStep *step) {
-	float motorSpeed;
-	if (fabs(turnController->GetError()) < 3) {
-		if (t == NULL) {
-			t = new Timer();
-			t->Start();
-		} else {
-			if (t->Get() > 1) {
-				time = autoTime;
-			}
-		}
-	} else {
-		delete t;
-		t = NULL;
-	}
-
-	if (xbox->getStartPressed() || autoTime) {
-		turnController->Disable();
-		commandDriveState = DriveSystemState::running;
-		delete t;
-		t = NULL;
-	} else {
-		motorSpeed = turnSpeed;
-	}
-
-	updateMotorSpeedResponse.leftMotorSpeed = -motorSpeed;
-	updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
-	return autoTime;
-}
 
 bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 	updateMotorSpeedResponse.leftMotorSpeed = 0;
@@ -354,4 +310,50 @@ void NavxSensorControl::InitAutoTarget() {
 bool NavxSensorControl::AutoTarget() {
 	TargetingStateMachine();
 	return time;
+}
+
+void NavxSensorControl::InitTurn(turnStep *step) {
+	ahrs->ZeroYaw();
+	turnController->Reset();
+	turnController->SetSetpoint(step->angle);
+	autoTime = false;
+	turnController->Enable();
+	targetState = TargetingState::driveToAngle;
+	updateMotorSpeedResponse.leftMotorSpeed = 0;
+	updateMotorSpeedResponse.rightMotorSpeed = 0;
+}
+
+/*
+ * Execute one turn step
+ * return true if target reached
+ */
+
+bool NavxSensorControl::ExecTurn(turnStep *step) {
+	float motorSpeed;
+	if (fabs(turnController->GetError()) < 3) {
+		if (t == NULL) {
+			t = new Timer();
+			t->Start();
+		} else {
+			if (t->Get() > 1) {
+				time = autoTime;
+			}
+		}
+	} else {
+		delete t;
+		t = NULL;
+	}
+
+	if (xbox->getStartPressed() || autoTime) {
+		turnController->Disable();
+		commandDriveState = DriveSystemState::running;
+		delete t;
+		t = NULL;
+	} else {
+		motorSpeed = turnSpeed;
+	}
+
+	updateMotorSpeedResponse.leftMotorSpeed = -motorSpeed;
+	updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
+	return autoTime;
 }
