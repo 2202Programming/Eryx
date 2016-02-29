@@ -7,6 +7,8 @@
 
 #ifndef SRC_AUTONOMOUS_COMMANDLISTMAKER_H_
 #define SRC_AUTONOMOUS_COMMANDLISTMAKER_H_
+
+#include "WPILib.h"
 #include "Profile/IProfile.h"
 #include "IControl.h"
 #include <vector>
@@ -22,7 +24,13 @@ public:
 
 	vector<stepBase*>* getList();
 
+	SendableChooser *autoPosition;
+	SendableChooser *autoDefence;
+
 private:
+
+
+
 	vector<stepBase*>* storage;
 	IProfile *profile;
 };
