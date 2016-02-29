@@ -55,6 +55,18 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 }
 
 Shooter::~Shooter() {
+	xbox = NULL;
+	motor = NULL;
+	c = NULL;
+	delete c;
+	t = NULL;
+	delete t;
+	angleSol = NULL;
+	delete angleSol;
+	trigger = NULL;
+	delete trigger;
+	intakeSol = NULL;
+	delete intakeSol;
 }
 
 void Shooter::AutonomousInit() {
@@ -126,7 +138,7 @@ void Shooter::TeleopPeriodic() {
 
 	switch (shootPercentState) {
 	case 0:
-		shootPercent = 0.5;
+		shootPercent = 0.46;
 		break;
 	case 1:
 		shootPercent = 0.45;
@@ -218,7 +230,7 @@ void Shooter::readXboxState() {
 			}
 		}
 
-		if (xbox->getRightTriggerPressed()) {
+		if (t->Get() > 5) {
 			sState = goShoot;
 			time = false;
 			delete t;

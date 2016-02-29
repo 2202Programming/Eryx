@@ -83,7 +83,7 @@ private:
 		CameraServer::GetInstance()->StartAutomaticCapture("cam1");
 
 		//added by David
-		USBCamera *camera=new USBCamera("cam1", true);
+		USBCamera *camera=new USBCamera("cam2", true);
 		//NIVision.Image frame=NIVision.imagCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 		camera->OpenCamera();
 		camera->StartCapture();
@@ -110,7 +110,7 @@ private:
 
 	void AutonomousPeriodic() {
 		SmartDashboard::PutString("State", "Autonomous Periodic");
-		//No list here beacause auto was always a bit more complicated
+		//No list here because auto was always a bit more complicated
 
 		SmartDashboard::PutNumber("AUTO COMMAND", x);
 		SmartDashboard::PutNumber("Auton Size", auton->size());

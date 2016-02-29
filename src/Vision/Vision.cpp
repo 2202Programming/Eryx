@@ -23,26 +23,26 @@ void Vision::RobotInit() {
 void Vision::TeleopPeriodic() {
 	switch (getState()) {
 	case JAVA_ERROR:
-		SmartDashboard::PutString("VisionStateString", "Java Error");
+		SmartDashboard::PutString("VisionStateString", "Lol Java Error");
 		break;
 	case NOT_SET:
 		SmartDashboard::PutString("VisionStateString", "Not Set");
 		break;
 	case WAITING:
-		SmartDashboard::PutString("VisionStateString", "WAITING");
+		SmartDashboard::PutString("VisionStateString", "Waiting...");
 		break;
 	case START:
-		SmartDashboard::PutString("VisionStateString", "Start Vision");
+		SmartDashboard::PutString("VisionStateString", "Started Vision!!");
 		break;
 	case PROCESSING:
-		SmartDashboard::PutString("VisionStateString", "Processing");
+		SmartDashboard::PutString("VisionStateString", "Processing, baby");
 		break;
 	case DONE:
-		SmartDashboard::PutString("VisionStateString", "Done");
+		SmartDashboard::PutString("VisionStateString", "Done, aww yiss");
 		break;
 	default:
 		SmartDashboard::PutString("VisionStateString",
-				"Something went really wrong");
+				"Something went really wrong, David why");
 		break;
 	}
 
@@ -58,7 +58,7 @@ void Vision::visionUpdate() {
 
 void Vision::startAiming() {
 	int shootingState = getState();
-	if (shootingState == WAITING||shootingState==JAVA_ERROR) {
+	if (shootingState == WAITING) {
 		setState(START);
 	}
 }
@@ -87,6 +87,10 @@ void Vision::setState(int newState) {
 
 int Vision::getState() {
 	return (int) (table->GetNumber("shootingState", -1.0));
+}
+
+bool Vision::getCrashed() {
+	return getState() == JAVA_ERROR;
 }
 
 /*
