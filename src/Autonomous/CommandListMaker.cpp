@@ -49,15 +49,15 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 	autoPosition->AddObject(AutoConstants::pos5, (void*)5);
 
 	autoDefence = new SendableChooser();
-	autoDefence->AddDefault(AutoConstants::rock,(void*)2);
-	autoDefence->AddObject(AutoConstants::low, (void*)1);
-	autoDefence->AddObject(AutoConstants::ram, (void*)0);
-	autoDefence->AddObject(AutoConstants::port, (void*)8);
-	autoDefence->AddObject(AutoConstants::chev, (void*)6);
-	autoDefence->AddObject(AutoConstants::sall, (void*)7);
-	autoDefence->AddObject(AutoConstants::deb, (void*)3);
-	autoDefence->AddObject(AutoConstants::moat, (void*)4);
-	autoDefence->AddObject(AutoConstants::draw, (void*)5);
+	autoDefence->AddDefault(AutoConstants::rock,(void*)ROCKWALL);
+	autoDefence->AddObject(AutoConstants::low, (void*)LOWBAR);
+	autoDefence->AddObject(AuxtoConstants::ram, (void*)RAMPARTS);
+	autoDefence->AddObject(AutoConstants::port, (void*)PORTI);
+	autoDefence->AddObject(AutoConstants::chev, (void*)CHEVAL);
+	autoDefence->AddObject(AutoConstants::sall, (void*)SALLY);
+	autoDefence->AddObject(AutoConstants::deb, (void*)DEBRIS);
+	autoDefence->AddObject(AutoConstants::moat, (void*)MOAT);
+	autoDefence->AddObject(AutoConstants::draw, (void*)DRAW);
 
 	SmartDashboard::PutData("Auto Defence", autoDefence);
 	SmartDashboard::PutData("Auto Position", autoPosition);
