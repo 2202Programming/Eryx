@@ -30,7 +30,7 @@ public:
 		clMaker = new CommandListMaker(profile);
 
 		robot = profile->getValue("ROBOT");
-		robot = "PROTO";
+		robot = "ORYX";
 
 		master->addNode(xbox, "Xbox");
 

@@ -41,6 +41,7 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
 	storage = new std::vector<stepBase*>();
 
+	/*
 	autoPosition = new SendableChooser();
 	autoPosition->AddDefault(AutoConstants::pos1, (void*)1);
 	autoPosition->AddObject(AutoConstants::pos2, (void*)2);
@@ -51,7 +52,7 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 	autoDefence = new SendableChooser();
 	autoDefence->AddDefault(AutoConstants::rock,(void*)ROCKWALL);
 	autoDefence->AddObject(AutoConstants::low, (void*)LOWBAR);
-	autoDefence->AddObject(AuxtoConstants::ram, (void*)RAMPARTS);
+	autoDefence->AddObject(AutoConstants::ram, (void*)RAMPARTS);
 	autoDefence->AddObject(AutoConstants::port, (void*)PORTI);
 	autoDefence->AddObject(AutoConstants::chev, (void*)CHEVAL);
 	autoDefence->AddObject(AutoConstants::sall, (void*)SALLY);
@@ -61,7 +62,7 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 
 	SmartDashboard::PutData("Auto Defence", autoDefence);
 	SmartDashboard::PutData("Auto Position", autoPosition);
-
+	*/
 	// TODO Auto-generated constructor stub
 
 }
