@@ -57,11 +57,11 @@ MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
 		}
 	}
 
-	if(DEBUG){
-	SmartDashboard::PutNumber("Update Motor Left",
-			updateMotorSpeedResponse.leftMotorSpeed);
-	SmartDashboard::PutNumber("Update Motor right",
-			updateMotorSpeedResponse.rightMotorSpeed);
+	if (DEBUG) {
+		SmartDashboard::PutNumber("Update Motor Left",
+				updateMotorSpeedResponse.leftMotorSpeed);
+		SmartDashboard::PutNumber("Update Motor right",
+				updateMotorSpeedResponse.rightMotorSpeed);
 	}
 
 	return &updateMotorSpeedResponse;
@@ -94,9 +94,9 @@ void NavxSensorControl::TargetingStateMachine() {
 		break;
 	case TargetingState::waitForPicResult:
 		if (vision->getDoneAiming()) {
-			//if (true) {
+
 			visionTargetAngle = vision->getDegreesToTurn();
-			//visionTargetAngle = 42;
+
 			ahrs->ZeroYaw();
 			turnController->Reset();
 			turnController->SetSetpoint(visionTargetAngle);
@@ -202,10 +202,10 @@ void NavxSensorControl::AutonomousInit() {
 void NavxSensorControl::InitDriveStraight(driveStep *step) {
 	t = new Timer();
 
-		t->Stop();
-		t->Reset();
-		t->Start();
-		DriveStraitTime = (step->distance / (step->speed * motorConstant));
+	t->Stop();
+	t->Reset();
+	t->Start();
+	DriveStraitTime = (step->distance / (step->speed * motorConstant));
 
 }
 
@@ -214,8 +214,8 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
  * return true if target reached
  */
 
-bool NavxSensorControl::GetDriveStraightContinue(float value){
-	switch(strat){
+bool NavxSensorControl::GetDriveStraightContinue(float value) {
+	switch (strat) {
 	case null:
 		return false;
 	case timer:
@@ -261,18 +261,7 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 	return true;
 }
 
-void NavxSensorControl::InitTurn(turnStep *step) {
 
-}
-
-/*
- * Execute one turn step
- * return true if target reached
- */
-
-bool NavxSensorControl::ExecTurn(turnStep *step) {
-	return true;
-}
 
 bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 	updateMotorSpeedResponse.leftMotorSpeed = 0;
@@ -301,19 +290,22 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 
 	case step->stop:
 		// Stop all autonomous execution
-		if(t != NULL) delete t;
+		if (t != NULL)
+			delete t;
 		t = NULL;
 		updateMotorSpeedResponse.leftMotorSpeed = 0;
 		updateMotorSpeedResponse.rightMotorSpeed = 0;
 		return false;
 	case step->target:
-		if(t != NULL)delete t;
+		if (t != NULL)
+			delete t;
 		t = NULL;
 
-		if(currentStep != step->stepNum){
+		if (currentStep != step->stepNum) {
 			currentStep = step->stepNum;
-
+			InitAutoTarget();
 		}
+		return AutoTarget();
 		break;
 	case step->shoot:
 		break;
@@ -323,4 +315,60 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 	}
 	// If we get here, we're lost and we give up
 	return false;
+}
+
+void NavxSensorControl::InitAutoTarget() {
+	ahrs->ZeroYaw();
+	targetState = TargetingState::waitForStopped;
+}
+
+bool NavxSensorControl::AutoTarget() {
+	TargetingStateMachine();
+	return time;
+}
+
+void NavxSensorControl::InitTurn(turnStep *step) {
+	ahrs->ZeroYaw();
+	turnController->Reset();
+	turnController->SetSetpoint(step->angle);
+	autoTime = false;
+	turnController->Enable();
+	targetState = TargetingState::driveToAngle;
+	updateMotorSpeedResponse.leftMotorSpeed = 0;
+	updateMotorSpeedResponse.rightMotorSpeed = 0;
+}
+
+/*
+ * Execute one turn step
+ * return true if target reached
+ */
+
+bool NavxSensorControl::ExecTurn(turnStep *step) {
+	float motorSpeed;
+	if (fabs(turnController->GetError()) < 3) {
+		if (t == NULL) {
+			t = new Timer();
+			t->Start();
+		} else {
+			if (t->Get() > 1) {
+				time = autoTime;
+			}
+		}
+	} else {
+		delete t;
+		t = NULL;
+	}
+
+	if (xbox->getStartPressed() || autoTime) {
+		turnController->Disable();
+		commandDriveState = DriveSystemState::running;
+		delete t;
+		t = NULL;
+	} else {
+		motorSpeed = turnSpeed;
+	}
+
+	updateMotorSpeedResponse.leftMotorSpeed = -motorSpeed;
+	updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
+	return autoTime;
 }

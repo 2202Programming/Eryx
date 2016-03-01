@@ -71,8 +71,11 @@ protected:
 	double visionAngleTolerance;
 	float turnSpeed;
 	int currentStep;
+
 	bool inAutonomous;
 	bool time;
+	bool autoTime;
+
 	float angleTime;
 	int timesCalled = 0;
 	Timer *t;
@@ -90,7 +93,6 @@ protected:
 	void InitializeVisionAlignment(double commandedAngle);
 	bool ExecuteVisionAlignment();
 	int getTime();
-
 };
 
 #endif /* SRC_SENSORCONTROL_NAVXSENSORCONTROL_H_ */
