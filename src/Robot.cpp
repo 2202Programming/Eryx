@@ -80,13 +80,13 @@ private:
 	void RobotInit() {
 		lw = LiveWindow::GetInstance();
 		SmartDashboard::PutString("State", "Robot Init");
-		CameraServer::GetInstance()->StartAutomaticCapture("cam1");
+		//CameraServer::GetInstance()->StartAutomaticCapture("cam1");
 
 		//added by David
-		USBCamera *camera=new USBCamera("cam1", true);
+		//USBCamera *camera=new USBCamera("cam1", true);
 		//NIVision.Image frame=NIVision.imagCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-		camera->OpenCamera();
-		camera->StartCapture();
+		//camera->OpenCamera();
+		//camera->StartCapture();
 
 		//
 

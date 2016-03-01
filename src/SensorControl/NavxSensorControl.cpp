@@ -29,6 +29,8 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 
 	left->SetReverseDirection(true);
 	left2->SetReverseDirection(true);
+	right->SetReverseDirection(false);
+	right2->SetReverseDirection(false);
 }
 
 NavxSensorControl::~NavxSensorControl() {
@@ -168,6 +170,10 @@ void NavxSensorControl::TeleopInit() {
 	commandDriveState = DriveSystemState::running;
 	t = NULL;
 	turnController->SetPID(0.055, 0.0004, 0.0);
+	left->Reset();
+	right->Reset();
+	left2->Reset();
+	right2->Reset();
 }
 
 void NavxSensorControl::TeleopPeriodic() {
@@ -177,6 +183,11 @@ void NavxSensorControl::TeleopPeriodic() {
 	SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
 	//SmartDashboard::PutNumber("Roll", ahrs->GetRoll());
 	//SmartDashboard::PutNumber("Pitch", ahrs->GetPitch());
+
+	SmartDashboard::PutNumber("Left Drive", left->Get());
+	SmartDashboard::PutNumber("Right Drive", right->Get());
+	SmartDashboard::PutNumber("Left Drive 2", left2->Get());
+	SmartDashboard::PutNumber("Right Drive 2", right2->Get());
 }
 
 void NavxSensorControl::AutonomousInit() {
@@ -212,10 +223,10 @@ bool NavxSensorControl::GetDriveStraightContinue(float value){
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return left->GetDistance() < value && left2->GetDistance() < value && right->GetDistance() < value && right->GetDistance() < value;
+		return right2->GetDistance() < 2000 || right->GetDistance() < 2000 || left->GetDistance() < 2000 || left2->GetDistance() < 2000;
 	case hardTimer:
 		SmartDashboard::PutNumber("Timer", t->Get());
-		return t->Get() < 3;
+		return t->Get() < 1;
 	default:
 		return false;
 	}
@@ -266,6 +277,11 @@ bool NavxSensorControl::ExecTurn(turnStep *step) {
 bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 	updateMotorSpeedResponse.leftMotorSpeed = 0;
 	updateMotorSpeedResponse.rightMotorSpeed = 0;
+
+	SmartDashboard::PutNumber("Left Drive", left->Get());
+	SmartDashboard::PutNumber("Right Drive", right->Get());
+	SmartDashboard::PutNumber("Left Drive 2", left2->Get());
+	SmartDashboard::PutNumber("Right Drive 2", right2->Get());
 
 	switch (step->command) {
 	case step->driveStraight:

@@ -44,7 +44,7 @@ public:
 	};
 
 
-	AutoStratagy strat = hardTimer;
+	AutoStratagy strat = encoder;
 
 	MotorCommand *UpdateMotorSpeeds(float leftMotorSpeed, float rightMotorSpeed);
 	DriveSystemState DriveSystemControlUpdate(DriveSystemState currentState, DriveSystemState requestedState);
