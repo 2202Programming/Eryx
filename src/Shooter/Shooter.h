@@ -38,6 +38,7 @@ private:
 
 	bool runShoot; //True if shooting motors should be running
 	bool runIntake;
+	bool intakeDirection;
 	bool runTrigger;
 	bool angle;
 	bool intakePos;

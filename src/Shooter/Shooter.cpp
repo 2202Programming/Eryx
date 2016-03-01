@@ -41,6 +41,7 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	runTrigger = false;
 	angle = false;
 	intakePos = false;
+	intakeDirection = false;
 	shot = false;
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
@@ -70,6 +71,7 @@ void Shooter::AutonomousInit() {
 	runTrigger = false;
 	intakeSol->Set(SOL_DEACTIVATED);
 	intakePos = false;
+	intakeDirection = false;
 }
 
 void Shooter::AutonomousPeriodic() {
@@ -112,6 +114,7 @@ void Shooter::TeleopInit() {
 	runTrigger = false;
 	intakeSol->Set(SOL_DEACTIVATED);
 	intakePos = false;
+	intakeDirection = false;
 
 	t = NULL;
 	time = false;
@@ -148,6 +151,12 @@ void Shooter::TeleopPeriodic() {
 	SmartDashboard::PutNumber("Intake Speed", intakeSpeed);
 	SmartDashboard::PutNumber("Shoot Percent", shootPercent);
 	SmartDashboard::PutNumber("Shoot Percent State", shootPercentState);
+
+	if (intakeDirection) {
+		SmartDashboard::PutBoolean("Intake Direction", "Forward");
+	} else {
+		SmartDashboard::PutBoolean("Intake Direction", "Reverse");
+	}
 
 	// Pistons
 	SmartDashboard::PutBoolean("Angle", angle);
@@ -194,6 +203,10 @@ void Shooter::readXboxState() {
 
 	if (xbox->getLeftBumperPressed()) {
 		runIntake = !runIntake;
+	}
+
+	if (xbox->getXPressed()) {
+		intakeDirection = !intakeDirection;
 	}
 
 	if (xbox->getL3Pressed()) {
@@ -315,7 +328,11 @@ void Shooter::updateMotor2() {
 	}
 
 	if (runIntake) {
-		intakeSpeed = -0.7;
+		if (intakeDirection) {
+			intakeSpeed = 0.5;
+		} else {
+			intakeSpeed = -0.5;
+		}
 	} else {
 		intakeSpeed = 0.0;
 	}
