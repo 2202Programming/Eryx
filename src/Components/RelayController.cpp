@@ -22,6 +22,8 @@ RelayController::~RelayController() {
 	// TODO Auto-generated destructor stub
 	delete Red;
 	delete Blue;
+	Red = 0;
+	Blue = 0;
 }
 
 void RelayController::ToggleColor() {
@@ -36,18 +38,22 @@ void RelayController::ToggleColor() {
 }
 
 void RelayController::setColor(RelayColor color) {
-	currnet = color;
+	if(currnet != color){
 	switch (color) {
 	case RelayColor::neither:
-		break; //TODO
-	case RelayColor::blue:
-		Red->Set(Relay::kOn);
+		Red->Set(Relay::kOff);
 		Blue->Set(Relay::kOff);
 		break;
 	case RelayColor::red:
+		Red->Set(Relay::kOn);
+		Blue->Set(Relay::kOff);
+		break;
+	case RelayColor::blue:
 		Red->Set(Relay::kOff);
 		Blue->Set(Relay::kOn);
 		break;
+	}
+	currnet = color;
 	}
 }
 
@@ -56,50 +62,45 @@ void RelayController::relayBlink(int speed) {
 }
 
 void RelayController::burnUp() {
-
+	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
+	switch(alligent){
+	case DriverStation::kBlue:
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
+		break;
+	case DriverStation::kRed:
+		Red->Set(Relay::kOn);
+		Blue->Set(Relay::kOff);
+		break;
+	case DriverStation::kInvalid:
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
+		break;
+	}
 }
 
 void RelayController::stopBlink() {
-
+	burnUp();
 }
 
 void RelayController::TeleopInit()
 {
-	SmartDashboard::PutNumber("LED", 0);
-	setColor(RelayColor::blue);
+	burnUp();
 }
 
-void RelayController::TeleopPeriodic()
+void RelayController::AutonomousInit()
 {
-	int x = SmartDashboard::GetNumber("LED", 0);
-	RelayColor test;
-
-	if(x == 0)test = RelayColor::blue;
-	else if(x == 1)test = RelayColor::red;
-
-	if (currnet != test)
-	{
-		setColor(test);
-	}
+	burnUp();
 }
 
 void RelayController::RobotInit()
 {
-	setColor(red);
+	burnUp();
 }
 
-void RelayController::DisabledPeriodic()
+void RelayController::DisabledInit()
 {
-	int x = SmartDashboard::GetNumber("LED", 0);
-	RelayColor test;
-
-	if(x == 0)test = RelayColor::blue;
-	else if(x == 1)test = RelayColor::red;
-
-	if (currnet != test)
-	{
-		setColor(test);
-	}
+	burnUp();
 }
 
 /*

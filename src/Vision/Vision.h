@@ -12,6 +12,7 @@ public:
 
 	//This will return true exactly one time. The vision state machine will then be ready to aim again.
 	bool getDoneAiming();
+	bool getCrashed();
 	float getDegreesToTurn();
 
 

@@ -63,6 +63,7 @@ public:
 
 			//MUST BE CALLED LAST
 			master->addNode(m, "Motor");
+
 		}
 
 		std::string autonID = profile->getValue("AUTOLIST");
@@ -82,6 +83,15 @@ private:
 	void RobotInit() {
 		lw = LiveWindow::GetInstance();
 		SmartDashboard::PutString("State", "Robot Init");
+		CameraServer::GetInstance()->StartAutomaticCapture("cam1");
+
+		//added by David
+		USBCamera *camera=new USBCamera("cam2", true);
+		//NIVision.Image frame=NIVision.imagCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+		camera->OpenCamera();
+		camera->StartCapture();
+
+		//
 
 		nLNode* test = master->head;
 		while (test != NULL) {
@@ -103,7 +113,7 @@ private:
 
 	void AutonomousPeriodic() {
 		SmartDashboard::PutString("State", "Autonomous Periodic");
-		//No list here beacause auto was always a bit more complicated
+		//No list here because auto was always a bit more complicated
 
 		SmartDashboard::PutNumber("AUTO COMMAND", x);
 		SmartDashboard::PutNumber("Auton Size", auton->size());
@@ -135,6 +145,10 @@ private:
 
 	void TeleopPeriodic() {
 		SmartDashboard::PutString("State", "Teleop Periodic");
+
+		//Added by David
+		//
+
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->TeleopPeriodic();

@@ -20,9 +20,27 @@ Drive::Drive(Motor *motor, IXbox *xbox, ISensorControl *nav) {
 	state = nav->running;
 	requestedState = nav->running;
 	userControl = false;
+
+	left = new Encoder(2, 3);
+	right = new Encoder(4, 5);
+	left2 = new Encoder(6, 7);
+	right2 = new Encoder(0, 1);
 }
 
 Drive::~Drive() {
+	motor = NULL;
+	xbox = NULL;
+	nav = NULL;
+	navSpeed = NULL;
+	delete navSpeed;
+	left = NULL;
+	delete left;
+	left2 = NULL;
+	delete left2;
+	right = NULL;
+	delete right;
+	right2 = NULL;
+	delete right2;
 }
 
 void Drive::AutonomousInit() {
@@ -50,6 +68,11 @@ void Drive::TeleopPeriodic() {
 	readXboxArcadeD();
 	navSpeed = nav->UpdateMotorSpeeds(leftSpeed, rightSpeed); //nav returns speed it wants (corrected or wehen nav is controlling)
 	updateMotors();
+
+	SmartDashboard::PutNumber("Left Raw", left->Get());
+	SmartDashboard::PutNumber("Right RAW", right->Get());
+	SmartDashboard::PutNumber("Left2 Raw", left2->Get());
+	SmartDashboard::PutNumber("Right2 RAW", right2->Get());
 }
 
 void Drive::readXboxTank() { //Tank drive - 2 sticks

@@ -39,7 +39,6 @@ private:
 	Spark *shootLeft, *shootRight;
 
 	Spark *armLower; //, *armUpper; // Arm Motors
-	Encoder *encArmLower, *encArmUpper; //Arm Encoders
 
 	Spark *intake;
 

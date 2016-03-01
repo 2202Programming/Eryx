@@ -41,6 +41,10 @@ private:
 	IXbox *xbox;
 	ISensorControl *nav;
 	MotorCommand *navSpeed;
+	Encoder *left;
+	Encoder *right;
+	Encoder *left2;
+	Encoder *right2;
 
 	ISensorControl::DriveSystemState state; //Current state
 	ISensorControl::DriveSystemState requestedState; //State nav wants us to go to
