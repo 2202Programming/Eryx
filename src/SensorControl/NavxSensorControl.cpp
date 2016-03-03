@@ -180,19 +180,25 @@ void NavxSensorControl::TeleopPeriodic() {
 	inAutonomous = false;
 	TargetingStateMachine();
 
-	SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
-	//SmartDashboard::PutNumber("Roll", ahrs->GetRoll());
-	//SmartDashboard::PutNumber("Pitch", ahrs->GetPitch());
+	if (Global::telemetry >= 1) { //Normal
+		SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
+	} else if (Global::telemetry >= 2) { //debug
 
-	SmartDashboard::PutNumber("Left Drive", left->Get());
-	SmartDashboard::PutNumber("Right Drive", right->Get());
-	SmartDashboard::PutNumber("Left Drive 2", left2->Get());
-	SmartDashboard::PutNumber("Right Drive 2", right2->Get());
+	} else if (Global::telemetry >= 3) { //advanced debug
+		SmartDashboard::PutNumber("Left Drive", left->Get());
+		SmartDashboard::PutNumber("Right Drive", right->Get());
+		SmartDashboard::PutNumber("Left Drive 2", left2->Get());
+		SmartDashboard::PutNumber("Right Drive 2", right2->Get());
+	}
+
 }
 
 void NavxSensorControl::AutonomousInit() {
 	currentStep = -1;
 	inAutonomous = true;
+
+	ahrs->ZeroYaw();
+	turnController->SetPID(0.055, 0.0, 0.0);
 }
 
 /*
@@ -223,7 +229,8 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right2->GetDistance() < 2000 || right->GetDistance() < 2000 || left->GetDistance() < 2000 || left2->GetDistance() < 2000;
+		return right2->GetDistance() < 2000 || right->GetDistance() < 2000
+				|| left->GetDistance() < 2000 || left2->GetDistance() < 2000;
 	case hardTimer:
 		SmartDashboard::PutNumber("Timer", t->Get());
 		return t->Get() < 1;
@@ -261,12 +268,11 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 	return true;
 }
 
-
-
 bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 	updateMotorSpeedResponse.leftMotorSpeed = 0;
 	updateMotorSpeedResponse.rightMotorSpeed = 0;
 
+	SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
 	SmartDashboard::PutNumber("Left Drive", left->Get());
 	SmartDashboard::PutNumber("Right Drive", right->Get());
 	SmartDashboard::PutNumber("Left Drive 2", left2->Get());
@@ -345,12 +351,13 @@ void NavxSensorControl::InitTurn(turnStep *step) {
 
 bool NavxSensorControl::ExecTurn(turnStep *step) {
 	float motorSpeed;
-	if (fabs(turnController->GetError()) < 3) {
+	SmartDashboard::PutString("AUTO STATE", "Exec Turn");
+	if (fabs(turnController->GetError()) < 1) {
 		if (t == NULL) {
 			t = new Timer();
 			t->Start();
 		} else {
-			if (t->Get() > 1) {
+			if (t->Get() > 5) {
 				time = autoTime;
 			}
 		}

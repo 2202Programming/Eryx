@@ -73,9 +73,9 @@ CommandListMaker::~CommandListMaker() {
 }
 
 void CommandListMaker::makeBasic() {
-	driveStep* step1 = new driveStep();
-	step1->command = stepBase::driveStraight;
-	step1->distance = 1;
+	turnStep* step1 = new turnStep();
+	step1->command = stepBase::turn;
+	step1->angle = 90;
 	step1->stepNum = 0;
 	step1->speed = 0.4;
 	storage->push_back(step1);

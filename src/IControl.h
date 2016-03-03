@@ -9,6 +9,25 @@
 #define SRC_ICONTROL_H_
 
 
+namespace Global
+{
+	const int telemetry = 1;
+	/*
+	 * 1 = Competition
+	 * 2 = Debug
+	 * 3 = Extreame Debug
+	 */
+
+	/*if (Global::telemetry  >= 1) { //Normal
+
+		} else if (Global::telemetry >= 2){ //debug
+
+		} else if (Global::telemetry >= 3) { //advanced debug
+
+		}
+		*/
+}
+
 class stepBase{
 public:
 
