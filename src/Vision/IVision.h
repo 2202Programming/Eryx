@@ -23,6 +23,8 @@ public:
 	 */
 	virtual bool getDoneAiming(){return false;}
 
+	virtual bool getCrashed(){return false;}
+
 	/*
 	 * Returns the number of degrees to the right that the robot should turn (relative to what it is currently facing)
 	 * If the robot is to turn left, the number of degrees will be negative. This assumes that getDoneAiming() has

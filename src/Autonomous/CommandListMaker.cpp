@@ -17,9 +17,51 @@
 #include <Autonomous/CommandListMaker.h>
 #include "WPILib.h"
 
+namespace AutoConstants{
+	const std::string pos1 = "Position One";
+	const std::string pos2 = "Position Two";
+	const std::string pos3 = "Position Three";
+	const std::string pos4 = "Position Four";
+	const std::string pos5 = "Position Five";
+
+	const std::string ram = "Ramparts";
+	const std::string low = "Low Bar";
+	const std::string rock = "Rock Wall";
+	const std::string port = "Portculis";
+	const std::string chev = "Cheval de Frise";
+	const std::string sall = "Sally Port";
+	const std::string deb = "Rough Terrain";
+	const std::string moat = "Moat";
+	const std::string draw = "Drawbridge";
+
+
+}
+
 CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
 	storage = new std::vector<stepBase*>();
+
+	autoPosition = new SendableChooser();
+	autoPosition->AddDefault(AutoConstants::pos1, (void*)1);
+	autoPosition->AddObject(AutoConstants::pos2, (void*)2);
+	autoPosition->AddObject(AutoConstants::pos3, (void*)3);
+	autoPosition->AddObject(AutoConstants::pos4, (void*)4);
+	autoPosition->AddObject(AutoConstants::pos5, (void*)5);
+
+	autoDefence = new SendableChooser();
+	autoDefence->AddDefault(AutoConstants::rock,(void*)ROCKWALL);
+	autoDefence->AddObject(AutoConstants::low, (void*)LOWBAR);
+	autoDefence->AddObject(AuxtoConstants::ram, (void*)RAMPARTS);
+	autoDefence->AddObject(AutoConstants::port, (void*)PORTI);
+	autoDefence->AddObject(AutoConstants::chev, (void*)CHEVAL);
+	autoDefence->AddObject(AutoConstants::sall, (void*)SALLY);
+	autoDefence->AddObject(AutoConstants::deb, (void*)DEBRIS);
+	autoDefence->AddObject(AutoConstants::moat, (void*)MOAT);
+	autoDefence->AddObject(AutoConstants::draw, (void*)DRAW);
+
+	SmartDashboard::PutData("Auto Defence", autoDefence);
+	SmartDashboard::PutData("Auto Position", autoPosition);
+
 	// TODO Auto-generated constructor stub
 
 }
@@ -34,7 +76,7 @@ void CommandListMaker::makeBasic() {
 	step1->command = stepBase::driveStraight;
 	step1->distance = 1;
 	step1->stepNum = 0;
-	step1->speed = 0.6;
+	step1->speed = 1.0;
 	storage->push_back(step1);
 
 	stepBase *fin =  new stepBase();
@@ -45,9 +87,8 @@ void CommandListMaker::makeBasic() {
 
 
 void CommandListMaker::makeDefenceBreaker() {
-	int def = SmartDashboard::GetNumber("AUTO DEFENCE", 0);
-	int pos = SmartDashboard::GetNumber("AUTO POSITION", 0);
-	bool basic = true;
+	int def = (int)autoDefence->GetSelected();
+	int pos = (int)autoPosition->GetSelected();
 
 	driveStep* drive = new driveStep();
 	switch (def) {
