@@ -14,8 +14,8 @@ const int RELAY_BLUE = 0;
 
 RelayController::RelayController() {
 	// TODO Auto-generated constructor stub
-	Red = new Relay(RelayIO::RELAY_RED);
-	Blue = new Relay(RelayIO::RELAY_BLUE);
+	Red = new Relay(RelayIO::RELAY_RED, Relay::kForwardOnly);
+	Blue = new Relay(RelayIO::RELAY_BLUE, Relay::kForwardOnly);
 }
 
 RelayController::~RelayController() {
@@ -24,74 +24,81 @@ RelayController::~RelayController() {
 	delete Blue;
 }
 
-void RelayController::ToggleColor() {
-	switch (currnet) {
-	case RelayColor::neither:
-		break; //TODO
-	case RelayColor::blue:
-		break; //TODO
-	case RelayColor::red:
-		break; // TODO
-	}
-}
 
-void RelayController::setColor(RelayColor color) {
-	currnet = color;
-	switch (color) {
-	case RelayColor::neither:
-		break; //TODO
-	case RelayColor::blue:
+void RelayController::TeleopInit()
+{
+	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
+	switch(alligent){
+	case DriverStation::kBlue:
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
+		break;
+	case DriverStation::kRed:
 		Red->Set(Relay::kOn);
 		Blue->Set(Relay::kOff);
 		break;
-	case RelayColor::red:
+	case DriverStation::kInvalid:
 		Red->Set(Relay::kOff);
 		Blue->Set(Relay::kOn);
 		break;
 	}
 }
 
-void RelayController::relayBlink(int speed) {
-
-}
-
-void RelayController::burnUp() {
+void RelayController::AutonomousInit()
+{
 	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
 	switch(alligent){
 	case DriverStation::kBlue:
-		setColor(blue);
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
 		break;
 	case DriverStation::kRed:
-		setColor(red);
+		Red->Set(Relay::kOn);
+		Blue->Set(Relay::kOff);
 		break;
 	case DriverStation::kInvalid:
-		setColor(red);
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
 		break;
 	}
 }
 
-void RelayController::stopBlink() {
-
-}
-
-void RelayController::TeleopInit()
-{
-	burnUp();
-}
-
-void RelayController::AutonomousInit()
-{
-	burnUp();
-}
-
 void RelayController::RobotInit()
 {
-	burnUp();
+	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
+	switch(alligent){
+	case DriverStation::kBlue:
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
+		break;
+	case DriverStation::kRed:
+		Red->Set(Relay::kOn);
+		Blue->Set(Relay::kOff);
+		break;
+	case DriverStation::kInvalid:
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
+		break;
+	}
 }
 
 void RelayController::DisabledInit()
 {
-	burnUp();
+	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
+	switch(alligent){
+	case DriverStation::kBlue:
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
+		break;
+	case DriverStation::kRed:
+		Red->Set(Relay::kOn);
+		Blue->Set(Relay::kOff);
+		break;
+	case DriverStation::kInvalid:
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
+		break;
+	}
 }
 
 /*

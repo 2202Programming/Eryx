@@ -100,7 +100,7 @@ private:
 
 	void AutonomousPeriodic() {
 		SmartDashboard::PutString("State", "Autonomous Periodic");
-		//No list here beacause auto was always a bit more complicated
+		//No list here because auto was always a bit more complicated
 
 		SmartDashboard::PutNumber("AUTO COMMAND", x);
 		SmartDashboard::PutNumber("Auton Size", auton->size());
@@ -118,6 +118,10 @@ private:
 			test->value->AutonomousPeriodic();
 			test = test->parent;
 		}
+
+
+		// Turn???
+		NavxSensorControl::AutonomousPeriodic(turn);
 
 	}
 
