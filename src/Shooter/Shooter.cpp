@@ -137,7 +137,7 @@ void Shooter::TeleopInit() {
 }
 
 void Shooter::TeleopPeriodic() {
-	readXboxState();
+	readXboxComp();
 	updateMotor2();
 	setPnumatics();
 
@@ -181,7 +181,10 @@ void Shooter::TeleopPeriodic() {
 		}
 	}*/
 
-	intakeSpeed = SmartDashboard::GetNumber("Intake Speed Change", -0.7);
+	intakeSpeed = SmartDashboard::GetNumber("Intake Speed Change", 0.7);
+	if(intakeDirection){
+		intakeSpeed = -intakeSpeed;
+	}
 
 	switch (sState) {
 	case ready:
@@ -328,8 +331,18 @@ void Shooter::readXboxComp() {
 		//TODO run motors for 2 sec after retract
 	}
 
+	if(xbox->getAPressed())
+	{
+		intakeDirection = !intakeDirection;
+	}
+
 	if (xbox->getBackPressed()) {
 		runIntake = !runIntake;
+	}
+
+	if(xbox->getYPressed())
+	{
+		//TODO Reverse Motors
 	}
 
 	switch (sState) {
@@ -388,6 +401,14 @@ void Shooter::readXboxComp() {
 		}
 		break;
 	}
+
+	if (xbox->getXPressed()) {
+		if (shootPercentState < 4) {
+			shootPercentState++;
+		} else {
+			shootPercentState = 0;
+		}
+	}
 }
 
 void Shooter::setPnumatics() {
@@ -422,11 +443,11 @@ void Shooter::updateMotor2() {
 	}
 
 	if (runIntake) {
-		/*if (intakeDirection) {
-		 intakeSpeed = 1;
-		 } else {
-		 intakeSpeed = -1;
-		 }*/
+//		if (intakeDirection) {
+//		 intakeSpeed = ;
+//		 } else {
+//		 intakeSpeed = -1;
+//		 }
 	} else {
 		intakeSpeed = 0.0;
 	}

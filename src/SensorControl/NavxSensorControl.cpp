@@ -6,6 +6,7 @@
  */
 
 #include <SensorControl/NavxSensorControl.h>
+#include <math.h>
 
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 		IProfile *profileInstance, IVision *visionInstance) {
@@ -79,7 +80,8 @@ void NavxSensorControl::TargetingStateMachine() {
 	float motorSpeed = 0;
 	switch (targetState) {
 	case TargetingState::waitForButtonPress:
-		if (xbox->getLeftTriggerPressed()) {
+		if ((xbox->getLeftTriggerPressed() && !comp)
+				|| (xbox->getLeftBumperPressed() && comp)) {
 			commandDriveState = DriveSystemState::stopped;
 			targetState = TargetingState::waitForStopped;
 		}
@@ -93,6 +95,9 @@ void NavxSensorControl::TargetingStateMachine() {
 		}
 		break;
 	case TargetingState::waitForPicResult:
+		if (xbox->getStartPressed()) {
+
+		}
 		if (vision->getDoneAiming()) {
 
 			visionTargetAngle = vision->getDegreesToTurn();
@@ -108,7 +113,7 @@ void NavxSensorControl::TargetingStateMachine() {
 		}
 		break;
 	case TargetingState::driveToAngle:
-		if (fabs(turnController->GetError()) < 3) {
+		if (fabs(turnController->GetError()) < 1) {
 			if (t == NULL) {
 				t = new Timer();
 				t->Start();
@@ -159,9 +164,18 @@ void NavxSensorControl::TargetingStateMachine() {
 }
 
 void NavxSensorControl::PIDWrite(float output) {
+	bool positive=output>=0;
+	output=sqrt(fabs(output));//negative numbers don't have a real square root
+	if (!positive)
+		output*=-1;
 	turnSpeed = output;
 }
 
+void NavxSensorControl::RobotInit() {
+	SmartDashboard::PutNumber("P", 0);
+	SmartDashboard::PutNumber("I", 0);
+	SmartDashboard::PutNumber("D", 0);
+}
 void NavxSensorControl::TeleopInit() {
 	ahrs->ZeroYaw();
 	turnSpeed = 0;
@@ -169,6 +183,7 @@ void NavxSensorControl::TeleopInit() {
 	currentDriveState = DriveSystemState::running;
 	commandDriveState = DriveSystemState::running;
 	t = NULL;
+
 	turnController->SetPID(0.055, 0.0004, 0.0);
 	left->Reset();
 	right->Reset();
