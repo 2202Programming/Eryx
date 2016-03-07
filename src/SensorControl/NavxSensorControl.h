@@ -49,6 +49,7 @@ public:
 	MotorCommand *UpdateMotorSpeeds(float leftMotorSpeed, float rightMotorSpeed);
 	DriveSystemState DriveSystemControlUpdate(DriveSystemState currentState, DriveSystemState requestedState);
 
+	void RobotInit();
 	void TeleopInit();
 	void TeleopPeriodic();
 	void AutonomousInit();
@@ -72,6 +73,7 @@ protected:
 	float turnSpeed;
 	int currentStep;
 
+	bool comp = true;
 	bool inAutonomous;
 	bool time;
 	bool autoTime;

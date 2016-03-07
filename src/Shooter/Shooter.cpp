@@ -137,7 +137,7 @@ void Shooter::TeleopInit() {
 }
 
 void Shooter::TeleopPeriodic() {
-	readXboxState();
+	readXboxComp();
 	updateMotor2();
 	setPnumatics();
 
@@ -181,7 +181,10 @@ void Shooter::TeleopPeriodic() {
 		}
 	}*/
 
-	intakeSpeed = SmartDashboard::GetNumber("Intake Speed Change", -0.7);
+	intakeSpeed = SmartDashboard::GetNumber("Intake Speed Change", 0.7);
+	if(intakeDirection){
+		intakeSpeed = -intakeSpeed;
+	}
 
 	switch (sState) {
 	case ready:
@@ -317,6 +320,97 @@ void Shooter::readXboxState() {
 	}
 }
 
+void Shooter::readXboxComp() {
+	if (xbox->getRightBumperPressed()) { //Up
+		angle = !angle;
+	}
+
+	if (xbox->getLeftTriggerPressed()) {
+		intakePos = !intakePos;
+		runIntake = !runIntake;
+		//TODO run motors for 2 sec after retract
+	}
+
+	if(xbox->getAPressed())
+	{
+		intakeDirection = !intakeDirection;
+	}
+
+	if (xbox->getBackPressed()) {
+		runIntake = !runIntake;
+	}
+
+	if(xbox->getYPressed())
+	{
+		//TODO Reverse Motors
+	}
+
+	switch (sState) {
+	case ready:
+		if (xbox->getRightTriggerPressed()) {
+			sState = windup;
+		}
+		break;
+	case windup:
+		runShoot = true;
+		if (xbox->getRightTriggerPressed()) {
+			sState = goShoot;
+		}
+		if (xbox->getBPressed()) {
+			sState = winddown;
+		}
+		break;
+	case goShoot:
+		runTrigger = true;
+
+		if (t == NULL) {
+			t = new Timer();
+			t->Start();
+		} else {
+			if (t->Get() > 1) {
+				time = true;
+			}
+		}
+
+		if (time) {
+			sState = winddown;
+			time = false;
+			delete t;
+			t = NULL;
+		}
+
+		break;
+	case winddown:
+		runShoot = false;
+		runTrigger = false;
+
+		if (t == NULL) {
+			t = new Timer();
+			t->Start();
+		} else {
+			if (t->Get() > 1) {
+				time = true;
+			}
+		}
+
+		if (time) {
+			sState = ready;
+			time = false;
+			delete t;
+			t = NULL;
+		}
+		break;
+	}
+
+	if (xbox->getXPressed()) {
+		if (shootPercentState < 4) {
+			shootPercentState++;
+		} else {
+			shootPercentState = 0;
+		}
+	}
+}
+
 void Shooter::setPnumatics() {
 
 	if (angle) {
@@ -349,11 +443,11 @@ void Shooter::updateMotor2() {
 	}
 
 	if (runIntake) {
-		/*if (intakeDirection) {
-		 intakeSpeed = 1;
-		 } else {
-		 intakeSpeed = -1;
-		 }*/
+//		if (intakeDirection) {
+//		 intakeSpeed = ;
+//		 } else {
+//		 intakeSpeed = -1;
+//		 }
 	} else {
 		intakeSpeed = 0.0;
 	}
