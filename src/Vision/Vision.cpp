@@ -21,29 +21,35 @@ void Vision::RobotInit() {
 }
 
 void Vision::TeleopPeriodic() {
-	switch (getState()) {
-	case JAVA_ERROR:
-		SmartDashboard::PutString("VisionStateString", "Lol Java Error");
-		break;
-	case NOT_SET:
-		SmartDashboard::PutString("VisionStateString", "Not Set");
-		break;
-	case WAITING:
-		SmartDashboard::PutString("VisionStateString", "Waiting...");
-		break;
-	case START:
-		SmartDashboard::PutString("VisionStateString", "Started Vision!!");
-		break;
-	case PROCESSING:
-		SmartDashboard::PutString("VisionStateString", "Processing, baby");
-		break;
-	case DONE:
-		SmartDashboard::PutString("VisionStateString", "Done, aww yiss");
-		break;
-	default:
-		SmartDashboard::PutString("VisionStateString",
-				"Something went really wrong, David why");
-		break;
+	if (Global::telemetry <= 1) { //Normal
+		switch (getState()) {
+			case JAVA_ERROR:
+				SmartDashboard::PutString("VisionStateString", "Lol Java Error");
+				break;
+			case NOT_SET:
+				SmartDashboard::PutString("VisionStateString", "Not Set");
+				break;
+			case WAITING:
+				SmartDashboard::PutString("VisionStateString", "Waiting...");
+				break;
+			case START:
+				SmartDashboard::PutString("VisionStateString", "Started Vision!!");
+				break;
+			case PROCESSING:
+				SmartDashboard::PutString("VisionStateString", "Processing, baby");
+				break;
+			case DONE:
+				SmartDashboard::PutString("VisionStateString", "Done, aww yiss");
+				break;
+			default:
+				SmartDashboard::PutString("VisionStateString",
+						"Something went really wrong, David why");
+				break;
+			}
+	} else if (Global::telemetry <= 2) { //debug
+
+	} else if (Global::telemetry <= 3) { //advanced debug
+
 	}
 
 	visionUpdate();
@@ -52,8 +58,8 @@ void Vision::TeleopPeriodic() {
 void Vision::visionUpdate() {
 	int shootingState = getState();
 	/*if (shootingState == NOT_SET||shootingState==JAVA_ERROR) {
-		setState(WAITING);
-	}*/
+	 setState(WAITING);
+	 }*/
 }
 
 void Vision::startAiming() {
@@ -69,7 +75,7 @@ float Vision::getDegreesToTurn() {
 
 bool Vision::getDoneAiming() {
 	int shootingState = getState();
-	if(shootingState == JAVA_ERROR|| shootingState == NOT_SET){
+	if (shootingState == JAVA_ERROR || shootingState == NOT_SET) {
 		setState(WAITING);
 		table->PutNumber("degreesToTurn", 0);
 		return true;

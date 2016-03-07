@@ -41,6 +41,7 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
 	storage = new std::vector<stepBase*>();
 
+	/*
 	autoPosition = new SendableChooser();
 	autoPosition->AddDefault(AutoConstants::pos1, (void*)1);
 	autoPosition->AddObject(AutoConstants::pos2, (void*)2);
@@ -61,7 +62,7 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 
 	SmartDashboard::PutData("Auto Defence", autoDefence);
 	SmartDashboard::PutData("Auto Position", autoPosition);
-
+	*/
 	// TODO Auto-generated constructor stub
 
 }
@@ -72,11 +73,11 @@ CommandListMaker::~CommandListMaker() {
 }
 
 void CommandListMaker::makeBasic() {
-	driveStep* step1 = new driveStep();
-	step1->command = stepBase::driveStraight;
-	step1->distance = 1;
+	turnStep* step1 = new turnStep();
+	step1->command = stepBase::turn;
+	step1->angle = 90;
 	step1->stepNum = 0;
-	step1->speed = 1.0;
+	step1->speed = 0.4;
 	storage->push_back(step1);
 
 	stepBase *fin =  new stepBase();
