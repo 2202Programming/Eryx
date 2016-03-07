@@ -129,6 +129,10 @@ private:
 			test = test->parent;
 		}
 
+
+		// Turn???
+		NavxSensorControl::AutonomousPeriodic(turn);
+
 	}
 
 	void TeleopInit() {
