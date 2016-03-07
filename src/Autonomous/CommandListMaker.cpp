@@ -51,7 +51,7 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 	autoDefence = new SendableChooser();
 	autoDefence->AddDefault(AutoConstants::rock,(void*)ROCKWALL);
 	autoDefence->AddObject(AutoConstants::low, (void*)LOWBAR);
-	autoDefence->AddObject(AuxtoConstants::ram, (void*)RAMPARTS);
+	autoDefence->AddObject(AutoConstants::ram, (void*)RAMPARTS);
 	autoDefence->AddObject(AutoConstants::port, (void*)PORTI);
 	autoDefence->AddObject(AutoConstants::chev, (void*)CHEVAL);
 	autoDefence->AddObject(AutoConstants::sall, (void*)SALLY);
