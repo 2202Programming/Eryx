@@ -36,6 +36,7 @@ private:
 
 	//Acceleration for the drives
 	float acceleration(float newS, float oldS);
+	float acceleration2(float newS, float oldS);
 
 	Motor *motor;
 	IXbox *xbox;
@@ -52,6 +53,7 @@ private:
 	float leftSpeed, rightSpeed;
 
 	bool userControl; //True if using xbox or decelerating, false if under nav control
+	bool direction;
 };
 
 #endif /* SRC_DRIVE_H_ */
