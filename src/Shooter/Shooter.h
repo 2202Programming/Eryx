@@ -29,6 +29,7 @@ private:
 	//Input from Xbox Controller
 	void readXbox();
 	void readXboxState();
+	void readXboxComp(); // Lukas and Aaron layout
 	void setPnumatics();
 	void updateMotor1(); // w/ encoders
 	void updateMotor2(); // w/o encoders
@@ -38,6 +39,7 @@ private:
 
 	bool runShoot; //True if shooting motors should be running
 	bool runIntake;
+	bool intakeDirection;
 	bool runTrigger;
 	bool angle;
 	bool intakePos;
