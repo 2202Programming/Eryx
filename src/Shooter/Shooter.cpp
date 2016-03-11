@@ -24,14 +24,12 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 
 	encFrontLeft = new Encoder(10, 11);
 	encFrontRight = new Encoder(12, 13);
-	//encBackLeft = new Encoder();
-	//encBackRight = new Encoder();
+
 	encFrontLeft->SetReverseDirection(true); //For test board
 	encFrontRight->SetReverseDirection(true); //For test board
 	encFrontLeft->SetDistancePerPulse(0.001);
 	encFrontRight->SetDistancePerPulse(0.001);
-	/* encBackLeft->SetReverseDirection(); //For test board
-	 encBackRight->SetReverseDirection(); //For test board */
+
 
 	runShoot = false;
 	runIntake = false;
@@ -109,7 +107,6 @@ bool Shooter::hasShot() {
 }
 
 void Shooter::TeleopInit() {
-	SmartDashboard::PutNumber("ShooterSpeed", 1.0);
 	motor->setShoot(0.0, 0.0);
 	motor->setIntake(0.0);
 	runShoot = false;
@@ -129,8 +126,6 @@ void Shooter::TeleopInit() {
 	time = false;
 
 	sState = ready;
-
-	SmartDashboard::PutNumber("Intake Speed Change", -0.700);
 }
 
 void Shooter::TeleopPeriodic() {
@@ -237,6 +232,9 @@ void Shooter::readXboxState() {
 		intakePos = !intakePos;
 	}
 
+
+
+
 	switch (sState) {
 	case ready:
 		if (xbox->getRightTriggerPressed()) {
@@ -328,7 +326,7 @@ void Shooter::readXboxComp() {
 		intakePos = !intakePos;
 		runIntake = !runIntake;
 
-//TODO run motors for 2 sec after retract
+		//TODO run motors for 2 sec after retract
 	}
 
 	if (xbox->getAPressed()) {
@@ -444,6 +442,7 @@ void Shooter::updateMotor1() {
 	if (runShoot) {
 		pChangeLeft = (shootRPM - rateL) * pVal;
 		pChangeRight = (shootRPM - rateR) * pVal;
+
 		if (shootRPM - rateL > 0 && iAccumLeft < 0) {
 			iAccumLeft = 0;
 		}
