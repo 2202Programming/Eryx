@@ -43,14 +43,14 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 
 	/*
 	autoPosition = new SendableChooser();
-	autoPosition->AddDefault(AutoConstants::pos1, (void*)1);
+	autoPosition->AddObject(AutoConstants::pos1, (void*)1);
 	autoPosition->AddObject(AutoConstants::pos2, (void*)2);
 	autoPosition->AddObject(AutoConstants::pos3, (void*)3);
 	autoPosition->AddObject(AutoConstants::pos4, (void*)4);
 	autoPosition->AddObject(AutoConstants::pos5, (void*)5);
 
 	autoDefence = new SendableChooser();
-	autoDefence->AddDefault(AutoConstants::rock,(void*)ROCKWALL);
+	autoDefence->AddObject(AutoConstants::rock,(void*)ROCKWALL);
 	autoDefence->AddObject(AutoConstants::low, (void*)LOWBAR);
 	autoDefence->AddObject(AutoConstants::ram, (void*)RAMPARTS);
 	autoDefence->AddObject(AutoConstants::port, (void*)PORTI);
