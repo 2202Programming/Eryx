@@ -45,8 +45,16 @@ private:
 	bool intakePos;
 	float leftSpeed, rightSpeed;
 	int shootPercentState; // 0 is 1.0, 1 is 0.5, 2 is 0.2
-	float shootPercent;
+	float shootRPM;
 	float intakeSpeed;
+	float pChangeLeft;
+	float pChangeRight;
+	float pVal; //Multiplication Constant
+	float iAccumLeft;
+	float iAccumRight;
+	float iChangeLeft;
+	float iChangeRight;
+	float iVal;
 	bool shot;
 	bool time;
 
