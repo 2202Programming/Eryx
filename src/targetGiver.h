@@ -37,4 +37,4 @@
 #include "noList.cpp"
 #include "Shooter/Shooter.h"
 #include "Components/RelayController.h"
-
+#include "Camera/CustomUSBCamera.h"

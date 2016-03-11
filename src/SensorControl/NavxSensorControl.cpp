@@ -80,7 +80,8 @@ void NavxSensorControl::TargetingStateMachine() {
 	float motorSpeed = 0;
 	switch (targetState) {
 	case TargetingState::waitForButtonPress:
-		if ( (xbox->getLeftBumperPressed() && comp)) {
+		if ((xbox->getLeftTriggerPressed() && !comp)
+				|| (xbox->getLeftBumperPressed() && comp)) {
 			commandDriveState = DriveSystemState::stopped;
 			targetState = TargetingState::waitForStopped;
 		}
