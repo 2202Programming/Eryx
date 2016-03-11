@@ -30,6 +30,7 @@ private:
 	void readXbox();
 	void readXboxState();
 	void readXboxComp(); // Lukas and Aaron layout
+
 	void setPnumatics();
 	void updateMotor1(); // w/ encoders
 	void updateMotor2(); // w/o encoders
@@ -44,9 +45,21 @@ private:
 	bool angle;
 	bool intakePos;
 	float leftSpeed, rightSpeed;
-	int shootPercentState; // 0 is 1.0, 1 is 0.5, 2 is 0.2
-	float shootPercent;
+	int shootPercentState;
+	float shootRPM;
 	float intakeSpeed;
+
+	//TODO Init in constuctor
+	float pChangeLeft;
+	float pChangeRight;
+	float pVal; //Multiplication Constant
+	float iAccumLeft;
+	float iAccumRight;
+	float iChangeLeft;
+	float iChangeRight;
+	float iVal;
+
+
 	bool shot;
 	bool time;
 
@@ -56,6 +69,7 @@ private:
 		goShoot,
 		winddown
 	};
+
 	shootState sState;
 
 	IXbox *xbox;
@@ -65,7 +79,7 @@ private:
 	DoubleSolenoid *angleSol;
 	DoubleSolenoid *trigger;
 	DoubleSolenoid *intakeSol;
-	//Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
+	Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
 };
 
 #endif /* SRC_SHOOTER_SHOOTER_H_ */

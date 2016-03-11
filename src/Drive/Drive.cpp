@@ -20,6 +20,7 @@ Drive::Drive(Motor *motor, IXbox *xbox, ISensorControl *nav) {
 	state = nav->running;
 	requestedState = nav->running;
 	userControl = false;
+	direction = true;
 
 	left = new Encoder(2, 3);
 	right = new Encoder(4, 5);
@@ -59,6 +60,7 @@ void Drive::TeleopInit() {
 	SmartDashboard::PutNumber("Accel", 0.1); //Acceleration curve Value 0.1 - 0.05 is good
 
 	userControl = true; //Start with user control
+	direction = true;
 	state = nav->running;
 	requestedState = nav->running;
 }
@@ -69,12 +71,18 @@ void Drive::TeleopPeriodic() {
 	navSpeed = nav->UpdateMotorSpeeds(leftSpeed, rightSpeed); //nav returns speed it wants (corrected or wehen nav is controlling)
 	updateMotors();
 
-	if (Global::telemetry <= 1) { //Normal
+	if (Global::telemetry >= 1) { //Normal
 		SmartDashboard::PutNumber("Drive Left", leftSpeed);
 		SmartDashboard::PutNumber("Drive Right", rightSpeed);
-	} else if (Global::telemetry <= 2) { //debug
+		if (direction)
+			SmartDashboard::PutString("Direction", "Forward");
+		else
+			SmartDashboard::PutString("Direction", "Reverse");
+	} else if (Global::telemetry >= 2) { //debug
 
-	} else if (Global::telemetry <= 3) { //advanced debug
+	} else if (Global::telemetry >= 3) { //advanced debug
+		SmartDashboard::PutNumber("X Value", xbox->getAxisLeftX());
+		SmartDashboard::PutNumber("Y Value", xbox->getAxisLeftY());
 		SmartDashboard::PutNumber("Left Raw", left->Get());
 		SmartDashboard::PutNumber("Right RAW", right->Get());
 		SmartDashboard::PutNumber("Left2 Raw", left2->Get());
@@ -109,6 +117,10 @@ void Drive::readXboxArcadeT() { // Doesn't work with NAV right now
 void Drive::readXboxArcadeD() {
 	float x, y;
 
+	if (xbox->getYPressed()) {
+		direction = !direction;
+	}
+
 	if (requestedState == nav->running) { //When the state is running xbox controls other wise start to stop
 		x = xbox->getAxisLeftX();
 		y = xbox->getAxisLeftY();
@@ -117,8 +129,6 @@ void Drive::readXboxArcadeD() {
 		x = 0.0;
 		y = 0.0;
 	}
-	//SmartDashboard::PutNumber("X Value", x);
-	//SmartDashboard::PutNumber("Y Value", y);
 
 	//x*x + y*y is >= 1
 	if (y > 0)
@@ -143,13 +153,17 @@ void Drive::readXboxArcadeD() {
 	} else
 		state = nav->running;
 
-	if (state == nav->running || state == nav->stopping) { //If running or stopping update speeds here
-		leftSpeed = acceleration(y + x, leftSpeed);
-		rightSpeed = acceleration(y - x, rightSpeed);
+	if (direction) {
+		if (state == nav->running || state == nav->stopping) { //If running or stopping update speeds here
+			leftSpeed = acceleration(y + x, leftSpeed);
+			rightSpeed = acceleration(y - x, rightSpeed);
+		}
+	} else {
+		if (state == nav->running || state == nav->stopping) { //If running or stopping update speeds here
+			leftSpeed = acceleration2(-(y + x), leftSpeed);
+			rightSpeed = acceleration2(-(y - x), rightSpeed);
+		}
 	}
-
-	//SmartDashboard::PutNumber("RightOut Value", rightSpeed);
-	//SmartDashboard::PutNumber("LeftOut Value", leftSpeed);
 }
 //Compare requested speed with last speed, if difference greater than accel value only change by accel value
 float Drive::acceleration(float newS, float oldS) {
@@ -160,6 +174,19 @@ float Drive::acceleration(float newS, float oldS) {
 			return oldS - accel;
 		else
 			return oldS + accel;
+	}
+
+	return newS;
+}
+
+float Drive::acceleration2(float newS, float oldS) {
+	float accel = SmartDashboard::GetNumber("Accel", 0.0);
+
+	if (fabs(newS - oldS) < accel) {
+		if (oldS < newS)
+			return oldS + accel;
+		else
+			return oldS - accel;
 	}
 
 	return newS;
