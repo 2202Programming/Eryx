@@ -79,7 +79,7 @@ private:
 	DoubleSolenoid *angleSol;
 	DoubleSolenoid *trigger;
 	DoubleSolenoid *intakeSol;
-	//Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
+	Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
 };
 
 #endif /* SRC_SHOOTER_SHOOTER_H_ */

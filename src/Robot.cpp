@@ -14,8 +14,6 @@ public:
 	Arm *arm;
 	CommandListMaker *clMaker;
 	RelayController* rc;
-	CustomUSBCamera* camera;
-
 
 	bool DEBUG = false;
 
@@ -35,7 +33,6 @@ public:
 		master->addNode(xbox, "Xbox");
 
 		if (robot.compare("PROTO") == 0) {
-			camera = new CustomUSBCamera();
 
 			//master->addNode(camera, "camera");
 
@@ -129,7 +126,7 @@ private:
 
 
 		// Turn???
-		NavxSensorControl::AutonomousPeriodic(turn);
+		//NavxSensorControl::AutonomousPeriodic(turn);
 
 	}
 

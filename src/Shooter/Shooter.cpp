@@ -453,7 +453,22 @@ void Shooter::updateMotor1() {
 	}
 
 	if (runShoot) {
-		pChangeLeft = (shootRPM - rateL) * pVal;
+
+		if (rateL < RPM) {
+			leftSpeed += 0.0025;
+		} else {
+			leftSpeed -= 0.0025;
+		}
+
+		rightSpeed = leftSpeed;
+
+		/*if (rateR < RPM) {
+			rightSpeed += 0.0025;
+		} else {
+			rightSpeed -= 0.0025;
+		}*/
+
+		/*pChangeLeft = (shootRPM - rateL) * pVal;
 		pChangeRight = (shootRPM - rateR) * pVal;
 
 		if (shootRPM - rateL > 0 && iAccumLeft < 0) {
@@ -475,10 +490,13 @@ void Shooter::updateMotor1() {
 		iChangeRight = iAccumRight * iVal;
 
 		leftSpeed = pChangeLeft + iChangeLeft;
-		rightSpeed = pChangeRight + iChangeRight;
+		rightSpeed = pChangeRight + iChangeRight; */
 	} else {
 		iAccumLeft = 0;
 		iAccumRight = 0;
+
+		leftSpeed = 0;
+		rightSpeed = 0;
 	}
 }
 
