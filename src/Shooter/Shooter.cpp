@@ -24,14 +24,11 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 
 	encFrontLeft = new Encoder(10, 11);
 	encFrontRight = new Encoder(12, 13);
-	//encBackLeft = new Encoder();
-	//encBackRight = new Encoder();
+
 	encFrontLeft->SetReverseDirection(true); //For test board
 	encFrontRight->SetReverseDirection(true); //For test board
 	encFrontLeft->SetDistancePerPulse(0.001);
 	encFrontRight->SetDistancePerPulse(0.001);
-	/* encBackLeft->SetReverseDirection(); //For test board
-	 encBackRight->SetReverseDirection(); //For test board */
 
 	runShoot = false;
 	runIntake = false;
@@ -43,8 +40,19 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
 	intakeSpeed = 0.0;
-	shootPercent = 0.5;
+	shootRPM = 0.5;
 	shootPercentState = 0;
+
+	pChangeLeft = 0;
+	pChangeRight = 0;
+	pVal = 0;
+	iVal = 0;
+	iChangeLeft = 0;
+	iChangeRight = 0;
+	iAccumLeft = 0;
+	iAccumRight = 0;
+	iChangeLeft = 0;
+	iChangeRight = 0;
 
 	t = NULL;
 	time = false;
@@ -109,7 +117,6 @@ bool Shooter::hasShot() {
 }
 
 void Shooter::TeleopInit() {
-	SmartDashboard::PutNumber("ShooterSpeed", 1.0);
 	motor->setShoot(0.0, 0.0);
 	motor->setIntake(0.0);
 	runShoot = false;
@@ -130,7 +137,8 @@ void Shooter::TeleopInit() {
 
 	sState = ready;
 
-	SmartDashboard::PutNumber("Intake Speed Change", -0.700);
+	SmartDashboard::PutNumber("Shooter P Val", pVal);
+	SmartDashboard::PutNumber("Shooter I Val", iVal);
 }
 
 void Shooter::TeleopPeriodic() {
@@ -138,21 +146,24 @@ void Shooter::TeleopPeriodic() {
 	updateMotor1();
 	setPnumatics();
 
+	pVal = SmartDashboard::GetNumber("Shooter P Val", 0.005);
+	iVal = SmartDashboard::GetNumber("Shooter I Val", 0.005);
+
 	switch (shootPercentState) {
 	case 0:
-		shootPercent = 40;
+		shootRPM = 40;
 		break;
 	case 1:
-		shootPercent = 38;
+		shootRPM = 38;
 		break;
 	case 2:
-		shootPercent = 35;
+		shootRPM = 35;
 		break;
 	case 3:
-		shootPercent = 33;
+		shootRPM = 33;
 		break;
 	case 4:
-		shootPercent = 30;
+		shootRPM = 30;
 		break;
 	}
 
@@ -160,7 +171,7 @@ void Shooter::TeleopPeriodic() {
 	motor->setIntake(intakeSpeed);
 
 	if (Global::telemetry >= 1) { //Normal
-		SmartDashboard::PutNumber("Shoot Percent", shootPercent);
+		SmartDashboard::PutNumber("Shoot Percent", shootRPM);
 		SmartDashboard::PutNumber("Intake Speed", intakeSpeed);
 		SmartDashboard::PutNumber("Shoot Left", leftSpeed);
 		SmartDashboard::PutNumber("Shoot Right", rightSpeed);
@@ -267,7 +278,7 @@ void Shooter::readXboxState() {
 				t = NULL;
 			}
 			break;
-		case goShoot:
+			case goShoot:
 			runTrigger = true;
 
 			if (t == NULL) {
@@ -328,7 +339,7 @@ void Shooter::readXboxComp() {
 		intakePos = !intakePos;
 		runIntake = !runIntake;
 
-//TODO run motors for 2 sec after retract
+		//TODO run motors for 2 sec after retract
 	}
 
 	if (xbox->getAPressed()) {
@@ -442,42 +453,40 @@ void Shooter::updateMotor1() {
 	}
 
 	if (runShoot) {
-		//Logic to keep the wheels within 150 of the desired RPM
-		//Left side
+		pChangeLeft = (shootRPM - rateL) * pVal;
+		pChangeRight = (shootRPM - rateR) * pVal;
 
-		/*if (leftSpeed > 0.5) {
-		 leftSpeed = 0.5;
-		 }
-
-		 if (rightSpeed > 0.5) {
-		 rightSpeed = 0.5;
-		 }*/
-
-		if (rateL < shootPercent) {
-			leftSpeed += 0.0025;
-
-		} else {
-			leftSpeed -= 0.0025;
+		if (shootRPM - rateL > 0 && iAccumLeft < 0) {
+			iAccumLeft = 0;
+		}
+		if (shootRPM - rateR > 0 && iAccumRight < 0) {
+			iAccumRight = 0;
+		}
+		if (shootRPM - rateL < 0 && iAccumLeft > 0) {
+			iAccumLeft = 0;
+		}
+		if (shootRPM - rateR < 0 && iAccumRight > 0) {
+			iAccumRight = 0;
 		}
 
-		//Right Side
-		if (rateR < shootPercent) {
-			rightSpeed += 0.0025;
+		iAccumLeft += (shootRPM - rateL);
+		iAccumRight += (shootRPM - rateR);
+		iChangeLeft = iAccumLeft * iVal;
+		iChangeRight = iAccumRight * iVal;
 
-		} else {
-			rightSpeed -= 0.0025;
-		}
+		leftSpeed = pChangeLeft + iChangeLeft;
+		rightSpeed = pChangeRight + iChangeRight;
 	} else {
-		leftSpeed = 0.0;
-		rightSpeed = 0.0;
+		iAccumLeft = 0;
+		iAccumRight = 0;
 	}
 }
 
 void Shooter::updateMotor2() {
 	//float appliedSpeed = SmartDashboard::GetNumber("ShooterSpeed", 1.0);
 	if (runShoot) {
-		leftSpeed = acceleration(shootPercent, leftSpeed);
-		rightSpeed = acceleration(shootPercent, rightSpeed);
+		leftSpeed = acceleration(shootRPM, leftSpeed);
+		rightSpeed = acceleration(shootRPM, rightSpeed);
 	} else {
 		leftSpeed = 0.0;
 		rightSpeed = 0.0;
