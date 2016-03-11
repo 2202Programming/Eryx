@@ -466,6 +466,9 @@ void Shooter::updateMotor1() {
 	} else {
 		iAccumLeft = 0;
 		iAccumRight = 0;
+
+		leftSpeed = 0;
+		rightSpeed = 0;
 	}
 }
 
