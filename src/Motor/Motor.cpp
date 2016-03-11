@@ -1,5 +1,5 @@
 /*
- * Motor.cpp
+  * Motor.cpp
  *
  *  Created on: Jan 27, 2016
  *      Author: Daniel Owen
@@ -17,10 +17,6 @@ Motor::Motor(IProfile *np) {
 	frontRight = new Spark(4);
 	backLeft = new Spark(1);
 	backRight = new Spark(3);
-	/*frontLeft->SetInverted(np->getBool("DRIVEFL_INVERT"));
-	frontRight->SetInverted(np->getBool("DRIVEFR_INVERT"));
-	backLeft->SetInverted(np->getBool("DRIVEBL_INVERT"));
-	backRight->SetInverted(np->getBool("DRIVEBR_INVERT"));*/
 
 	//Shooter
 	shootLeft = new Spark(6);

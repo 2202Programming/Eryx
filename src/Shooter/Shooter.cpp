@@ -267,7 +267,7 @@ void Shooter::readXboxState() {
 				t = NULL;
 			}
 			break;
-			case goShoot:
+		case goShoot:
 			runTrigger = true;
 
 			if (t == NULL) {
@@ -454,18 +454,18 @@ void Shooter::updateMotor1() {
 		 }*/
 
 		if (rateL < shootPercent) {
-			leftSpeed += 0.005;
+			leftSpeed += 0.0025;
 
 		} else {
-			leftSpeed -= 0.005;
+			leftSpeed -= 0.0025;
 		}
 
 		//Right Side
 		if (rateR < shootPercent) {
-			rightSpeed += 0.005;
+			rightSpeed += 0.0025;
 
 		} else {
-			rightSpeed -= 0.005;
+			rightSpeed -= 0.0025;
 		}
 	} else {
 		leftSpeed = 0.0;
