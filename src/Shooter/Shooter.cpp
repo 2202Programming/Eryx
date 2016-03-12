@@ -30,7 +30,6 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	encFrontLeft->SetDistancePerPulse(0.001);
 	encFrontRight->SetDistancePerPulse(0.001);
 
-
 	runShoot = false;
 	runIntake = false;
 	runTrigger = false;
@@ -232,9 +231,6 @@ void Shooter::readXboxState() {
 		intakePos = !intakePos;
 	}
 
-
-
-
 	switch (sState) {
 	case ready:
 		if (xbox->getRightTriggerPressed()) {
@@ -324,7 +320,26 @@ void Shooter::readXboxComp() {
 
 	if (xbox->getLeftTriggerPressed()) {
 		intakePos = !intakePos;
-		runIntake = !runIntake;
+
+		if (intakePos)
+			runIntake = true;
+		else {
+			if (t == NULL) {
+				t = new Timer();
+				t->Start();
+			} else {
+				if (t->Get() > 1) {
+					intakeTime = true;
+				}
+			}
+
+			if(intakeTime){
+				runIntake = false;
+				intakeTime = false;
+				delete t;
+				t = NULL;
+			}
+		}
 
 		//TODO run motors for 2 sec after retract
 	}

@@ -6,6 +6,7 @@
  */
 #pragma once
 
+#include <IList.cpp>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
@@ -34,6 +35,5 @@
 #include "Arm/Arm.h"
 #include "Profile/DProfile.h"
 #include "Autonomous/CommandListMaker.h"
-#include "noList.cpp"
 #include "Shooter/Shooter.h"
 #include "Components/RelayController.h"

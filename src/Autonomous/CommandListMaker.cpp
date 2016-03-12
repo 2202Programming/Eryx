@@ -41,7 +41,7 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
 	storage = new std::vector<stepBase*>();
 
-	/*
+			/*
 	autoPosition = new SendableChooser();
 	autoPosition->AddObject(AutoConstants::pos1, (void*)1);
 	autoPosition->AddObject(AutoConstants::pos2, (void*)2);

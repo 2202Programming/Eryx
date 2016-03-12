@@ -20,11 +20,11 @@ struct nLNode {
 	}
 };
 
-struct noList {
+struct IList {
 	nLNode* head;
 	int length = 0;
 
-	noList() {
+	IList() {
 		head = NULL;
 	}
 	nLNode* getComponent(std::string id) {

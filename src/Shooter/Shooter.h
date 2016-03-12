@@ -62,6 +62,7 @@ private:
 
 	bool shot;
 	bool time;
+	bool intakeTime;
 
 	enum shootState {
 		ready,

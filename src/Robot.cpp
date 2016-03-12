@@ -3,7 +3,7 @@
 class Robot: public IterativeRobot {
 public:
 	unsigned int x = 0;
-	noList* master;
+	IList* master;
 	IProfile* profile;
 	std::vector<stepBase*> *auton;
 	Motor *m;
@@ -22,7 +22,7 @@ public:
 	std::string robot;
 
 	Robot() {
-		master = new noList();
+		master = new IList();
 		profile = new DProfile();
 		xbox = MasterXboxController::getInstance();
 		clMaker = new CommandListMaker(profile);
