@@ -6,6 +6,7 @@ class Vision: public IVision {
 public:
 	void RobotInit();
 	void TeleopPeriodic();
+	void AutonomousPeriodic();
 	std::shared_ptr<NetworkTable> table;
 
 	void startAiming();

@@ -55,6 +55,9 @@ void Vision::TeleopPeriodic() {
 	visionUpdate();
 }
 
+void Vision::AutonomousPeriodic() {
+	TeleopPeriodic();
+}
 void Vision::visionUpdate() {
 	int shootingState = getState();
 	/*if (shootingState == NOT_SET||shootingState==JAVA_ERROR) {

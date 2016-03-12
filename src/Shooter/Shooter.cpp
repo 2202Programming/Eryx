@@ -44,6 +44,7 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	shootPercentState = 0;
 
 	t = NULL;
+	intakeT = NULL;
 	time = false;
 
 	sState = ready;
@@ -91,9 +92,23 @@ void Shooter::AutonomousPeriodic() {
 	 }*/
 }
 
-void Shooter::shoot() {
+bool Shooter::shoot() {
 	runShoot = true;
 	angle = true;
+
+	if (t == NULL) {
+		t = new Timer();
+		t->Start();
+	}
+	if (t->Get() > 2)
+		runTrigger = true;
+
+	if(runTrigger){
+		delete t;
+		t = NULL;
+		return true;
+	}
+	return false;
 }
 
 bool Shooter::hasShot() {
@@ -119,12 +134,13 @@ void Shooter::TeleopInit() {
 	runTrigger = false;
 	intakeSol->Set(SOL_DEACTIVATED);
 	intakePos = false;
-	intakeDirection = false;
+	intakeDirection = true;
 
 	t = NULL;
 	time = false;
 
 	sState = ready;
+	iState = closed;
 }
 
 void Shooter::TeleopPeriodic() {
@@ -134,19 +150,19 @@ void Shooter::TeleopPeriodic() {
 
 	switch (shootPercentState) {
 	case 0:
-		shootRPM = 40;
+		shootRPM = 0.40;
 		break;
 	case 1:
-		shootRPM = 38;
+		shootRPM = 0.38;
 		break;
 	case 2:
-		shootRPM = 35;
+		shootRPM = 0.35;
 		break;
 	case 3:
-		shootRPM = 33;
+		shootRPM = 0.33;
 		break;
 	case 4:
-		shootRPM = 30;
+		shootRPM = 0.30;
 		break;
 	}
 
@@ -248,7 +264,7 @@ void Shooter::readXboxState() {
 				time = true;
 			}
 
-			if (t->Get() > 5) { //(xbox->getRightTriggerPressed())
+			if (xbox->getRightTriggerPressed()) { //()
 				sState = goShoot;
 				time = false;
 				delete t;
@@ -318,31 +334,6 @@ void Shooter::readXboxComp() {
 		angle = !angle;
 	}
 
-	if (xbox->getLeftTriggerPressed()) {
-		intakePos = !intakePos;
-
-		if (intakePos)
-			runIntake = true;
-		else {
-			if (t == NULL) {
-				t = new Timer();
-				t->Start();
-			} else {
-				if (t->Get() > 1) {
-					intakeTime = true;
-				}
-			}
-
-			if(intakeTime){
-				runIntake = false;
-				intakeTime = false;
-				delete t;
-				t = NULL;
-			}
-		}
-
-		//TODO run motors for 2 sec after retract
-	}
 
 	if (xbox->getAPressed()) {
 		intakeDirection = !intakeDirection;
@@ -356,7 +347,38 @@ void Shooter::readXboxComp() {
 		}
 	}
 
-	if (xbox->getBackPressed()) {
+	switch (iState) {
+	case open:
+		intakePos = true;
+		runIntake = true;
+		if (xbox->getLeftTriggerPressed()) {
+			iState = closing;
+		}
+		break;
+	case closing:
+		intakePos = false;
+		if (intakeT == NULL) {
+			intakeT = new Timer();
+			intakeT->Start();
+		} else {
+			if (intakeT->Get() > 1.5) {
+				runIntake = false;
+				iState = closed;
+				delete intakeT;
+				intakeT = NULL;
+			}
+		}
+		break;
+	case closed:
+		intakePos = false;
+		runIntake = false;
+		if (xbox->getLeftTriggerPressed()) {
+			iState = open;
+		}
+		break;
+	}
+
+	if (xbox->getBackHeld()) {
 		runIntake = !runIntake;
 	}
 
@@ -441,8 +463,14 @@ void Shooter::setPnumatics() {
 }
 
 void Shooter::updateMotor1() {
-	double rateR = encFrontRight->GetRate();
-	double rateL = encFrontLeft->GetRate();
+
+	if (runShoot) {
+		leftSpeed = acceleration(shootRPM, leftSpeed);
+		rightSpeed = acceleration(shootRPM, rightSpeed);
+	} else {
+		leftSpeed = 0;
+		rightSpeed = 0;
+	}
 
 	if (runIntake) {
 		if (intakeDirection) {
@@ -453,6 +481,10 @@ void Shooter::updateMotor1() {
 	} else {
 		intakeSpeed = 0.0;
 	}
+
+#if 0
+	double rateR = encFrontRight->GetRate();
+	double rateL = encFrontLeft->GetRate();
 
 	if (runShoot) {
 		pChangeLeft = (shootRPM - rateL) * pVal;
@@ -485,6 +517,7 @@ void Shooter::updateMotor1() {
 		leftSpeed = 0;
 		rightSpeed = 0;
 	}
+#endif
 }
 
 void Shooter::updateMotor2() {
@@ -509,7 +542,7 @@ void Shooter::updateMotor2() {
 }
 
 float Shooter::acceleration(float newS, float oldS) {
-	float accel = 0.005;
+	float accel = 0.0025;
 
 	if (fabs(newS - oldS) > accel) {
 		if (oldS > newS)

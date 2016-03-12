@@ -1,5 +1,5 @@
 /*
- * Motor.cpp
+  * Motor.cpp
  *
  *  Created on: Jan 27, 2016
  *      Author: Daniel Owen
@@ -17,10 +17,6 @@ Motor::Motor(IProfile *np) {
 	frontRight = new Spark(4);
 	backLeft = new Spark(1);
 	backRight = new Spark(3);
-	/*frontLeft->SetInverted(np->getBool("DRIVEFL_INVERT"));
-	frontRight->SetInverted(np->getBool("DRIVEFR_INVERT"));
-	backLeft->SetInverted(np->getBool("DRIVEBL_INVERT"));
-	backRight->SetInverted(np->getBool("DRIVEBR_INVERT"));*/
 
 	//Shooter
 	shootLeft = new Spark(6);
@@ -145,6 +141,15 @@ void Motor::setDrive(float speedL, float speedR) { //Called from drive class
 void Motor::setShoot(float speedL, float speedR) { //Called from the shooter class
 	sLeftSpeed = speedL;
 	sRightSpeed = speedR;
+
+	if (sLeftSpeed > 0.6) {
+		sLeftSpeed = 0.6;
+	}
+
+	if (sRightSpeed > 0.6) {
+		sRightSpeed = 0.6;
+	}
+
 }
 
 void Motor::setArm(float armSpeed) { //Called from the arm class

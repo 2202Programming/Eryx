@@ -9,7 +9,7 @@
 #include <math.h>
 
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
-		IProfile *profileInstance, IVision *visionInstance) {
+		IProfile *profileInstance, IVision *visionInstance,  Shooter *shhh) {
 	// TODO Auto-generated constructor stub
 	xbox = xboxInstance;
 	profile = profileInstance;
@@ -80,7 +80,8 @@ void NavxSensorControl::TargetingStateMachine() {
 	float motorSpeed = 0;
 	switch (targetState) {
 	case TargetingState::waitForButtonPress:
-		if ( (xbox->getLeftBumperPressed() && comp)) {
+		if ((xbox->getLeftTriggerPressed() && !comp)
+				|| (xbox->getLeftBumperPressed() && comp)) {
 			commandDriveState = DriveSystemState::stopped;
 			targetState = TargetingState::waitForStopped;
 		}
@@ -95,7 +96,11 @@ void NavxSensorControl::TargetingStateMachine() {
 		break;
 	case TargetingState::waitForPicResult:
 		if (xbox->getStartPressed()) {
-
+			turnController->Disable();
+			targetState = TargetingState::waitForButtonPress;
+			commandDriveState = DriveSystemState::running;
+			delete t;
+			t = NULL;
 		}
 		if (vision->getDoneAiming()) {
 
@@ -208,6 +213,7 @@ void NavxSensorControl::TeleopPeriodic() {
 }
 
 void NavxSensorControl::AutonomousInit() {
+	right->Reset();
 	currentStep = -1;
 	inAutonomous = true;
 
@@ -215,12 +221,16 @@ void NavxSensorControl::AutonomousInit() {
 	turnController->SetPID(0.055, 0.0, 0.0);
 }
 
+
 /*
  * Initialize parameters for a straight drive
  */
 
 void NavxSensorControl::InitDriveStraight(driveStep *step) {
+	delete t;
+	t = NULL;
 	t = new Timer();
+
 
 	t->Stop();
 	t->Reset();
@@ -243,11 +253,11 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right2->GetDistance() < 2000 || right->GetDistance() < 2000
-				|| left->GetDistance() < 2000 || left2->GetDistance() < 2000;
+		return right->Get() < 2500;
 	case hardTimer:
+
 		SmartDashboard::PutNumber("Timer", t->Get());
-		return t->Get() < 1;
+		return t->Get() < 2;
 	default:
 		return false;
 	}
@@ -294,10 +304,8 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 
 	switch (step->command) {
 	case step->driveStraight:
-		if (currentStep != step->stepNum) {
-			currentStep = step->stepNum;
 			InitDriveStraight((driveStep *) step);
-		}
+
 		return ExecDriveStraight((driveStep *) step);
 		break;
 	case step->turn:
@@ -328,6 +336,11 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 		return AutoTarget();
 		break;
 	case step->shoot:
+		if(currentStep != step->stepNum){
+			currentStep = step->stepNum;
+			InitAutoShoot();
+		}
+		return ExecAutoShoot();
 		break;
 	default:
 		// We don't support this command; skip
@@ -392,4 +405,15 @@ bool NavxSensorControl::ExecTurn(turnStep *step) {
 	updateMotorSpeedResponse.leftMotorSpeed = -motorSpeed;
 	updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
 	return autoTime;
+}
+
+void NavxSensorControl::InitAutoShoot()
+{
+
+}
+
+bool NavxSensorControl::ExecAutoShoot()
+{
+	return shootie->shoot();
+	return false;
 }

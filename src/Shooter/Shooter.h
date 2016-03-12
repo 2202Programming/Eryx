@@ -25,6 +25,8 @@ public:
 	void TeleopInit();
 	void TeleopPeriodic();
 
+	bool shoot();
+
 private:
 	//Input from Xbox Controller
 	void readXbox();
@@ -34,7 +36,7 @@ private:
 	void setPnumatics();
 	void updateMotor1(); // w/ encoders
 	void updateMotor2(); // w/o encoders
-	void shoot();
+
 	bool hasShot();
 	float acceleration(float newS, float oldS);
 
@@ -71,12 +73,20 @@ private:
 		winddown
 	};
 
+	enum intakeState {
+		closed,
+		closing,
+		open
+	};
+
 	shootState sState;
+	intakeState iState;
 
 	IXbox *xbox;
 	Motor *motor;
 	Compressor *c;
 	Timer *t;
+	Timer *intakeT;
 	DoubleSolenoid *angleSol;
 	DoubleSolenoid *trigger;
 	DoubleSolenoid *intakeSol;
