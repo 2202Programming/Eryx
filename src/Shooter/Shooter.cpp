@@ -43,18 +43,8 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	shootRPM = 0.5;
 	shootPercentState = 0;
 
-	pChangeLeft = 0;
-	pChangeRight = 0;
-	pVal = 0;
-	iVal = 0;
-	iChangeLeft = 0;
-	iChangeRight = 0;
-	iAccumLeft = 0;
-	iAccumRight = 0;
-	iChangeLeft = 0;
-	iChangeRight = 0;
-
 	t = NULL;
+	intakeT = NULL;
 	time = false;
 
 	sState = ready;
@@ -102,9 +92,23 @@ void Shooter::AutonomousPeriodic() {
 	 }*/
 }
 
-void Shooter::shoot() {
+bool Shooter::shoot() {
 	runShoot = true;
 	angle = true;
+
+	if (t == NULL) {
+		t = new Timer();
+		t->Start();
+	}
+	if (t->Get() > 2)
+		runTrigger = true;
+
+	if(runTrigger){
+		delete t;
+		t = NULL;
+		return true;
+	}
+	return false;
 }
 
 bool Shooter::hasShot() {
@@ -130,15 +134,13 @@ void Shooter::TeleopInit() {
 	runTrigger = false;
 	intakeSol->Set(SOL_DEACTIVATED);
 	intakePos = false;
-	intakeDirection = false;
+	intakeDirection = true;
 
 	t = NULL;
 	time = false;
 
 	sState = ready;
-
-	SmartDashboard::PutNumber("Shooter P Val", pVal);
-	SmartDashboard::PutNumber("Shooter I Val", iVal);
+	iState = closed;
 }
 
 void Shooter::TeleopPeriodic() {
@@ -146,24 +148,21 @@ void Shooter::TeleopPeriodic() {
 	updateMotor1();
 	setPnumatics();
 
-	pVal = SmartDashboard::GetNumber("Shooter P Val", 0.005);
-	iVal = SmartDashboard::GetNumber("Shooter I Val", 0.005);
-
 	switch (shootPercentState) {
 	case 0:
-		shootRPM = 40;
+		shootRPM = 0.40;
 		break;
 	case 1:
-		shootRPM = 38;
+		shootRPM = 0.38;
 		break;
 	case 2:
-		shootRPM = 35;
+		shootRPM = 0.35;
 		break;
 	case 3:
-		shootRPM = 33;
+		shootRPM = 0.33;
 		break;
 	case 4:
-		shootRPM = 30;
+		shootRPM = 0.30;
 		break;
 	}
 
@@ -265,7 +264,7 @@ void Shooter::readXboxState() {
 				time = true;
 			}
 
-			if (t->Get() > 5) { //(xbox->getRightTriggerPressed())
+			if (xbox->getRightTriggerPressed()) { //()
 				sState = goShoot;
 				time = false;
 				delete t;
@@ -335,13 +334,6 @@ void Shooter::readXboxComp() {
 		angle = !angle;
 	}
 
-	if (xbox->getLeftTriggerPressed()) {
-		intakePos = !intakePos;
-		runIntake = !runIntake;
-
-		//TODO run motors for 2 sec after retract
-	}
-
 	if (xbox->getAPressed()) {
 		intakeDirection = !intakeDirection;
 	}
@@ -354,7 +346,38 @@ void Shooter::readXboxComp() {
 		}
 	}
 
-	if (xbox->getBackPressed()) {
+	switch (iState) {
+	case open:
+		intakePos = true;
+		runIntake = true;
+		if (xbox->getLeftTriggerPressed()) {
+			iState = closing;
+		}
+		break;
+	case closing:
+		intakePos = false;
+		if (intakeT == NULL) {
+			intakeT = new Timer();
+			intakeT->Start();
+		} else {
+			if (intakeT->Get() > 1.5) {
+				runIntake = false;
+				iState = closed;
+				delete intakeT;
+				intakeT = NULL;
+			}
+		}
+		break;
+	case closed:
+		intakePos = false;
+		runIntake = false;
+		if (xbox->getLeftTriggerPressed()) {
+			iState = open;
+		}
+		break;
+	}
+
+	if (xbox->getBackHeld()) {
 		runIntake = !runIntake;
 	}
 
@@ -439,8 +462,14 @@ void Shooter::setPnumatics() {
 }
 
 void Shooter::updateMotor1() {
-	double rateR = encFrontRight->GetRate();
-	double rateL = encFrontLeft->GetRate();
+
+	if (runShoot) {
+		leftSpeed = acceleration(shootRPM, leftSpeed);
+		rightSpeed = acceleration(shootRPM, rightSpeed);
+	} else {
+		leftSpeed = 0;
+		rightSpeed = 0;
+	}
 
 	if (runIntake) {
 		if (intakeDirection) {
@@ -452,23 +481,12 @@ void Shooter::updateMotor1() {
 		intakeSpeed = 0.0;
 	}
 
+#if 0
+	double rateR = encFrontRight->GetRate();
+	double rateL = encFrontLeft->GetRate();
+
 	if (runShoot) {
-
-		if (rateL < RPM) {
-			leftSpeed += 0.0025;
-		} else {
-			leftSpeed -= 0.0025;
-		}
-
-		rightSpeed = leftSpeed;
-
-		/*if (rateR < RPM) {
-			rightSpeed += 0.0025;
-		} else {
-			rightSpeed -= 0.0025;
-		}*/
-
-		/*pChangeLeft = (shootRPM - rateL) * pVal;
+		pChangeLeft = (shootRPM - rateL) * pVal;
 		pChangeRight = (shootRPM - rateR) * pVal;
 
 		if (shootRPM - rateL > 0 && iAccumLeft < 0) {
@@ -490,7 +508,7 @@ void Shooter::updateMotor1() {
 		iChangeRight = iAccumRight * iVal;
 
 		leftSpeed = pChangeLeft + iChangeLeft;
-		rightSpeed = pChangeRight + iChangeRight; */
+		rightSpeed = pChangeRight + iChangeRight;
 	} else {
 		iAccumLeft = 0;
 		iAccumRight = 0;
@@ -498,6 +516,7 @@ void Shooter::updateMotor1() {
 		leftSpeed = 0;
 		rightSpeed = 0;
 	}
+#endif
 }
 
 void Shooter::updateMotor2() {
@@ -522,7 +541,7 @@ void Shooter::updateMotor2() {
 }
 
 float Shooter::acceleration(float newS, float oldS) {
-	float accel = 0.005;
+	float accel = 0.0025;
 
 	if (fabs(newS - oldS) > accel) {
 		if (oldS > newS)

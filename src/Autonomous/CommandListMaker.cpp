@@ -73,16 +73,22 @@ CommandListMaker::~CommandListMaker() {
 }
 
 void CommandListMaker::makeBasic() {
-	turnStep* step1 = new turnStep();
-	step1->command = stepBase::turn;
-	step1->angle = 90;
+	driveStep* step1 = new driveStep();
+	step1->command = stepBase::driveStraight;
+	step1->speed = 1.0;
+	step1->distance = 1;
 	step1->stepNum = 0;
-	step1->speed = 0.4;
+	step1->speed = 1.0;
 	storage->push_back(step1);
+
+	stepBase *step2 = new stepBase();
+	step2->command = stepBase::shoot;
+	step2->stepNum = 1;
+	storage->push_back(step2);
 
 	stepBase *fin =  new stepBase();
 	fin->command = stepBase::stop;
-	fin->stepNum = 1;
+	fin->stepNum = 2;
 	storage->push_back(fin);
 }
 

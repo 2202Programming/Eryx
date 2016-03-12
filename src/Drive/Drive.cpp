@@ -146,6 +146,14 @@ void Drive::readXboxArcadeD() {
 	if (state == nav->running || state == nav->stopping) { //If running or stopping update speeds here
 		leftSpeed = acceleration(y + x, leftSpeed);
 		rightSpeed = acceleration(y - x, rightSpeed);
+
+		if (leftSpeed > 0.8) {
+			leftSpeed = 0.8;
+		}
+
+		if (rightSpeed > 0.8) {
+			rightSpeed = 0.8;
+		}
 	}
 
 	//SmartDashboard::PutNumber("RightOut Value", rightSpeed);

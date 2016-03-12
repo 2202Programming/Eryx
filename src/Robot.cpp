@@ -45,10 +45,10 @@ public:
 
 			vision = new Vision();
 			m = new Motor(profile);
-			sensorControl = new NavxSensorControl(xbox, profile, vision);
-			drive = new Drive(m, xbox, sensorControl);
 			arm = new Arm(m, xbox);
 			shooter = new Shooter(m, xbox, profile);
+			sensorControl = new NavxSensorControl(xbox, profile, vision, shooter);
+			drive = new Drive(m, xbox, sensorControl);
 			rc = new RelayController();
 
 			master->addNode(sensorControl, "Sensor Control");
@@ -63,15 +63,9 @@ public:
 
 		}
 
-		std::string autonID = profile->getValue("AUTOLIST");
-		autonID = "BASIC";
-
-		if (autonID.compare("BASIC") == 0) {
-			clMaker->makeBasic();
-		} else if (autonID.compare("ADVANCED") == 0) {
-			//	clMaker->makeDefenceBreaker();
-		}
+		clMaker->makeBasic();
 		auton = clMaker->getList();
+		//CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 	}
 
 private:

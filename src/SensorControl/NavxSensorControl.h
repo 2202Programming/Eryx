@@ -11,15 +11,17 @@
 #include <Profile/IProfile.h>
 #include <AHRS.h>
 #include <Vision/IVision.h>
+#include "Shooter/Shooter.h"
 #include "WPILib.h"
 
 #include <SensorControl/ISensorControl.h>
 
 class NavxSensorControl: public ISensorControl, public PIDOutput {
 public:
-	NavxSensorControl(IXbox *xbox, IProfile *profileInstance, IVision *visionInstance);
+	NavxSensorControl(IXbox *xbox, IProfile *profileInstance, IVision *visionInstance, Shooter *shhh);
 	virtual ~NavxSensorControl();
 
+	Shooter *shootie;
 	IXbox *xbox;
 	IProfile *profile;
 	AHRS *ahrs;                         // navX-MXP
@@ -84,6 +86,9 @@ protected:
 
 	double motorConstant = 1.5;
 	double DriveStraitTime;
+
+	void InitAutoShoot();
+	bool ExecAutoShoot();
 
 	void InitAutoTarget();
 	bool AutoTarget();

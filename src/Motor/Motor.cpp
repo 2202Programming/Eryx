@@ -141,6 +141,15 @@ void Motor::setDrive(float speedL, float speedR) { //Called from drive class
 void Motor::setShoot(float speedL, float speedR) { //Called from the shooter class
 	sLeftSpeed = speedL;
 	sRightSpeed = speedR;
+
+	if (sLeftSpeed > 0.6) {
+		sLeftSpeed = 0.6;
+	}
+
+	if (sRightSpeed > 0.6) {
+		sRightSpeed = 0.6;
+	}
+
 }
 
 void Motor::setArm(float armSpeed) { //Called from the arm class
