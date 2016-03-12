@@ -69,18 +69,8 @@ void Drive::TeleopPeriodic() {
 	navSpeed = nav->UpdateMotorSpeeds(leftSpeed, rightSpeed); //nav returns speed it wants (corrected or wehen nav is controlling)
 	updateMotors();
 
-	if (Global::telemetry <= 1) { //Normal
-		SmartDashboard::PutNumber("Drive Left", leftSpeed);
-		SmartDashboard::PutNumber("Drive Right", rightSpeed);
-	} else if (Global::telemetry <= 2) { //debug
-
-	} else if (Global::telemetry <= 3) { //advanced debug
-		SmartDashboard::PutNumber("Left Raw", left->Get());
-		SmartDashboard::PutNumber("Right RAW", right->Get());
-		SmartDashboard::PutNumber("Left2 Raw", left2->Get());
-		SmartDashboard::PutNumber("Right2 RAW", right2->Get());
-	}
-
+	SmartDashboard::PutNumber("Drive Left", leftSpeed);
+	SmartDashboard::PutNumber("Drive Right", rightSpeed);
 }
 
 void Drive::readXboxTank() { //Tank drive - 2 sticks

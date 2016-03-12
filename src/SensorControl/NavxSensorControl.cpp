@@ -9,7 +9,7 @@
 #include <math.h>
 
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
-		IProfile *profileInstance, IVision *visionInstance,  Shooter *shhh) {
+		IProfile *profileInstance, IVision *visionInstance, Shooter *shhh) {
 	// TODO Auto-generated constructor stub
 	xbox = xboxInstance;
 	profile = profileInstance;
@@ -168,17 +168,14 @@ void NavxSensorControl::TargetingStateMachine() {
 }
 
 void NavxSensorControl::PIDWrite(float output) {
-	bool positive=output>=0;
-	output=sqrt(fabs(output));//negative numbers don't have a real square root
+	bool positive = output >= 0;
+	output = sqrt(fabs(output));//negative numbers don't have a real square root
 	if (!positive)
-		output*=-1;
+		output *= -1;
 	turnSpeed = output;
 }
 
 void NavxSensorControl::RobotInit() {
-	SmartDashboard::PutNumber("P", 0);
-	SmartDashboard::PutNumber("I", 0);
-	SmartDashboard::PutNumber("D", 0);
 }
 void NavxSensorControl::TeleopInit() {
 	ahrs->ZeroYaw();
@@ -198,17 +195,7 @@ void NavxSensorControl::TeleopInit() {
 void NavxSensorControl::TeleopPeriodic() {
 	inAutonomous = false;
 	TargetingStateMachine();
-
-	if (Global::telemetry >= 1) { //Normal
-		SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
-	} else if (Global::telemetry >= 2) { //debug
-
-	} else if (Global::telemetry >= 3) { //advanced debug
-		SmartDashboard::PutNumber("Left Drive", left->Get());
-		SmartDashboard::PutNumber("Right Drive", right->Get());
-		SmartDashboard::PutNumber("Left Drive 2", left2->Get());
-		SmartDashboard::PutNumber("Right Drive 2", right2->Get());
-	}
+	SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
 
 }
 
@@ -221,7 +208,6 @@ void NavxSensorControl::AutonomousInit() {
 	turnController->SetPID(0.055, 0.0, 0.0);
 }
 
-
 /*
  * Initialize parameters for a straight drive
  */
@@ -230,7 +216,6 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
 	delete t;
 	t = NULL;
 	t = new Timer();
-
 
 	t->Stop();
 	t->Reset();
@@ -304,7 +289,7 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 
 	switch (step->command) {
 	case step->driveStraight:
-			InitDriveStraight((driveStep *) step);
+		InitDriveStraight((driveStep *) step);
 
 		return ExecDriveStraight((driveStep *) step);
 		break;
@@ -336,7 +321,7 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 		return AutoTarget();
 		break;
 	case step->shoot:
-		if(currentStep != step->stepNum){
+		if (currentStep != step->stepNum) {
 			currentStep = step->stepNum;
 			InitAutoShoot();
 		}
@@ -407,13 +392,11 @@ bool NavxSensorControl::ExecTurn(turnStep *step) {
 	return autoTime;
 }
 
-void NavxSensorControl::InitAutoShoot()
-{
+void NavxSensorControl::InitAutoShoot() {
 
 }
 
-bool NavxSensorControl::ExecAutoShoot()
-{
+bool NavxSensorControl::ExecAutoShoot() {
 	return shootie->shoot();
 	return false;
 }

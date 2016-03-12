@@ -124,13 +124,6 @@ void Motor::TeleopPeriodic() { //Update all motors every loop
 
 	//Intake
 	intake->Set(intakeSpeed);
-
-	//Date Feeds
-	SmartDashboard::PutNumber("Arm Speed", aLowerSpeed);
-	/*SmartDashboard::PutNumber("Left Speed", leftSpeed);
-	SmartDashboard::PutNumber("Right Speed", rightSpeed);
-	SmartDashboard::PutNumber("Left Motor", sRightSpeed);
-	SmartDashboard::PutNumber("Right Motor", sLeftSpeed);*/
 }
 
 void Motor::setDrive(float speedL, float speedR) { //Called from drive class
