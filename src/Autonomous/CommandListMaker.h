@@ -19,6 +19,8 @@ public:
 	CommandListMaker(IProfile *p);
 	virtual ~CommandListMaker();
 
+	void RobotInit();
+
 	void makeBasic();
 	void makeDefenceBreaker();
 

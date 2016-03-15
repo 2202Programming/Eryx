@@ -11,6 +11,7 @@
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 		IProfile *profileInstance, IVision *visionInstance, Shooter *shhh) {
 	// TODO Auto-generated constructor stub
+	shootie = shhh;
 	xbox = xboxInstance;
 	profile = profileInstance;
 	vision = visionInstance;
@@ -117,6 +118,15 @@ void NavxSensorControl::TargetingStateMachine() {
 		}
 		break;
 	case TargetingState::driveToAngle:
+		if(autoT == NULL)
+		{
+			autoT = new Timer();
+			autoT->Start();
+		} else if (autoT->Get() > 3)
+		{
+			delete autoT;
+			autoT = NULL;
+		}
 		if (fabs(turnController->GetError()) < 1) {
 			if (t == NULL) {
 				t = new Timer();
@@ -238,7 +248,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right->Get() < 2500;
+		return right->Get() < 3000;
 	case hardTimer:
 
 		SmartDashboard::PutNumber("Timer", t->Get());
@@ -337,7 +347,8 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 
 void NavxSensorControl::InitAutoTarget() {
 	ahrs->ZeroYaw();
-	targetState = TargetingState::waitForStopped;
+	vision->startAiming();
+	targetState = TargetingState::waitForPicResult;
 }
 
 bool NavxSensorControl::AutoTarget() {

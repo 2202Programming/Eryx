@@ -89,7 +89,7 @@ void Shooter::AutonomousInit() {
 }
 
 void Shooter::AutonomousPeriodic() {
-	updateMotor2();
+	updateMotor1();
 	setPnumatics();
 	motor->setShoot(leftSpeed, rightSpeed);
 }
@@ -101,7 +101,7 @@ bool Shooter::shoot() {
 	if (t == NULL) {
 		t = new Timer();
 		t->Start();
-	} else if (t->Get() > 2) {
+	} else if (t->Get() > 5) {
 		runTrigger = true;
 		shot = true;
 	}
@@ -150,26 +150,26 @@ void Shooter::TeleopInit() {
 
 void Shooter::TeleopPeriodic() {
 	readXboxComp();
-	updateMotor1();
 	setPnumatics();
+	updateMotor1();
 
-	switch (shootPercentState) {
-	case 0:
-		shootRPM = 0.40;
-		break;
-	case 1:
-		shootRPM = 0.38;
-		break;
-	case 2:
-		shootRPM = 0.35;
-		break;
-	case 3:
-		shootRPM = 0.33;
-		break;
-	case 4:
-		shootRPM = 0.30;
-		break;
-	}
+	/*switch (shootPercentState) {
+	 case 0:
+	 shootRPM = 0.40;
+	 break;
+	 case 1:
+	 shootRPM = 0.38;
+	 break;
+	 case 2:
+	 shootRPM = 0.35;
+	 break;
+	 case 3:
+	 shootRPM = 0.30;
+	 break;
+	 case 4:
+	 shootRPM = 0.25;
+	 break;
+	 }*/
 
 	motor->setShoot(-leftSpeed, -rightSpeed);
 	motor->setIntake(intakeSpeed);
@@ -205,7 +205,7 @@ void Shooter::TeleopPeriodic() {
 		break;
 	}
 
-	switch(iState) {
+	switch (iState) {
 	case closed:
 		SmartDashboard::PutString("Intake State", "Closed");
 		break;
@@ -345,13 +345,13 @@ void Shooter::readXboxComp() {
 		intakeDirection = !intakeDirection;
 	}
 
-	if (xbox->getXPressed()) {
-		if (shootPercentState < 4) {
-			shootPercentState++;
-		} else {
-			shootPercentState = 0;
-		}
-	}
+	/*if (xbox->getXPressed()) {
+	 if (shootPercentState < 4) {
+	 shootPercentState++;
+	 } else {
+	 shootPercentState = 0;
+	 }
+	 }*/
 
 	switch (iState) {
 	case open:
@@ -390,11 +390,13 @@ void Shooter::readXboxComp() {
 
 	switch (sState) {
 	case ready:
+		runShoot = false;
 		if (xbox->getRightTriggerPressed()) {
 			sState = windup;
 		}
 		break;
 	case windup:
+		runIntake = false;
 		runShoot = true;
 		if (xbox->getRightTriggerPressed()) {
 			sState = goShoot;
@@ -404,6 +406,7 @@ void Shooter::readXboxComp() {
 		}
 		break;
 	case goShoot:
+		runIntake = false;
 		runTrigger = true;
 
 		if (t == NULL) {
@@ -445,6 +448,19 @@ void Shooter::readXboxComp() {
 		break;
 	}
 
+	if (xbox->getXHeld()) {
+		shootRPM = 0.28;
+		intakePos = true;
+		runShoot = true;
+		if (leftSpeed == shootRPM) {
+			runTrigger = true;
+		}
+	} else {
+		shootRPM = 0.4;
+		if (!runShoot) {
+			runTrigger = false;
+		}
+	}
 }
 
 void Shooter::setPnumatics() {

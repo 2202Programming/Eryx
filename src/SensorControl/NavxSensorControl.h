@@ -82,7 +82,8 @@ protected:
 
 	float angleTime;
 	int timesCalled = 0;
-	Timer *t;
+	Timer *t = NULL;
+	Timer *autoT = NULL;
 
 	double motorConstant = 1.5;
 	double DriveStraitTime;

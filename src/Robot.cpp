@@ -1,5 +1,37 @@
 #include "targetGiver.h"
 
+#define RAMPARTS 0
+#define LOWBAR 1
+#define ROCKWALL 2
+#define DEBRIS 3
+#define MOAT 4
+#define DRAW 5
+#define CHEVAL 6
+#define SALLY 7
+#define PORTI 8
+
+
+namespace AutoConstants{
+	const std::string pos1 = "Position One";
+	const std::string pos2 = "Position Two";
+	const std::string pos3 = "Position Three";
+	const std::string pos4 = "Position Four";
+	const std::string pos5 = "Position Five";
+
+	const std::string ram = "Ramparts";
+	const std::string low = "Low Bar";
+	const std::string rock = "Rock Wall";
+	const std::string port = "Portculis";
+	const std::string chev = "Cheval de Frise";
+	const std::string sall = "Sally Port";
+	const std::string deb = "Rough Terrain";
+	const std::string moat = "Moat";
+	const std::string draw = "Drawbridge";
+
+
+}
+
+
 class Robot: public IterativeRobot {
 public:
 	unsigned int x = 0;
@@ -15,6 +47,9 @@ public:
 	CommandListMaker *clMaker;
 	RelayController* rc;
 
+	SendableChooser *autoPosition;
+	SendableChooser *autoDefence;
+
 	bool DEBUG = false;
 
 	Shooter *shooter;
@@ -26,6 +61,7 @@ public:
 		profile = new DProfile();
 		xbox = MasterXboxController::getInstance();
 		clMaker = new CommandListMaker(profile);
+
 
 		robot = profile->getValue("ROBOT");
 		robot = "ORYX";
@@ -63,8 +99,7 @@ public:
 
 		}
 
-		clMaker->makeBasic();
-		auton = clMaker->getList();
+
 		//CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 	}
 
@@ -72,8 +107,13 @@ private:
 	LiveWindow *lw;
 
 	void RobotInit() {
+
+
+
 		lw = LiveWindow::GetInstance();
 		SmartDashboard::PutString("State", "Robot Init");
+		SmartDashboard::PutNumber("Auto Angle", 0.0);
+		clMaker->RobotInit();
 		//CameraServer::GetInstance()->StartAutomaticCapture("cam1");
 
 		//added by David
@@ -90,6 +130,31 @@ private:
 	void AutonomousInit() {
 		x = 0;
 		SmartDashboard::PutString("State", "Autonomous Init");
+
+		autoPosition = new SendableChooser();
+			autoPosition->AddObject("ROCKASD", (void*)1);
+			autoPosition->AddObject(AutoConstants::pos2, (void*)2);
+			autoPosition->AddObject(AutoConstants::pos3, (void*)3);
+			autoPosition->AddObject(AutoConstants::pos4, (void*)4);
+			autoPosition->AddObject(AutoConstants::pos5, (void*)5);
+
+			autoDefence = new SendableChooser();
+			autoDefence->AddObject(AutoConstants::rock,(void*)ROCKWALL);
+			autoDefence->AddObject(AutoConstants::low, (void*)LOWBAR);
+			autoDefence->AddObject(AutoConstants::ram, (void*)RAMPARTS);
+			autoDefence->AddObject(AutoConstants::port, (void*)PORTI);
+			autoDefence->AddObject(AutoConstants::chev, (void*)CHEVAL);
+			autoDefence->AddObject(AutoConstants::sall, (void*)SALLY);
+			autoDefence->AddObject(AutoConstants::deb, (void*)DEBRIS);
+			autoDefence->AddObject(AutoConstants::moat, (void*)MOAT);
+			autoDefence->AddObject(AutoConstants::draw, (void*)DRAW);
+
+			SmartDashboard::PutData("Auto Defence", autoDefence);
+			SmartDashboard::PutData("Auto Position", autoPosition);
+
+		clMaker->makeBasic();
+		auton = clMaker->getList();
+
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->AutonomousInit();

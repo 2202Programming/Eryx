@@ -41,7 +41,19 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
 	storage = new std::vector<stepBase*>();
 
-			/*
+	// TODO Auto-generated constructor stub
+}
+
+CommandListMaker::~CommandListMaker()
+{
+	delete storage;
+	// TODO Auto-generated destructor stub
+}
+
+void CommandListMaker::RobotInit()
+{
+
+
 	autoPosition = new SendableChooser();
 	autoPosition->AddObject(AutoConstants::pos1, (void*)1);
 	autoPosition->AddObject(AutoConstants::pos2, (void*)2);
@@ -62,17 +74,11 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 
 	SmartDashboard::PutData("Auto Defence", autoDefence);
 	SmartDashboard::PutData("Auto Position", autoPosition);
-	*/
-	// TODO Auto-generated constructor stub
-
 }
 
-CommandListMaker::~CommandListMaker() {
-	delete storage;
-	// TODO Auto-generated destructor stub
-}
+void CommandListMaker::makeBasic()
+{
 
-void CommandListMaker::makeBasic() {
 	driveStep* step1 = new driveStep();
 	step1->command = stepBase::driveStraight;
 	step1->speed = 1.0;
@@ -81,15 +87,27 @@ void CommandListMaker::makeBasic() {
 	step1->speed = 1.0;
 	storage->push_back(step1);
 
+	turnStep* stp = new turnStep();
+	stp->command = stepBase::turn;
+	stp->angle= SmartDashboard::GetNumber("Auto Angle", 0);
+	stp->speed = .5;
+	stp->stepNum = 1;
+	//storage->push_back(stp);
+
 	stepBase *step2 = new stepBase();
-	step2->command = stepBase::shoot;
-	step2->stepNum = 1;
-	storage->push_back(step2);
+	step2->command = stepBase::target;
+	step2->stepNum = 2;
+	//storage->push_back(step2);
 
 	stepBase *fin =  new stepBase();
-	fin->command = stepBase::stop;
-	fin->stepNum = 2;
-	storage->push_back(fin);
+	fin->command = stepBase::shoot;
+	fin->stepNum = 3;
+	//storage->push_back(fin);
+
+	stepBase *sb3 = new stepBase();
+	sb3->command = stepBase::stop;
+	sb3->stepNum = 4;
+	storage->push_back(sb3);
 }
 
 
