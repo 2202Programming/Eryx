@@ -4,38 +4,8 @@
  *  Created on: Feb 16, 2016
  *      Author: lazar
  */
-#define RAMPARTS 0
-#define LOWBAR 1
-#define ROCKWALL 2
-#define DEBRIS 3
-#define MOAT 4
-#define DRAW 5
-#define CHEVAL 6
-#define SALLY 7
-#define PORTI 8
-
 #include <Autonomous/CommandListMaker.h>
 #include "WPILib.h"
-
-namespace AutoConstants{
-	const std::string pos1 = "Position One";
-	const std::string pos2 = "Position Two";
-	const std::string pos3 = "Position Three";
-	const std::string pos4 = "Position Four";
-	const std::string pos5 = "Position Five";
-
-	const std::string ram = "Ramparts";
-	const std::string low = "Low Bar";
-	const std::string rock = "Rock Wall";
-	const std::string port = "Portculis";
-	const std::string chev = "Cheval de Frise";
-	const std::string sall = "Sally Port";
-	const std::string deb = "Rough Terrain";
-	const std::string moat = "Moat";
-	const std::string draw = "Drawbridge";
-
-
-}
 
 CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
@@ -47,33 +17,29 @@ CommandListMaker::CommandListMaker(IProfile *p) {
 CommandListMaker::~CommandListMaker()
 {
 	delete storage;
-	// TODO Auto-generated destructor stub
 }
 
 void CommandListMaker::RobotInit()
 {
-
-
 	autoPosition = new SendableChooser();
-	autoPosition->AddObject(AutoConstants::pos1, (void*)1);
-	autoPosition->AddObject(AutoConstants::pos2, (void*)2);
-	autoPosition->AddObject(AutoConstants::pos3, (void*)3);
-	autoPosition->AddObject(AutoConstants::pos4, (void*)4);
-	autoPosition->AddObject(AutoConstants::pos5, (void*)5);
+	autoPosition->AddDefault(low, (void*)&low);
+	autoPosition->AddObject(ram, (void*)&ram);
+	autoPosition->AddObject(rock, (void*)&rock);
+	autoPosition->AddObject(port, (void*)&port);
+	autoPosition->AddObject(chev, (void*)&chev);
+	autoPosition->AddObject(sall, (void*)&sall);
+	autoPosition->AddObject(deb, (void*)&deb);
+	autoPosition->AddObject(moat, (void*)&moat);
+	autoPosition->AddObject(draw, (void*)&draw);
+	SmartDashboard::PutData("Position", autoPosition);
 
 	autoDefence = new SendableChooser();
-	autoDefence->AddObject(AutoConstants::rock,(void*)ROCKWALL);
-	autoDefence->AddObject(AutoConstants::low, (void*)LOWBAR);
-	autoDefence->AddObject(AutoConstants::ram, (void*)RAMPARTS);
-	autoDefence->AddObject(AutoConstants::port, (void*)PORTI);
-	autoDefence->AddObject(AutoConstants::chev, (void*)CHEVAL);
-	autoDefence->AddObject(AutoConstants::sall, (void*)SALLY);
-	autoDefence->AddObject(AutoConstants::deb, (void*)DEBRIS);
-	autoDefence->AddObject(AutoConstants::moat, (void*)MOAT);
-	autoDefence->AddObject(AutoConstants::draw, (void*)DRAW);
-
-	SmartDashboard::PutData("Auto Defence", autoDefence);
-	SmartDashboard::PutData("Auto Position", autoPosition);
+	autoDefence->AddDefault(pos1, (void*)&pos1);
+	autoDefence->AddObject(pos2, (void*)&pos2);
+	autoDefence->AddObject(pos3, (void*)&pos3);
+	autoDefence->AddObject(pos4, (void*)&pos4);
+	autoDefence->AddObject(pos5, (void*)&pos5);
+	SmartDashboard::PutData("Defence", autoDefence);
 }
 
 void CommandListMaker::makeBasic()
@@ -112,57 +78,71 @@ void CommandListMaker::makeBasic()
 
 
 void CommandListMaker::makeDefenceBreaker() {
-	int def = (int)autoDefence->GetSelected();
-	int pos = (int)autoPosition->GetSelected();
+	void* temp = autoPosition->GetSelected();
+	std::string* dt =  static_cast<std::string*>(temp);
+	std::string defence = *dt;
+
+	temp = autoDefence->GetSelected();
+	dt = static_cast<std::string*>(temp);
+	std::string position = *dt;
+
+	delete dt;
+	delete temp;
 
 	driveStep* drive = new driveStep();
-	switch (def) {
-	case DEBRIS:
+
+	if(defence.compare(deb) == 0)	//DEBRIS
+	{
 		drive->stepNum = 0;
 		drive->command = stepBase::driveStraight;
 		drive->distance = 2.0;
 		drive->speed = .75;
 		storage->push_back(drive);
-		break; //TODO
-	case RAMPARTS:
+	}
+	else if (defence.compare(ram)) //RAMPARTS
+	{
 		drive->stepNum = 0;
 		drive->command = stepBase::driveStraight;
 		drive->distance = 2.0;
 		drive->speed = .75;
 		storage->push_back(drive);
-		break; //TODO
-	case LOWBAR:
+	}
+	else if(defence.compare(rock)) //ROCK WALL
+	{
 		drive->stepNum = 0;
 		drive->command = stepBase::driveStraight;
 		drive->distance = 2.0;
 		drive->speed = .75;
 		storage->push_back(drive);
-		break; //TODO
-	case MOAT:
+	}
+	else if(defence.compare(low)) // LOW BAR
+	{
 		drive->stepNum = 0;
 		drive->command = stepBase::driveStraight;
 		drive->distance = 2.0;
 		drive->speed = .75;
 		storage->push_back(drive);
-		break; //TODO
-	case ROCKWALL:
+	}
+	else if(defence.compare(moat) == 0) // DRAWBRIDGE
+	{
 		drive->stepNum = 0;
 		drive->command = stepBase::driveStraight;
 		drive->distance = 2.0;
 		drive->speed = .75;
 		storage->push_back(drive);
-		break; //TODO
-	case PORTI:
+	}
+	else //THE OTHERS
+	{
 		drive->stepNum = 0;
 		drive->command = stepBase::driveStraight;
 		drive->distance = 2.0;
 		drive->speed = .75;
 		storage->push_back(drive);
-		break; //TODO
 	}
 
-	turnStep *turn = new turnStep();
 
+	turnStep *turn = new turnStep();
+	int pos = position[position.length()-1] - '0';
 	switch (pos) {
 	case 1:
 		turn->stepNum = 1;
