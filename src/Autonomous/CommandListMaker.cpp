@@ -188,17 +188,17 @@ void CommandListMaker::makeDefenceBreaker() {
 
 	if (CanShoot) {
 		stepBase* prepareShot = new stepBase();
-		prepareShot->stepNum = 2;
+		prepareShot->stepNum = GlobalStep; GlobalStep ++;
 		prepareShot->command = stepBase::target;
 		storage->push_back(prepareShot);
 
 		stepBase* shoot = new stepBase();
-		shoot->stepNum = 3;
+		shoot->stepNum = GlobalStep; GlobalStep ++;
 		shoot->command = stepBase::shoot;
 		storage->push_back(shoot);
 
 		stepBase* stop = new stepBase();
-		stop->stepNum = 4;
+		stop->stepNum = GlobalStep; GlobalStep ++;
 		stop->command = stepBase::stop;
 		storage->push_back(stop);
 	}
