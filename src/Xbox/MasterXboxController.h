@@ -53,6 +53,8 @@ public:
 	float getAxisRightX();
 	float getAxisRightY();
 
+	void setRumble(bool on);
+
 private:
 	MasterXboxController(int port = 0);
 	Joystick lstick;

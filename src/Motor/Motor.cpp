@@ -13,10 +13,10 @@
 Motor::Motor(IProfile *np) {
 
 	//Drive
-	frontLeft = new Spark(2);
-	frontRight = new Spark(4);
-	backLeft = new Spark(1);
-	backRight = new Spark(3);
+	frontLeft = new Talon(2);//new Spark(2);
+	frontRight = new Talon(4);//new Spark(4);
+	backLeft = new Talon(1);//new Spark(1);
+	backRight = new Talon(3);//new Spark(3);
 
 	//Shooter
 	shootLeft = new Spark(6);

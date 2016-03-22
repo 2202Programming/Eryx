@@ -36,6 +36,8 @@ public:
 	virtual float getAxisLeftY()=0;
 	virtual float getAxisRightX()=0;
 	virtual float getAxisRightY()=0;
+
+	virtual void setRumble(bool on)=0;
 private:
 
 };

@@ -232,6 +232,7 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
 	t->Start();
 	DriveStraitTime = (step->distance / (step->speed * motorConstant));
 
+	right->SetDistancePerPulse(0.63);
 }
 
 /*
@@ -248,7 +249,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right->Get() < 3000;
+		return right->GetDistance() < 3000;
 	case hardTimer:
 
 		SmartDashboard::PutNumber("Timer", t->Get());
@@ -270,6 +271,9 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 		SmartDashboard::PutNumber("Step Speed", step->speed);
 		timesCalled += 1;
 	}
+
+	SmartDashboard::PutNumber("Distance", right->GetDistance());
+	SmartDashboard::PutNumber("Raw", right->Get());
 
 	if (GetDriveStraightContinue(step->distance)) {
 		// Check these motor speed values

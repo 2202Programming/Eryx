@@ -13,6 +13,7 @@
 #include <Vision/IVision.h>
 #include "Shooter/Shooter.h"
 #include "WPILib.h"
+#include <math.h>
 
 #include <SensorControl/ISensorControl.h>
 
