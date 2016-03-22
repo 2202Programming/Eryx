@@ -135,7 +135,7 @@ void CommandListMaker::makeDefenceBreaker() {
 	{
 		drive->stepNum = 0;
 		drive->command = stepBase::driveStraight;
-		drive->distance = 2.0;
+		drive->distance = .2;
 		drive->speed = .75;
 		storage->push_back(drive);
 	}
