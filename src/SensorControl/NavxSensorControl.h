@@ -96,6 +96,7 @@ protected:
 	bool AutoTarget();
 
 	bool GetDriveStraightContinue(float value);
+	double GetEncoderCount(float);
 
 	void PIDWrite(float output);
 	void TargetingStateMachine();

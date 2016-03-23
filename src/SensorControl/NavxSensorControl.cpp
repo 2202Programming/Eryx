@@ -235,6 +235,11 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
 	right->SetDistancePerPulse(0.63);
 }
 
+double NavxSensorControl::GetEncoderCount(float value)
+{
+	return value *  107.1429;
+}
+
 /*
  * Execute one driveStraight step
  * return true if target reached
@@ -249,7 +254,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right->Get() < value * 1000;
+		return right->Get() < GetEncoderCount(value);
 	case hardTimer:
 
 		SmartDashboard::PutNumber("Timer", t->Get());
