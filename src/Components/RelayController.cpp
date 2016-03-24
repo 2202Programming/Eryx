@@ -16,6 +16,8 @@ RelayController::RelayController() {
 	// TODO Auto-generated constructor stub
 	Red = new Relay(RelayIO::RELAY_RED, Relay::kForwardOnly);
 	Blue = new Relay(RelayIO::RELAY_BLUE, Relay::kForwardOnly);
+
+	USB = new Joystick(1);
 }
 
 RelayController::~RelayController() {
@@ -24,11 +26,41 @@ RelayController::~RelayController() {
 	delete Blue;
 }
 
+void RelayController::TeleopInit() {
+	DriverStation::Alliance alligent =
+			DriverStation::GetInstance().GetAlliance();
+	switch (alligent) {
+	case DriverStation::kBlue:
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
+		break;
+	case DriverStation::kRed:
+		Red->Set(Relay::kOn);
+		Blue->Set(Relay::kOff);
+		break;
+	case DriverStation::kInvalid:
+		Red->Set(Relay::kOff);
+		Blue->Set(Relay::kOn);
+		break;
+	}
 
-void RelayController::TeleopInit()
-{
-	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
-	switch(alligent){
+	if (USB->GetRawButton(0)) {
+		SmartDashboard::PutBoolean("USB Controller 0", true);
+	} else {
+		SmartDashboard::PutBoolean("USB Controller 0", false);
+	}
+
+	if (USB->GetRawButton(1)) {
+		SmartDashboard::PutBoolean("USB Controller 1", true);
+	} else {
+		SmartDashboard::PutBoolean("USB Controller 1", false);
+	}
+}
+
+void RelayController::AutonomousInit() {
+	DriverStation::Alliance alligent =
+			DriverStation::GetInstance().GetAlliance();
+	switch (alligent) {
 	case DriverStation::kBlue:
 		Red->Set(Relay::kOff);
 		Blue->Set(Relay::kOn);
@@ -44,10 +76,10 @@ void RelayController::TeleopInit()
 	}
 }
 
-void RelayController::AutonomousInit()
-{
-	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
-	switch(alligent){
+void RelayController::RobotInit() {
+	DriverStation::Alliance alligent =
+			DriverStation::GetInstance().GetAlliance();
+	switch (alligent) {
 	case DriverStation::kBlue:
 		Red->Set(Relay::kOff);
 		Blue->Set(Relay::kOn);
@@ -63,29 +95,10 @@ void RelayController::AutonomousInit()
 	}
 }
 
-void RelayController::RobotInit()
-{
-	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
-	switch(alligent){
-	case DriverStation::kBlue:
-		Red->Set(Relay::kOff);
-		Blue->Set(Relay::kOn);
-		break;
-	case DriverStation::kRed:
-		Red->Set(Relay::kOn);
-		Blue->Set(Relay::kOff);
-		break;
-	case DriverStation::kInvalid:
-		Red->Set(Relay::kOff);
-		Blue->Set(Relay::kOn);
-		break;
-	}
-}
-
-void RelayController::DisabledInit()
-{
-	DriverStation::Alliance alligent = DriverStation::GetInstance().GetAlliance();
-	switch(alligent){
+void RelayController::DisabledInit() {
+	DriverStation::Alliance alligent =
+			DriverStation::GetInstance().GetAlliance();
+	switch (alligent) {
 	case DriverStation::kBlue:
 		Red->Set(Relay::kOff);
 		Blue->Set(Relay::kOn);

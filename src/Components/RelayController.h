@@ -37,6 +37,7 @@ protected:
 
 	Relay* Blue;
 	Relay* Red;
+	Joystick *USB;
 
 	void ToggleColor();	//Switches the current color if it is set to neither it does nothing
 	void setColor(RelayColor); 	//Sets the selected color to the value

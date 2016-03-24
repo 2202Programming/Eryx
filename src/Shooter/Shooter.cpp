@@ -129,8 +129,8 @@ void Shooter::TeleopInit() {
 	runShoot = false;
 	runIntake = false;
 
-	c->Start();
-	c->SetClosedLoopControl(true);
+	//c->Start();
+	//c->SetClosedLoopControl(true);
 
 	angleSol->Set(SOL_DEACTIVATED);
 	angle = false;

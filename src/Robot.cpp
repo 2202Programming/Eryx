@@ -14,6 +14,7 @@ public:
 	Arm *arm;
 	CommandListMaker *clMaker;
 	RelayController* rc;
+	LineReader* lineReader;
 
 	bool DEBUG = false;
 
@@ -50,6 +51,7 @@ public:
 			sensorControl = new NavxSensorControl(xbox, profile, vision, shooter);
 			drive = new Drive(m, xbox, sensorControl);
 			rc = new RelayController();
+			lineReader=new LineReader();
 
 			master->addNode(sensorControl, "Sensor Control");
 			master->addNode(vision, "Vision");
@@ -57,6 +59,7 @@ public:
 			master->addNode(shooter, "Shooter");
 			master->addNode(arm, "ARM");
 			master->addNode(rc, "relay");
+			master->addNode(lineReader, "LineReader");//added by David, might have messed stuff up
 
 			//MUST BE CALLED LAST
 			master->addNode(m, "Motor");

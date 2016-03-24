@@ -37,3 +37,4 @@
 #include "Autonomous/CommandListMaker.h"
 #include "Shooter/Shooter.h"
 #include "Components/RelayController.h"
+#include "LineReader/LineReader.h"
