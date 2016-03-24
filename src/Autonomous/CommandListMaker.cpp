@@ -11,6 +11,7 @@
 CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
 	storage = NULL;
+	stick = new Joystick(1);
 
 	// TODO Auto-generated constructor stub
 }
@@ -76,12 +77,13 @@ void CommandListMaker::makeBasic() {
 
 void CommandListMaker::makeDefenceBreaker() {
 
-	if(storage != NULL){
+	if (storage != NULL) {
 		delete storage;
 		storage = NULL;
 	}
 	storage = new std::vector<stepBase*>();
 
+#if 0
 	/* Gets the current selction from the dashboard (should default to LowBar)*/
 	//Selection
 	void* temp = autoPosition->GetSelected();
@@ -93,6 +95,22 @@ void CommandListMaker::makeDefenceBreaker() {
 	std::string position = *dt;
 
 	delete dt;
+#endif
+
+	//Defaults to low bar
+	std::string defence = low;
+
+	if (stick->GetRawButton(7)) {
+		defence = low;
+	} else if (stick->GetRawButton(8)) {
+		defence = rock;
+	} else if (stick->GetRawButton(9)) {
+		defence = deb;
+	} else if (stick->GetRawButton(10)) {
+		defence = moat;
+	} else if (stick->GetRawButton(11)) {
+		defence = ram;
+	}
 
 	//Bool Determing if Shooting is possible on the current defence
 	bool CanShoot = false;
@@ -110,31 +128,26 @@ void CommandListMaker::makeDefenceBreaker() {
 	//Which Defence we are going over determines the speed and distance they will go
 	//But ignores the type and number
 	if (defence.compare(deb) == 0)	//DEBRIS
-	{
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else if (defence.compare(ram)) //RAMPARTS
-	{
+	} else if (defence.compare(ram)) //RAMPARTS
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else if (defence.compare(rock)) //ROCK WALL
-	{
+	} else if (defence.compare(rock)) //ROCK WALL
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else if (defence.compare(low)) // LOW BAR
-	{
+	} else if (defence.compare(low)) // LOW BAR
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else if (defence.compare(moat) == 0) // Moat
-	{
+	} else if (defence.compare(moat) == 0) // Moat
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else //THE OTHERS
+	} else //THE OTHERS
 	{
 		DriveDistance = 0.5;
 		DriveSpeed = 0.5;
@@ -155,7 +168,7 @@ void CommandListMaker::makeDefenceBreaker() {
 		turnStep *turn = new turnStep();
 
 		//The Position it is in gotten through 'rough' means
-		int pos = position[position.length() - 1] - '0';
+		int pos = 1;
 
 		//Turn angle and
 		double TurnAngle;

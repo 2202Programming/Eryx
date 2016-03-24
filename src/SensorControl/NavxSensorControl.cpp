@@ -237,7 +237,7 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
 double NavxSensorControl::GetEncoderCount(float value) {
 	return value * 107.1429;
 }
-e
+
 
 /*
  * Execute one driveStraight step

@@ -16,6 +16,7 @@
 using namespace std;
 class CommandListMaker {
 public:
+
 	CommandListMaker(IProfile *p);
 	virtual ~CommandListMaker();
 
@@ -25,8 +26,6 @@ public:
 	void makeDefenceBreaker();
 
 	vector<stepBase*>* getList();
-
-
 
 private:
 	const std::string ram = "Ramparts";
@@ -49,7 +48,7 @@ private:
 	SendableChooser *autoDefence;
 
 
-
+	Joystick *stick;
 	vector<stepBase*>* storage;
 	IProfile *profile;
 };
