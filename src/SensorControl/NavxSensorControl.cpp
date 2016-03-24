@@ -249,7 +249,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right->GetDistance() < 3000;
+		return right->GetDistance() < value * 1000;
 	case hardTimer:
 
 		SmartDashboard::PutNumber("Timer", t->Get());
