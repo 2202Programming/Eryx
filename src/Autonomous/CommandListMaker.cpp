@@ -6,7 +6,7 @@
  */
 #include <Autonomous/CommandListMaker.h>
 #include "WPILib.h"
-#define TURNIF_NOSHOT true
+#define TURNIF_NOSHOT false
 
 CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
@@ -43,6 +43,13 @@ void CommandListMaker::RobotInit() {
 }
 
 void CommandListMaker::makeBasic() {
+
+	if(storage != NULL){
+		delete storage;
+		storage = NULL;
+	}
+	storage = new std::vector<stepBase*>();
+
 
 	driveStep* step1 = new driveStep();
 	step1->command = stepBase::driveStraight;
@@ -112,7 +119,7 @@ void CommandListMaker::makeDefenceBreaker() {
 		defence = ram;
 	}
 
-	//Bool Determing if Shooting is possible on the current defence
+	//Bool determining if Shooting is possible on the current defence
 	bool CanShoot = false;
 
 	//Step Number Needs to be tracked
@@ -163,6 +170,13 @@ void CommandListMaker::makeDefenceBreaker() {
 	drive->speed = DriveSpeed;
 	storage->push_back(drive);
 
+	stepBase* stop = new stepBase();
+	stop->stepNum = GlobalStep;
+	GlobalStep++;
+	stop->command = stepBase::stop;
+	storage->push_back(stop);
+
+#if 0
 	//Turn Decision based on position
 	if (CanShoot && TURNIF_NOSHOT) {
 		//Eventual TurnStep
@@ -180,23 +194,23 @@ void CommandListMaker::makeDefenceBreaker() {
 		case 1:
 			TurnAngle = 39.09;
 			TurnSpeed = .6;
-			break; //TODO
+			break;
 		case 2:
 			TurnAngle = 27.11;
 			TurnSpeed = .6;
-			break; //TODO
+			break;
 		case 3:
 			TurnAngle = 11.95;
 			TurnSpeed = .6;
-			break; //TODO
+			break;
 		case 4:
 			TurnAngle = -5.06;
 			TurnSpeed = .6;
-			break; //TODO
+			break;
 		case 5:
 			TurnAngle = -21.25;
 			TurnSpeed = .6;
-			break; //TODO
+			break;
 		default:
 			TurnAngle = 0;
 			TurnSpeed = .6;
@@ -231,7 +245,86 @@ void CommandListMaker::makeDefenceBreaker() {
 		stop->command = stepBase::stop;
 		storage->push_back(stop);
 	}
+#endif
 }
+
+void CommandListMaker::makeTest(){
+
+	int x = 0;
+
+	if(storage != NULL){
+		delete storage;
+		storage = NULL;
+	}
+	storage = new std::vector<stepBase*>();
+
+	driveStep* ds = new driveStep();
+	ds->speed = 1.0;
+	ds->distance = 5;
+	ds->stepNum = x; x++;
+	ds->command = stepBase::driveStraight;
+	storage->push_back(ds);
+
+	driveStep* ds2 = new driveStep();
+	ds2->speed = 1.0;
+	ds2->distance = 5;
+	ds2->stepNum = x; x++;
+	ds2->command = stepBase::driveStraight;
+	storage->push_back(ds2);
+
+	stepBase* stp = new stepBase();
+	stp->command = stepBase::stop;
+	stp->stepNum = x; x++;
+	storage->push_back(stp);
+
+}
+
+void CommandListMaker::makeTest2(){
+	if(storage != NULL){
+		delete storage;
+		storage = NULL;
+	}
+	storage = new std::vector<stepBase*>();
+	int x = 0;
+
+	turnStep* tn = new turnStep();
+	tn->angle = 90;
+	tn->speed = .5;
+	tn->stepNum = x; x++;
+	tn->command = stepBase::turn;
+	storage->push_back(tn);
+
+	stepBase* stp = new stepBase();
+	stp->command = stepBase::stop;
+	stp->stepNum = x; x++;
+	storage->push_back(stp);
+}
+
+void CommandListMaker::makeTest3(){
+
+	if(storage != NULL){
+		delete storage;
+		storage = NULL;
+	}
+	storage = new std::vector<stepBase*>();
+	int x = 0;
+
+	stepBase* tar = new stepBase();
+	tar->command = stepBase::target;
+	tar->stepNum = x; x++;
+	storage->push_back(tar);
+
+	stepBase* sht = new stepBase();
+	sht->command = stepBase::shoot;
+	sht->stepNum = x; x++;
+	storage->push_back(sht);
+
+	stepBase* stp = new stepBase();
+	stp->command = stepBase::stop;
+	stp->stepNum = x; x++;
+	storage->push_back(stp);
+}
+
 vector<stepBase*>* CommandListMaker::getList() {
 	return storage;
 }

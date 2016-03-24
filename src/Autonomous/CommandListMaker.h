@@ -24,6 +24,9 @@ public:
 
 	void makeBasic();
 	void makeDefenceBreaker();
+	void makeTest();
+	void makeTest2();
+	void makeTest3();
 
 	vector<stepBase*>* getList();
 
