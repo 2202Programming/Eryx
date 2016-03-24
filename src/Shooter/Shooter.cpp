@@ -155,7 +155,7 @@ void Shooter::TeleopPeriodic() {
 	setPnumatics();
 	updateMotor1();
 
-	switch (shootPercentState) {
+	/*switch (shootPercentState) {
 	case 0:
 		shootRPM = 0.40;
 		break;
@@ -171,7 +171,7 @@ void Shooter::TeleopPeriodic() {
 	case 4:
 		shootRPM = 0.25;
 		break;
-	}
+	}*/
 
 	motor->setShoot(-leftSpeed, -rightSpeed);
 	motor->setIntake(intakeSpeed);
@@ -248,7 +248,7 @@ void Shooter::readXboxComp() {
 		if (useEncoder) {
 			shootRPM = 0.10;
 		} else {
-			shootRPM = 0.4;
+			shootRPM = SmartDashboard::GetNumber("Shoot Percent", 0.4);
 		}
 		if (!runShoot) {
 			runTrigger = false;
