@@ -7,6 +7,7 @@
 
 #include <SensorControl/NavxSensorControl.h>
 #include <math.h>
+#define STABILIZE true
 
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 		IProfile *profileInstance, IVision *visionInstance, Shooter *shhh) {
@@ -118,12 +119,10 @@ void NavxSensorControl::TargetingStateMachine() {
 		}
 		break;
 	case TargetingState::driveToAngle:
-		if(autoT == NULL)
-		{
+		if (autoT == NULL) {
 			autoT = new Timer();
 			autoT->Start();
-		} else if (autoT->Get() > 3)
-		{
+		} else if (autoT->Get() > 3) {
 			delete autoT;
 			autoT = NULL;
 		}
@@ -235,6 +234,11 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
 	right->SetDistancePerPulse(0.63);
 }
 
+double NavxSensorControl::GetEncoderCount(float value) {
+	return value * 107.1429;
+}
+
+
 /*
  * Execute one driveStraight step
  * return true if target reached
@@ -249,7 +253,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right->GetDistance() < value * 1000;
+		return right->Get() < GetEncoderCount(value);
 	case hardTimer:
 
 		SmartDashboard::PutNumber("Timer", t->Get());
@@ -279,6 +283,16 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 		// Check these motor speed values
 		updateMotorSpeedResponse.leftMotorSpeed = step->speed;
 		updateMotorSpeedResponse.rightMotorSpeed = step->speed;
+
+		if (STABILIZE) {
+			if (ahrs->GetRawAccelY() > 0) {
+				updateMotorSpeedResponse.leftMotorSpeed -= .05;
+				updateMotorSpeedResponse.rightMotorSpeed += .05;
+			} else if (ahrs->GetRawAccelY() < 0) {
+				updateMotorSpeedResponse.leftMotorSpeed += .05;
+				updateMotorSpeedResponse.rightMotorSpeed -= .05;
+			}
+		}
 		return false;
 	} else {
 		// Set speeds to zero
