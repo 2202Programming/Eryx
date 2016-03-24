@@ -10,7 +10,7 @@
 
 CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
-	storage = new std::vector<stepBase*>();
+	storage = NULL;
 
 	// TODO Auto-generated constructor stub
 }
@@ -75,6 +75,12 @@ void CommandListMaker::makeBasic() {
 }
 
 void CommandListMaker::makeDefenceBreaker() {
+
+	if(storage != NULL){
+		delete storage;
+		storage = NULL;
+	}
+	storage = new std::vector<stepBase*>();
 
 	/* Gets the current selction from the dashboard (should default to LowBar)*/
 	//Selection
