@@ -149,6 +149,7 @@ void CommandListMaker::makeDefenceBreaker() {
 		DriveSpeed = .75;
 	} else //THE OTHERS
 	{
+
 		DriveDistance = 0.5;
 		DriveSpeed = 0.5;
 		CanShoot = false;
