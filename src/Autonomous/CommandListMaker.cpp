@@ -6,7 +6,7 @@
  */
 #include <Autonomous/CommandListMaker.h>
 #include "WPILib.h"
-#define TURNIF_NOSHOT true
+#define TURNIF_NOSHOT false
 
 CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
@@ -46,7 +46,7 @@ void CommandListMaker::makeBasic() {
 	driveStep* step1 = new driveStep();
 	step1->command = stepBase::driveStraight;
 	step1->speed = 1.0;
-	step1->distance = 1;
+	step1->distance = 28;
 	step1->stepNum = 0;
 	step1->speed = 1.0;
 	storage->push_back(step1);
@@ -66,11 +66,11 @@ void CommandListMaker::makeBasic() {
 	stepBase *fin = new stepBase();
 	fin->command = stepBase::shoot;
 	fin->stepNum = 3;
-	//storage->push_back(fin);
+	//storage->push_back(fin);z
 
 	stepBase *sb3 = new stepBase();
 	sb3->command = stepBase::stop;
-	sb3->stepNum = 4;
+	sb3->stepNum = 1;
 	storage->push_back(sb3);
 }
 
@@ -84,6 +84,7 @@ void CommandListMaker::makeDefenceBreaker() {
 
 	/* Gets the current selction from the dashboard (should default to LowBar)*/
 	//Selection
+	/*
 	void* temp = autoPosition->GetSelected();
 	std::string* dt = static_cast<std::string*>(temp);
 	std::string defence = *dt;
@@ -93,6 +94,8 @@ void CommandListMaker::makeDefenceBreaker() {
 	std::string position = *dt;
 
 	delete dt;
+	*/
+	std::string defence = deb;
 
 	//Bool Determing if Shooting is possible on the current defence
 	bool CanShoot = false;
@@ -150,13 +153,22 @@ void CommandListMaker::makeDefenceBreaker() {
 	drive->speed = DriveSpeed;
 	storage->push_back(drive);
 
+	stepBase* stop = new stepBase();
+	stop->stepNum = GlobalStep;
+	GlobalStep++;
+	stop->command = stepBase::stop;
+	storage->push_back(stop);
+
+#if 0
+	CanShoot = false;
+
 	//Turn Decision based on position
 	if (CanShoot && TURNIF_NOSHOT) {
 		//Eventual TurnStep
 		turnStep *turn = new turnStep();
 
 		//The Position it is in gotten through 'rough' means
-		int pos = position[position.length() - 1] - '0';
+		int pos = 1;
 
 		//Turn angle and
 		double TurnAngle;
@@ -218,6 +230,7 @@ void CommandListMaker::makeDefenceBreaker() {
 		stop->command = stepBase::stop;
 		storage->push_back(stop);
 	}
+#endif
 }
 vector<stepBase*>* CommandListMaker::getList() {
 	return storage;
