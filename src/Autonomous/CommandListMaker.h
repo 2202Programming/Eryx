@@ -19,15 +19,34 @@ public:
 	CommandListMaker(IProfile *p);
 	virtual ~CommandListMaker();
 
+	void RobotInit();
+
 	void makeBasic();
 	void makeDefenceBreaker();
 
 	vector<stepBase*>* getList();
 
-	SendableChooser *autoPosition;
-	SendableChooser *autoDefence;
+
 
 private:
+	const std::string ram = "Ramparts";
+	const std::string low = "Low Bar";
+	const std::string rock = "Rock Wall";
+	const std::string port = "Portculis";
+	const std::string chev = "Cheval de Frise";
+	const std::string sall = "Sally Port";
+	const std::string deb = "Rough Terrain";
+	const std::string moat = "Moat";
+	const std::string draw = "Drawbridge";
+
+	const std::string pos1 = "Position 1";
+	const std::string pos2 = "Position 2";
+	const std::string pos3 = "Position 3";
+	const std::string pos4 = "Position 4";
+	const std::string pos5 = "Position 5";
+
+	SendableChooser *autoPosition;
+	SendableChooser *autoDefence;
 
 
 

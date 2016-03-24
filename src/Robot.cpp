@@ -28,6 +28,7 @@ public:
 		xbox = MasterXboxController::getInstance();
 		clMaker = new CommandListMaker(profile);
 
+
 		robot = profile->getValue("ROBOT");
 		robot = "ORYX";
 
@@ -66,8 +67,7 @@ public:
 
 		}
 
-		clMaker->makeBasic();
-		auton = clMaker->getList();
+
 		//CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 	}
 
@@ -75,8 +75,13 @@ private:
 	LiveWindow *lw;
 
 	void RobotInit() {
+
+
+
 		lw = LiveWindow::GetInstance();
 		SmartDashboard::PutString("State", "Robot Init");
+		SmartDashboard::PutNumber("Auto Angle", 0.0);
+		clMaker->RobotInit();
 		//CameraServer::GetInstance()->StartAutomaticCapture("cam1");
 
 		//added by David
@@ -93,6 +98,10 @@ private:
 	void AutonomousInit() {
 		x = 0;
 		SmartDashboard::PutString("State", "Autonomous Init");
+
+		clMaker->makeDefenceBreaker();
+		auton = clMaker->getList();
+
 		nLNode* test = master->head;
 		while (test != NULL) {
 			test->value->AutonomousInit();

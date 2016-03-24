@@ -7,10 +7,12 @@
 
 #include <SensorControl/NavxSensorControl.h>
 #include <math.h>
+#define STABILIZE true
 
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 		IProfile *profileInstance, IVision *visionInstance, Shooter *shhh) {
 	// TODO Auto-generated constructor stub
+	shootie = shhh;
 	xbox = xboxInstance;
 	profile = profileInstance;
 	vision = visionInstance;
@@ -117,6 +119,13 @@ void NavxSensorControl::TargetingStateMachine() {
 		}
 		break;
 	case TargetingState::driveToAngle:
+		if (autoT == NULL) {
+			autoT = new Timer();
+			autoT->Start();
+		} else if (autoT->Get() > 3) {
+			delete autoT;
+			autoT = NULL;
+		}
 		if (fabs(turnController->GetError()) < 1) {
 			if (t == NULL) {
 				t = new Timer();
@@ -222,7 +231,13 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
 	t->Start();
 	DriveStraitTime = (step->distance / (step->speed * motorConstant));
 
+	right->SetDistancePerPulse(0.63);
 }
+
+double NavxSensorControl::GetEncoderCount(float value) {
+	return value * 107.1429;
+}
+
 
 /*
  * Execute one driveStraight step
@@ -238,7 +253,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right->Get() < 2500;
+		return right->Get() < GetEncoderCount(value);
 	case hardTimer:
 
 		SmartDashboard::PutNumber("Timer", t->Get());
@@ -261,10 +276,23 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 		timesCalled += 1;
 	}
 
+	SmartDashboard::PutNumber("Distance", right->GetDistance());
+	SmartDashboard::PutNumber("Raw", right->Get());
+
 	if (GetDriveStraightContinue(step->distance)) {
 		// Check these motor speed values
 		updateMotorSpeedResponse.leftMotorSpeed = step->speed;
 		updateMotorSpeedResponse.rightMotorSpeed = step->speed;
+
+		if (STABILIZE) {
+			if (ahrs->GetRawAccelY() > 0) {
+				updateMotorSpeedResponse.leftMotorSpeed -= .05;
+				updateMotorSpeedResponse.rightMotorSpeed += .05;
+			} else if (ahrs->GetRawAccelY() < 0) {
+				updateMotorSpeedResponse.leftMotorSpeed += .05;
+				updateMotorSpeedResponse.rightMotorSpeed -= .05;
+			}
+		}
 		return false;
 	} else {
 		// Set speeds to zero
@@ -337,7 +365,8 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 
 void NavxSensorControl::InitAutoTarget() {
 	ahrs->ZeroYaw();
-	targetState = TargetingState::waitForStopped;
+	vision->startAiming();
+	targetState = TargetingState::waitForPicResult;
 }
 
 bool NavxSensorControl::AutoTarget() {

@@ -268,6 +268,13 @@ float MasterXboxController::getAxisTriggerRight() {
 	return rstick.GetRawAxis(AXIS_TRIGGER_RIGHT);
 }
 
+void MasterXboxController::setRumble(bool on) {
+	rstick.SetRumble(Joystick::RumbleType::kLeftRumble, on);
+	rstick.SetRumble(Joystick::RumbleType::kRightRumble, on);
+	lstick.SetRumble(Joystick::RumbleType::kLeftRumble, on);
+	lstick.SetRumble(Joystick::RumbleType::kRightRumble, on);
+}
+
 float MasterXboxController::getAxisTriggerLeft() {
 	return rstick.GetRawAxis(AXIS_TRIGGER_LEFT);
 }

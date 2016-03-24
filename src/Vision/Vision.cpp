@@ -7,6 +7,7 @@
 #include "NetworkTables/NetworkTable.h"
 #include <AHRS.h>
 #include <Vision/Vision.h>
+#include <Xbox/MasterXboxController.h>
 
 #define JAVA_ERROR -2
 #define NOT_SET -1
@@ -17,6 +18,10 @@
 
 void Vision::RobotInit() {
 	table = NetworkTable::GetTable("database");
+	setState(WAITING);
+}
+
+void Vision::TeleopInit() {
 	setState(WAITING);
 }
 
@@ -59,10 +64,6 @@ void Vision::AutonomousPeriodic() {
 	TeleopPeriodic();
 }
 void Vision::visionUpdate() {
-	int shootingState = getState();
-	/*if (shootingState == NOT_SET||shootingState==JAVA_ERROR) {
-	 setState(WAITING);
-	 }*/
 }
 
 void Vision::startAiming() {

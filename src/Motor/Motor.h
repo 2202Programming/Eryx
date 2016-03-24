@@ -33,7 +33,8 @@ public:
 	void setShoot2(bool run);
 
 private:
-	Spark *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
+	Talon *frontLeft, *frontRight, *backLeft, *backRight;
+	//Spark *frontLeft, *frontRight, *backLeft, *backRight; //Drive Motors
 
 	//Talon *shootFrontLeft, *shootFrontRight, *shootBackLeft, *shootBackRight; //Shooter Motors
 	Spark *shootLeft, *shootRight;

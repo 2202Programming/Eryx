@@ -13,6 +13,7 @@
 #include <Vision/IVision.h>
 #include "Shooter/Shooter.h"
 #include "WPILib.h"
+#include <math.h>
 
 #include <SensorControl/ISensorControl.h>
 
@@ -82,7 +83,8 @@ protected:
 
 	float angleTime;
 	int timesCalled = 0;
-	Timer *t;
+	Timer *t = NULL;
+	Timer *autoT = NULL;
 
 	double motorConstant = 1.5;
 	double DriveStraitTime;
@@ -94,6 +96,7 @@ protected:
 	bool AutoTarget();
 
 	bool GetDriveStraightContinue(float value);
+	double GetEncoderCount(float);
 
 	void PIDWrite(float output);
 	void TargetingStateMachine();

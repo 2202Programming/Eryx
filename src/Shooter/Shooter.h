@@ -65,6 +65,7 @@ private:
 	bool shot;
 	bool time;
 	bool intakeTime;
+	bool useEncoder;
 
 	enum shootState {
 		ready,
@@ -91,6 +92,8 @@ private:
 	DoubleSolenoid *trigger;
 	DoubleSolenoid *intakeSol;
 	Encoder *encFrontLeft, *encFrontRight, *encBackLeft, *encBackRight; //Shooter Encoders
+
+	Joystick *box;
 };
 
 #endif /* SRC_SHOOTER_SHOOTER_H_ */

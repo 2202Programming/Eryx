@@ -4,75 +4,45 @@
  *  Created on: Feb 16, 2016
  *      Author: lazar
  */
-#define RAMPARTS 0
-#define LOWBAR 1
-#define ROCKWALL 2
-#define DEBRIS 3
-#define MOAT 4
-#define DRAW 5
-#define CHEVAL 6
-#define SALLY 7
-#define PORTI 8
-
 #include <Autonomous/CommandListMaker.h>
 #include "WPILib.h"
-
-namespace AutoConstants{
-	const std::string pos1 = "Position One";
-	const std::string pos2 = "Position Two";
-	const std::string pos3 = "Position Three";
-	const std::string pos4 = "Position Four";
-	const std::string pos5 = "Position Five";
-
-	const std::string ram = "Ramparts";
-	const std::string low = "Low Bar";
-	const std::string rock = "Rock Wall";
-	const std::string port = "Portculis";
-	const std::string chev = "Cheval de Frise";
-	const std::string sall = "Sally Port";
-	const std::string deb = "Rough Terrain";
-	const std::string moat = "Moat";
-	const std::string draw = "Drawbridge";
-
-
-}
+#define TURNIF_NOSHOT true
 
 CommandListMaker::CommandListMaker(IProfile *p) {
 	profile = p;
-	storage = new std::vector<stepBase*>();
+	storage = NULL;
 
-			/*
-	autoPosition = new SendableChooser();
-	autoPosition->AddObject(AutoConstants::pos1, (void*)1);
-	autoPosition->AddObject(AutoConstants::pos2, (void*)2);
-	autoPosition->AddObject(AutoConstants::pos3, (void*)3);
-	autoPosition->AddObject(AutoConstants::pos4, (void*)4);
-	autoPosition->AddObject(AutoConstants::pos5, (void*)5);
-
-	autoDefence = new SendableChooser();
-	autoDefence->AddObject(AutoConstants::rock,(void*)ROCKWALL);
-	autoDefence->AddObject(AutoConstants::low, (void*)LOWBAR);
-	autoDefence->AddObject(AutoConstants::ram, (void*)RAMPARTS);
-	autoDefence->AddObject(AutoConstants::port, (void*)PORTI);
-	autoDefence->AddObject(AutoConstants::chev, (void*)CHEVAL);
-	autoDefence->AddObject(AutoConstants::sall, (void*)SALLY);
-	autoDefence->AddObject(AutoConstants::deb, (void*)DEBRIS);
-	autoDefence->AddObject(AutoConstants::moat, (void*)MOAT);
-	autoDefence->AddObject(AutoConstants::draw, (void*)DRAW);
-
-	SmartDashboard::PutData("Auto Defence", autoDefence);
-	SmartDashboard::PutData("Auto Position", autoPosition);
-	*/
 	// TODO Auto-generated constructor stub
-
 }
 
 CommandListMaker::~CommandListMaker() {
 	delete storage;
-	// TODO Auto-generated destructor stub
+}
+
+void CommandListMaker::RobotInit() {
+	autoPosition = new SendableChooser();
+	autoPosition->AddDefault(low, (void*) &low);
+	autoPosition->AddObject(ram, (void*) &ram);
+	autoPosition->AddObject(rock, (void*) &rock);
+	autoPosition->AddObject(port, (void*) &port);
+	autoPosition->AddObject(chev, (void*) &chev);
+	autoPosition->AddObject(sall, (void*) &sall);
+	autoPosition->AddObject(deb, (void*) &deb);
+	autoPosition->AddObject(moat, (void*) &moat);
+	autoPosition->AddObject(draw, (void*) &draw);
+	SmartDashboard::PutData("Position", autoPosition);
+
+	autoDefence = new SendableChooser();
+	autoDefence->AddDefault(pos1, (void*) &pos1);
+	autoDefence->AddObject(pos2, (void*) &pos2);
+	autoDefence->AddObject(pos3, (void*) &pos3);
+	autoDefence->AddObject(pos4, (void*) &pos4);
+	autoDefence->AddObject(pos5, (void*) &pos5);
+	SmartDashboard::PutData("Defence", autoDefence);
 }
 
 void CommandListMaker::makeBasic() {
+
 	driveStep* step1 = new driveStep();
 	step1->command = stepBase::driveStraight;
 	step1->speed = 1.0;
@@ -81,129 +51,174 @@ void CommandListMaker::makeBasic() {
 	step1->speed = 1.0;
 	storage->push_back(step1);
 
+	turnStep* stp = new turnStep();
+	stp->command = stepBase::turn;
+	stp->angle = SmartDashboard::GetNumber("Auto Angle", 0);
+	stp->speed = .5;
+	stp->stepNum = 1;
+	//storage->push_back(stp);
+
 	stepBase *step2 = new stepBase();
-	step2->command = stepBase::shoot;
-	step2->stepNum = 1;
-	storage->push_back(step2);
+	step2->command = stepBase::target;
+	step2->stepNum = 2;
+	//storage->push_back(step2);
 
-	stepBase *fin =  new stepBase();
-	fin->command = stepBase::stop;
-	fin->stepNum = 2;
-	storage->push_back(fin);
+	stepBase *fin = new stepBase();
+	fin->command = stepBase::shoot;
+	fin->stepNum = 3;
+	//storage->push_back(fin);
+
+	stepBase *sb3 = new stepBase();
+	sb3->command = stepBase::stop;
+	sb3->stepNum = 4;
+	storage->push_back(sb3);
 }
-
 
 void CommandListMaker::makeDefenceBreaker() {
-	int def = (int)autoDefence->GetSelected();
-	int pos = (int)autoPosition->GetSelected();
 
+	if(storage != NULL){
+		delete storage;
+		storage = NULL;
+	}
+	storage = new std::vector<stepBase*>();
+
+	/* Gets the current selction from the dashboard (should default to LowBar)*/
+	//Selection
+	void* temp = autoPosition->GetSelected();
+	std::string* dt = static_cast<std::string*>(temp);
+	std::string defence = *dt;
+
+	temp = autoDefence->GetSelected();
+	dt = static_cast<std::string*>(temp);
+	std::string position = *dt;
+
+	delete dt;
+
+	//Bool Determing if Shooting is possible on the current defence
+	bool CanShoot = false;
+
+	//Step Number Needs to be tracked
+	int GlobalStep = 0;
+
+	//Fist Drive Step Distance and Speed
+	double DriveDistance;
+	double DriveSpeed;
+
+	//The Step We Are Going to Pass
 	driveStep* drive = new driveStep();
-	switch (def) {
-	case DEBRIS:
-		drive->stepNum = 0;
-		drive->command = stepBase::driveStraight;
-		drive->distance = 2.0;
-		drive->speed = .75;
-		storage->push_back(drive);
-		break; //TODO
-	case RAMPARTS:
-		drive->stepNum = 0;
-		drive->command = stepBase::driveStraight;
-		drive->distance = 2.0;
-		drive->speed = .75;
-		storage->push_back(drive);
-		break; //TODO
-	case LOWBAR:
-		drive->stepNum = 0;
-		drive->command = stepBase::driveStraight;
-		drive->distance = 2.0;
-		drive->speed = .75;
-		storage->push_back(drive);
-		break; //TODO
-	case MOAT:
-		drive->stepNum = 0;
-		drive->command = stepBase::driveStraight;
-		drive->distance = 2.0;
-		drive->speed = .75;
-		storage->push_back(drive);
-		break; //TODO
-	case ROCKWALL:
-		drive->stepNum = 0;
-		drive->command = stepBase::driveStraight;
-		drive->distance = 2.0;
-		drive->speed = .75;
-		storage->push_back(drive);
-		break; //TODO
-	case PORTI:
-		drive->stepNum = 0;
-		drive->command = stepBase::driveStraight;
-		drive->distance = 2.0;
-		drive->speed = .75;
-		storage->push_back(drive);
-		break; //TODO
+
+	//Which Defence we are going over determines the speed and distance they will go
+	//But ignores the type and number
+	if (defence.compare(deb) == 0)	//DEBRIS
+	{
+		DriveDistance = 28;
+		DriveSpeed = .75;
+	}
+	else if (defence.compare(ram)) //RAMPARTS
+	{
+		DriveDistance = 28;
+		DriveSpeed = .75;
+	}
+	else if (defence.compare(rock)) //ROCK WALL
+	{
+		DriveDistance = 28;
+		DriveSpeed = .75;
+	}
+	else if (defence.compare(low)) // LOW BAR
+	{
+		DriveDistance = 28;
+		DriveSpeed = .75;
+	}
+	else if (defence.compare(moat) == 0) // Moat
+	{
+		DriveDistance = 28;
+		DriveSpeed = .75;
+	}
+	else //THE OTHERS
+	{
+
+		DriveDistance = 0.5;
+		DriveSpeed = 0.5;
+		CanShoot = false;
 	}
 
-	turnStep *turn = new turnStep();
+	//Seting the Values and Pushing the Command
+	drive->stepNum = GlobalStep;
+	GlobalStep++;
+	drive->command = stepBase::driveStraight;
+	drive->distance = DriveDistance;
+	drive->speed = DriveSpeed;
+	storage->push_back(drive);
 
-	switch (pos) {
-	case 1:
-		turn->stepNum = 1;
+	//Turn Decision based on position
+	if (CanShoot && TURNIF_NOSHOT) {
+		//Eventual TurnStep
+		turnStep *turn = new turnStep();
+
+		//The Position it is in gotten through 'rough' means
+		int pos = position[position.length() - 1] - '0';
+
+		//Turn angle and
+		double TurnAngle;
+		double TurnSpeed; //TODO Remove from IControl this is't used
+
+		//Switch Controller;
+		switch (pos) {
+		case 1:
+			TurnAngle = 39.09;
+			TurnSpeed = .6;
+			break; //TODO
+		case 2:
+			TurnAngle = 27.11;
+			TurnSpeed = .6;
+			break; //TODO
+		case 3:
+			TurnAngle = 11.95;
+			TurnSpeed = .6;
+			break; //TODO
+		case 4:
+			TurnAngle = -5.06;
+			TurnSpeed = .6;
+			break; //TODO
+		case 5:
+			TurnAngle = -21.25;
+			TurnSpeed = .6;
+			break; //TODO
+		default:
+			TurnAngle = 0;
+			TurnSpeed = .6;
+			break;
+		}
+
+		//Sets and Push the Actual Step
+		turn->stepNum = GlobalStep;
+		GlobalStep++;
 		turn->command = stepBase::turn;
-		turn->angle = 45.0;
-		turn->speed = .5;
+		turn->angle = TurnAngle;
+		turn->speed = TurnSpeed;
 		storage->push_back(turn);
-
-		break; //TODO
-	case 2:
-		turn->stepNum = 1;
-		turn->command = stepBase::turn;
-		turn->angle = 45.0;
-		turn->speed = .5;
-		storage->push_back(turn);
-
-		break; //TODO
-	case 3:
-		turn->stepNum = 1;
-		turn->command = stepBase::turn;
-		turn->angle = 45.0;
-		turn->speed = .5;
-		storage->push_back(turn);
-
-		break; //TODO
-	case 4:
-		turn->stepNum = 1;
-		turn->command = stepBase::turn;
-		turn->angle = 45.0;
-		turn->speed = .5;
-		storage->push_back(turn);
-
-		break; //TODO
-	case 5:
-		turn->stepNum = 1;
-		turn->command = stepBase::turn;
-		turn->angle = 45.0;
-		turn->speed = .5;
-		storage->push_back(turn);
-
-		break; //TODO
 	}
 
-	stepBase* prepareShot = new stepBase();
-	prepareShot->stepNum = 2;
-	prepareShot->command = stepBase::target;
-	storage->push_back(prepareShot);
+	if (CanShoot) {
+		stepBase* prepareShot = new stepBase();
+		prepareShot->stepNum = GlobalStep;
+		GlobalStep++;
+		prepareShot->command = stepBase::target;
+		storage->push_back(prepareShot);
 
-	stepBase* shoot = new stepBase();
-	shoot->stepNum = 3;
-	shoot->command = stepBase::shoot;
-	storage->push_back(shoot);
+		stepBase* shoot = new stepBase();
+		shoot->stepNum = GlobalStep;
+		GlobalStep++;
+		shoot->command = stepBase::shoot;
+		storage->push_back(shoot);
 
-	stepBase* stop = new stepBase();
-	stop->stepNum = 4;
-	stop->command = stepBase::stop;
-	storage->push_back(stop);
+		stepBase* stop = new stepBase();
+		stop->stepNum = GlobalStep;
+		GlobalStep++;
+		stop->command = stepBase::stop;
+		storage->push_back(stop);
+	}
 }
-
 vector<stepBase*>* CommandListMaker::getList() {
 	return storage;
 }
