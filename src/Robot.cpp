@@ -96,7 +96,13 @@ private:
 		x = 0;
 		SmartDashboard::PutString("State", "Autonomous Init");
 
+		try{
 		clMaker->makeDefenceBreaker();
+		}
+		catch (...){
+
+		}
+
 		auton = clMaker->getList();
 
 		nLNode* test = master->head;
