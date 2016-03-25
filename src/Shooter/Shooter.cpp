@@ -233,6 +233,28 @@ void Shooter::readXboxComp() {
 		intakeDirection = !intakeDirection;
 	}
 
+	if (xbox->getXHeld()) {
+		if (useEncoder) {
+			shootRPM = 0.05;
+		} else {
+			shootRPM = 0.28;
+		}
+		intakePos = true;
+		runShoot = true;
+		if (leftSpeed == shootRPM) {
+			runTrigger = true;
+		}
+	} else {
+		if (useEncoder) {
+			shootRPM = 0.10;
+		} else {
+			shootRPM = 0.4;
+		}
+		if (!runShoot) {
+			runTrigger = false;
+		}
+	}
+
 	/*if (xbox->getXPressed()) {
 	 if (shootPercentState < 4) {
 	 shootPercentState++;
@@ -340,29 +362,6 @@ void Shooter::readXboxComp() {
 		useEncoder = true;
 	} else {
 		useEncoder = false;
-	}
-
-	//Needs to stay here
-	if (xbox->getXHeld()) {
-		if (useEncoder) {
-			shootRPM = 0.05;
-		} else {
-			shootRPM = 0.28;
-		}
-		intakePos = true;
-		runShoot = true;
-		if (leftSpeed == shootRPM) {
-			runTrigger = true;
-		}
-	} else {
-		if (useEncoder) {
-			shootRPM = 0.10;
-		} else {
-			shootRPM = 0.4;
-		}
-		if (!runShoot) {
-			runTrigger = false;
-		}
 	}
 }
 
