@@ -76,7 +76,7 @@ void CommandListMaker::makeBasic() {
 
 void CommandListMaker::makeDefenceBreaker() {
 
-	if(storage != NULL){
+	if (storage != NULL) {
 		delete storage;
 		storage = NULL;
 	}
@@ -84,15 +84,18 @@ void CommandListMaker::makeDefenceBreaker() {
 
 	/* Gets the current selction from the dashboard (should default to LowBar)*/
 	//Selection
-	void* temp = autoPosition->GetSelected();
-	std::string* dt = static_cast<std::string*>(temp);
-	std::string defence = *dt;
+	/*void* temp = autoPosition->GetSelected();
+	 std::string* dt = static_cast<std::string*>(temp);
+	 std::string defence = *dt;
 
-	temp = autoDefence->GetSelected();
-	dt = static_cast<std::string*>(temp);
-	std::string position = *dt;
+	 temp = autoDefence->GetSelected();
+	 dt = static_cast<std::string*>(temp);
+	 std::string position = *dt;
 
-	delete dt;
+	 delete dt;
+	 */
+
+	std::string defence = low;
 
 	//Bool Determing if Shooting is possible on the current defence
 	bool CanShoot = false;
@@ -110,114 +113,119 @@ void CommandListMaker::makeDefenceBreaker() {
 	//Which Defence we are going over determines the speed and distance they will go
 	//But ignores the type and number
 	if (defence.compare(deb) == 0)	//DEBRIS
-	{
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else if (defence.compare(ram)) //RAMPARTS
-	{
+	} else if (defence.compare(ram)) //RAMPARTS
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else if (defence.compare(rock)) //ROCK WALL
-	{
+	} else if (defence.compare(rock)) //ROCK WALL
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else if (defence.compare(low)) // LOW BAR
-	{
+	} else if (defence.compare(low)) // LOW BAR
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else if (defence.compare(moat) == 0) // Moat
-	{
+	} else if (defence.compare(moat) == 0) // Moat
+			{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	}
-	else //THE OTHERS
+	} else //THE OTHERS
 	{
 
 		DriveDistance = 0.5;
 		DriveSpeed = 0.5;
 		CanShoot = false;
 	}
-
 	//Seting the Values and Pushing the Command
-	drive->stepNum = GlobalStep;
+
+	DriveDistance = 28;
+	DriveSpeed = 0.75;
+
+	driveStep* driveForward = new driveStep();
+	driveForward->stepNum = GlobalStep;
 	GlobalStep++;
-	drive->command = stepBase::driveStraight;
-	drive->distance = DriveDistance;
-	drive->speed = DriveSpeed;
-	storage->push_back(drive);
+	driveForward->command = stepBase::driveStraight;
+	driveForward->distance = DriveDistance;
+	driveForward->speed = DriveSpeed;
+	storage->push_back(driveForward);
 
+	stepBase* stop = new stepBase();
+	stop->stepNum = GlobalStep;
+	GlobalStep++;
+	stop->command = stepBase::stop;
+	storage->push_back(stop);
 	//Turn Decision based on position
-	if (CanShoot && TURNIF_NOSHOT) {
-		//Eventual TurnStep
-		turnStep *turn = new turnStep();
+	/*
+	 if (CanShoot && TURNIF_NOSHOT) {
+	 //Eventual TurnStep
+	 turnStep *turn = new turnStep();
 
-		//The Position it is in gotten through 'rough' means
-		int pos = position[position.length() - 1] - '0';
+	 //The Position it is in gotten through 'rough' means
+	 int pos = position[position.length() - 1] - '0';
 
-		//Turn angle and
-		double TurnAngle;
-		double TurnSpeed; //TODO Remove from IControl this is't used
+	 //Turn angle and
+	 double TurnAngle;
+	 double TurnSpeed;//TODO Remove from IControl this is't used
 
-		//Switch Controller;
-		switch (pos) {
-		case 1:
-			TurnAngle = 39.09;
-			TurnSpeed = .6;
-			break; //TODO
-		case 2:
-			TurnAngle = 27.11;
-			TurnSpeed = .6;
-			break; //TODO
-		case 3:
-			TurnAngle = 11.95;
-			TurnSpeed = .6;
-			break; //TODO
-		case 4:
-			TurnAngle = -5.06;
-			TurnSpeed = .6;
-			break; //TODO
-		case 5:
-			TurnAngle = -21.25;
-			TurnSpeed = .6;
-			break; //TODO
-		default:
-			TurnAngle = 0;
-			TurnSpeed = .6;
-			break;
-		}
+	 //Switch Controller;
+	 switch (pos) {
+	 case 1:
+	 TurnAngle = 39.09;
+	 TurnSpeed = .6;
+	 break; //TODO
+	 case 2:
+	 TurnAngle = 27.11;
+	 TurnSpeed = .6;
+	 break;//TODO
+	 case 3:
+	 TurnAngle = 11.95;
+	 TurnSpeed = .6;
+	 break;//TODO
+	 case 4:
+	 TurnAngle = -5.06;
+	 TurnSpeed = .6;
+	 break;//TODO
+	 case 5:
+	 TurnAngle = -21.25;
+	 TurnSpeed = .6;
+	 break;//TODO
+	 default:
+	 TurnAngle = 0;
+	 TurnSpeed = .6;
+	 break;
+	 }
 
-		//Sets and Push the Actual Step
-		turn->stepNum = GlobalStep;
-		GlobalStep++;
-		turn->command = stepBase::turn;
-		turn->angle = TurnAngle;
-		turn->speed = TurnSpeed;
-		storage->push_back(turn);
-	}
+	 //Sets and Push the Actual Step
+	 turn->stepNum = GlobalStep;
+	 GlobalStep++;
+	 turn->command = stepBase::turn;
+	 turn->angle = TurnAngle;
+	 turn->speed = TurnSpeed;
+	 storage->push_back(turn);
+	 }
 
-	if (CanShoot) {
-		stepBase* prepareShot = new stepBase();
-		prepareShot->stepNum = GlobalStep;
-		GlobalStep++;
-		prepareShot->command = stepBase::target;
-		storage->push_back(prepareShot);
+	 if (CanShoot) {
+	 stepBase* prepareShot = new stepBase();
+	 prepareShot->stepNum = GlobalStep;
+	 GlobalStep++;
+	 prepareShot->command = stepBase::target;
+	 storage->push_back(prepareShot);
 
-		stepBase* shoot = new stepBase();
-		shoot->stepNum = GlobalStep;
-		GlobalStep++;
-		shoot->command = stepBase::shoot;
-		storage->push_back(shoot);
+	 stepBase* shoot = new stepBase();
+	 shoot->stepNum = GlobalStep;
+	 GlobalStep++;
+	 shoot->command = stepBase::shoot;
+	 storage->push_back(shoot);
 
-		stepBase* stop = new stepBase();
-		stop->stepNum = GlobalStep;
-		GlobalStep++;
-		stop->command = stepBase::stop;
-		storage->push_back(stop);
-	}
+	 stepBase* stop = new stepBase();
+	 stop->stepNum = GlobalStep;
+	 GlobalStep++;
+	 stop->command = stepBase::stop;
+	 storage->push_back(stop);
+	 }*/
 }
 vector<stepBase*>* CommandListMaker::getList() {
 	return storage;
