@@ -141,7 +141,7 @@ void CommandListMaker::makeDefenceBreaker() {
 	}
 	//Seting the Values and Pushing the Command
 
-	DriveDistance = 28;
+	DriveDistance = 35;
 	DriveSpeed = 0.75;
 
 	driveStep* driveForward = new driveStep();

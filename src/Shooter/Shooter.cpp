@@ -225,13 +225,25 @@ void Shooter::TeleopPeriodic() {
 }
 
 void Shooter::readXboxComp() {
+	/*A - Nothing
+	 * B - Cancel Shot
+	 * X - Low Shot
+	 * Y - Nothing
+	 * Left Trigger - Intake
+	 * Left Bumper - Vision
+	 * Right Trigger - Shooter
+	 * Right Bumper - Shooter Up/Down
+	 * Back - Nothing
+	 * Start - Cancel Vision (in Nav)
+	 */
+
 	if (xbox->getRightBumperPressed()) { //Up
 		angle = !angle;
 	}
 
-	if (xbox->getAPressed()) {
+	/*if (xbox->getAPressed()) {
 		intakeDirection = !intakeDirection;
-	}
+	}*/
 
 	/*if (xbox->getXPressed()) {
 	 if (shootPercentState < 4) {
@@ -272,9 +284,9 @@ void Shooter::readXboxComp() {
 		break;
 	}
 
-	if (xbox->getBackHeld()) {
+	/*if (xbox->getBackHeld()) {
 		runIntake = !runIntake;
-	}
+	}*/
 
 	switch (sState) {
 	case ready:
@@ -479,7 +491,7 @@ void Shooter::updateMotor2() {
 }
 
 float Shooter::acceleration(float newS, float oldS) {
-	float accel = 0.0025;
+	float accel = 0.005;
 
 	if (fabs(newS - oldS) > accel) {
 		if (oldS > newS)
