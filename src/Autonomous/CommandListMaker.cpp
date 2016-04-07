@@ -92,8 +92,6 @@ void CommandListMaker::makeDefenceBreaker() {
 	 dt = static_cast<std::string*>(temp);
 	 std::string position = *dt;
 
-	 delete dt;
-
 
 
 	//Bool Determing if Shooting is possible on the current defence
