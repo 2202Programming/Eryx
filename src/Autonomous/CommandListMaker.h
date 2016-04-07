@@ -26,6 +26,24 @@ public:
 
 	vector<stepBase*>* getList();
 
+	stepBase* getNextStep()
+	{
+		if (storage == NULL) return (stepBase*)NULL;
+		if (currentStep < 0) return (stepBase*)NULL;
+		if (currentStep >= storage->size()) return (stepBase*)NULL;
+		int temp = currentStep;
+		currentStep += 1;
+		return storage->at(temp);
+	}
+
+	stepBase* getFirstStep()
+	{
+		currentStep = 0;
+		return getNextStep();
+	}
+
+
+	int currentStep = 0;
 
 
 private:

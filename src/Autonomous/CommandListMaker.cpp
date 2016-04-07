@@ -84,7 +84,7 @@ void CommandListMaker::makeDefenceBreaker() {
 
 	/* Gets the current selction from the dashboard (should default to LowBar)*/
 	//Selection
-	/*void* temp = autoPosition->GetSelected();
+	void* temp = autoPosition->GetSelected();
 	 std::string* dt = static_cast<std::string*>(temp);
 	 std::string defence = *dt;
 
@@ -93,9 +93,8 @@ void CommandListMaker::makeDefenceBreaker() {
 	 std::string position = *dt;
 
 	 delete dt;
-	 */
 
-	std::string defence = low;
+
 
 	//Bool Determing if Shooting is possible on the current defence
 	bool CanShoot = false;
@@ -158,7 +157,7 @@ void CommandListMaker::makeDefenceBreaker() {
 	stop->command = stepBase::stop;
 	storage->push_back(stop);
 	//Turn Decision based on position
-	/*
+
 	 if (CanShoot && TURNIF_NOSHOT) {
 	 //Eventual TurnStep
 	 turnStep *turn = new turnStep();
@@ -225,8 +224,9 @@ void CommandListMaker::makeDefenceBreaker() {
 	 GlobalStep++;
 	 stop->command = stepBase::stop;
 	 storage->push_back(stop);
-	 }*/
+	 }
 }
+
 vector<stepBase*>* CommandListMaker::getList() {
 	return storage;
 }

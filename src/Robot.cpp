@@ -2,7 +2,6 @@
 
 class Robot: public IterativeRobot {
 public:
-	unsigned int x = 0;
 	IList* master;
 	IProfile* profile;
 	std::vector<stepBase*> *auton;
@@ -15,6 +14,7 @@ public:
 	CommandListMaker *clMaker;
 	RelayController* rc;
 	LineReader* lineReader;
+	stepBase* currentStep;
 
 	bool DEBUG = false;
 
@@ -96,11 +96,10 @@ private:
 	}
 
 	void AutonomousInit() {
-		x = 0;
 		SmartDashboard::PutString("State", "Autonomous Init");
 
 		clMaker->makeDefenceBreaker();
-		auton = clMaker->getList();
+		currentStep = clMaker->getFirstStep();
 
 		nLNode* test = master->head;
 		while (test != NULL) {
@@ -111,15 +110,14 @@ private:
 
 	void AutonomousPeriodic() {
 		SmartDashboard::PutString("State", "Autonomous Periodic");
-		//No list here because auto was always a bit more complicated
 
-		SmartDashboard::PutNumber("AUTO COMMAND", x);
-		SmartDashboard::PutNumber("Auton Size", auton->size());
-		if (robot.compare("ORYX") == 0 && x < auton->size()) {
-			stepBase *command = auton->at(x);
-			if (sensorControl->AutonomousPeriodic(command) && command != NULL) {
-				x += 1;
-				command = auton->at(x);
+		//If the robot is oryx and the step is not null
+		if (robot.compare("ORYX") == 0 && currentStep != NULL) {
+
+			if (sensorControl->AutonomousPeriodic(currentStep)) {
+
+				currentStep = clMaker->getNextStep();
+
 			}
 
 		}
@@ -129,11 +127,6 @@ private:
 			test->value->AutonomousPeriodic();
 			test = test->parent;
 		}
-
-
-		// Turn???
-		//NavxSensorControl::AutonomousPeriodic(turn);
-
 	}
 
 	void TeleopInit() {
