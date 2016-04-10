@@ -31,12 +31,17 @@ namespace Global
 class stepBase{
 public:
 
+	//Controls the type of steps that exist
 	enum step{
 		driveStraight,
 		turn,
 		target,
 		shoot,
 		stop,
+		driveThroughDefence,
+		experimentalDriveStraight,
+		driveTillHitsWall,
+		BeastModeDanceAttack,
 	};
 
 	int stepNum;

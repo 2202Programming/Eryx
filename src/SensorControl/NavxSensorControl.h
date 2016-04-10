@@ -22,15 +22,17 @@ public:
 	NavxSensorControl(IXbox *xbox, IProfile *profileInstance, IVision *visionInstance, Shooter *shhh);
 	virtual ~NavxSensorControl();
 
-	Shooter *shootie;
-	IXbox *xbox;
-	IProfile *profile;
+	//
+	Shooter *shootie;					//Main Shooting Mechanism
+	IXbox *xbox;						//Xbox Controller
+	IProfile *profile;					//Profile System
 	AHRS *ahrs;                         // navX-MXP
 	PIDController *turnController;      // PID Controller
-	IVision *vision;
+	IVision *vision;					//Vision Class
 
-	bool DEBUG = false;
+	bool DEBUG = false;					//Debug
 
+	//Values for Targeting State machine
 	enum TargetingState{
 		waitForButtonPress,
 		waitForStopped,
@@ -38,6 +40,7 @@ public:
 		driveToAngle,
 	};
 
+	//Values for The DriveStraight Auto Step
 	enum AutoStratagy{
 		null,
 		timer,
@@ -46,21 +49,59 @@ public:
 		hardTimer,
 	};
 
-
+	//Which Stratagy the system is currently using
 	AutoStratagy strat = encoder;
 
 	MotorCommand *UpdateMotorSpeeds(float leftMotorSpeed, float rightMotorSpeed);
 	DriveSystemState DriveSystemControlUpdate(DriveSystemState currentState, DriveSystemState requestedState);
 
+	//ICONTROL METHODS
 	void RobotInit();
 	void TeleopInit();
 	void TeleopPeriodic();
 	void AutonomousInit();
 	bool AutonomousPeriodic(stepBase *step);
+
+private:
+
+	//All the Auto Methods
+	//Drive Straight Methods
 	void InitDriveStraight(driveStep *step);
 	bool ExecDriveStraight(driveStep *step);
+	bool GetDriveStraightContinue(float value);		//Support return the criteria to continue driveing
+	double GetEncoderCount(float);					//Return the current encoder count
+													//TODO Average all the encoders or something
+
+	//Turn Methods
 	void InitTurn(turnStep *step);
 	bool ExecTurn(turnStep *step);
+
+	//Shooting Methods
+	void InitAutoShoot();
+	bool ExecAutoShoot();
+
+	//Targeting Methods
+	void InitAutoTarget();
+	bool AutoTarget();
+
+	//Drive Straight with navx stabilization
+	void InitExpDriveStraight();
+	bool ExecExpDriveStraight();
+	float GetPIDError();			//Support Return the offset from the correct path
+
+	//Drive Throught Defence With Navx Heading to detect when the Pitch return to zero
+	void InitDriveThroughDefence();
+	bool ExecDriveThroughDefence();
+	float getPitch();
+
+	//DriveUntil it hits the wall
+	void InitDriveTillHitsWall();
+	bool ExecDriveTillHitsWall();
+
+	//DANCE MODE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE
+	void InitBeastModeDanceAttack();
+	bool ExecBeastModeDanceAttack();
+
 
 
 protected:
@@ -88,15 +129,6 @@ protected:
 
 	double motorConstant = 1.5;
 	double DriveStraitTime;
-
-	void InitAutoShoot();
-	bool ExecAutoShoot();
-
-	void InitAutoTarget();
-	bool AutoTarget();
-
-	bool GetDriveStraightContinue(float value);
-	double GetEncoderCount(float);
 
 	void PIDWrite(float output);
 	void TargetingStateMachine();
