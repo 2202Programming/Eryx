@@ -87,7 +87,7 @@ private:
 	//Drive Straight with navx stabilization
 	void InitExpDriveStraight();
 	bool ExecExpDriveStraight();
-	float GetPIDError();			//Support Return the offset from the correct path
+	float GetPIDError();							//Support Return the offset from the correct path
 
 	//Drive Throught Defence With Navx Heading to detect when the Pitch return to zero
 	void InitDriveThroughDefence();
