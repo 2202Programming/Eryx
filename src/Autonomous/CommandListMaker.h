@@ -31,7 +31,7 @@ public:
 	{
 		if (storage == NULL) return (stepBase*)NULL;
 		if (currentStep < 0) return (stepBase*)NULL;
-		if (currentStep >= storage->size()) return (stepBase*)NULL;
+		if (currentStep >= (signed)storage->size()) return (stepBase*)NULL;
 		int temp = currentStep;
 		currentStep += 1;
 		return storage->at(temp);

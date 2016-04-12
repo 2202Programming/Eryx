@@ -7,7 +7,7 @@ public:
 	{
 		DifferenceValue = 0;
 	}
-	~ArtificialSource()
+	virtual ~ArtificialSource()
 	{
 
 	}
@@ -38,7 +38,7 @@ public:
 	{
 		OutputValue = 0.0;
 	}
-	~ArtificialOutput()
+	virtual ~ArtificialOutput()
 	{
 
 	}

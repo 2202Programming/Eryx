@@ -8,7 +8,8 @@
 #include "WPILib.h"
 #include "IControl.h"
 
-	class MasterXboxController: public IXbox,  public OldXboxController, public IControl {
+class MasterXboxController: public IXbox,  public OldXboxController, public IControl
+{
 public:
 	static MasterXboxController* getInstance(int port=0);
 	~MasterXboxController() {

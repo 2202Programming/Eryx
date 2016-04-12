@@ -9,9 +9,11 @@
 #include <math.h>
 #define STABILIZE true
 
-#define kP 0.05
-#define kI 0.25
+#define kP 0.006
+#define kI 0.002
 #define kD 0.0
+
+#define TunePID false
 
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 		IProfile *profileInstance, IVision *visionInstance, Shooter *shhh) {
@@ -182,9 +184,9 @@ void NavxSensorControl::PIDWrite(float output) {
 void NavxSensorControl::RobotInit() {
 
 
-	SmartDashboard::PutNumber("kP", 0.5);
-	SmartDashboard::PutNumber("kI", 0.25);
-	SmartDashboard::PutNumber("kD", 0.0);
+	SmartDashboard::PutNumber("kP", kP);
+	SmartDashboard::PutNumber("kI", kI);
+	SmartDashboard::PutNumber("kD", kD);
 }
 void NavxSensorControl::TeleopInit() {
 	ahrs->ZeroYaw();
@@ -472,9 +474,18 @@ void NavxSensorControl::InitExpDriveStraight()
 	AO = new ArtificialOutput();
 	AS = new ArtificialSource();
 
-	nkp  = SmartDashboard::GetNumber("kP", 0.5);
-	nki  = SmartDashboard::GetNumber("kI", 0.25);
-	nkd  = SmartDashboard::GetNumber("kD", 0);
+	if(TunePID)
+	{
+	nkp  = SmartDashboard::GetNumber("kP", kP);
+	nki  = SmartDashboard::GetNumber("kI", kI);
+	nkd  = SmartDashboard::GetNumber("kD", kD);
+	}
+	else
+	{
+	nkp = kP;
+	nki = kI;
+	nkd = kD;
+	}
 
 	if(DriveingController != NULL)
 	{
@@ -559,7 +570,7 @@ bool NavxSensorControl::ExecDriveTillHitsWall()
 {
 
 	double motorSpeed = 0.5;
-	updateMotorSpeedResponse.leftMotorSpeed = -motorSpeed;
+	updateMotorSpeedResponse.leftMotorSpeed = motorSpeed;
 	updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
 
 	SmartDashboard::PutString("AUTO STATE", "Exec DriveThroughDefence");
@@ -592,5 +603,8 @@ void NavxSensorControl::InitBeastModeDanceAttack()
 }
 bool NavxSensorControl::ExecBeastModeDanceAttack()
 {
-	return true;
+	float motorSpeed = 1.0f;
+	updateMotorSpeedResponse.leftMotorSpeed = -motorSpeed;
+	updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
+	return false;
 }
