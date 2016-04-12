@@ -225,6 +225,24 @@ void CommandListMaker::makeDefenceBreaker() {
 	 }
 }
 
+void CommandListMaker::Experimental()
+{
+	if(storage != NULL)
+	{
+		delete storage;
+		storage = NULL;
+	}
+	storage = new std::vector<stepBase*>();
+
+	driveStep* one = new driveStep();
+	one->distance = 1000;
+	one->speed = .8;
+	one->command = stepBase::driveStraight;
+	one->stepNum = 0;
+	storage->push_back(one);
+
+}
+
 vector<stepBase*>* CommandListMaker::getList() {
 	return storage;
 }

@@ -14,6 +14,8 @@
 #include "Shooter/Shooter.h"
 #include "WPILib.h"
 #include <math.h>
+#include <list>
+#include "SensorControl/Artificial.cpp"
 
 #include <SensorControl/ISensorControl.h>
 
@@ -23,6 +25,8 @@ public:
 	virtual ~NavxSensorControl();
 
 	//
+
+
 	Shooter *shootie;					//Main Shooting Mechanism
 	IXbox *xbox;						//Xbox Controller
 	IProfile *profile;					//Profile System
@@ -86,7 +90,7 @@ private:
 
 	//Drive Straight with navx stabilization
 	void InitExpDriveStraight();
-	bool ExecExpDriveStraight();
+	bool ExecExpDriveStraight(driveStep* ds);
 	float GetPIDError();							//Support Return the offset from the correct path
 
 	//Drive Throught Defence With Navx Heading to detect when the Pitch return to zero
@@ -105,6 +109,18 @@ private:
 
 
 protected:
+
+	float SavedYaw;
+
+	float nkp, nkd, nki;
+
+	ArtificialOutput* AO;					//Artifical PID Output for auto drive staight
+	ArtificialSource* AS;					//Artifical PID Input for auto Drive Straight
+	PIDController* DriveingController;		//PID Controller for auto Drive Straight
+
+	std::list<double>* VoltageList;		//Stores the Last x Voltages to normalize the value
+	double minVoltage = 8.0f;			//Store the Lowest Normal Voltage
+
 	Encoder *left;
 	Encoder *right;
 	Encoder *left2;

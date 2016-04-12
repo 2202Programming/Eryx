@@ -23,6 +23,7 @@ public:
 
 	void makeBasic();
 	void makeDefenceBreaker();
+	void Experimental();
 
 	vector<stepBase*>* getList();
 
