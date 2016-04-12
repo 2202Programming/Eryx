@@ -240,7 +240,7 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
 }
 
 double NavxSensorControl::GetEncoderCount(float value) {
-	return value * 107.1429;
+	return value * 14.06579404;
 }
 
 
@@ -258,7 +258,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right->Get() <  1000; //GetEncoderCount(value);
+		return right->Get() <  GetEncoderCount(value);
 	case hardTimer:
 
 		SmartDashboard::PutNumber("Timer", t->Get());
