@@ -184,9 +184,12 @@ void NavxSensorControl::PIDWrite(float output) {
 void NavxSensorControl::RobotInit() {
 
 
+	if(TunePID)
+	{
 	SmartDashboard::PutNumber("kP", kP);
 	SmartDashboard::PutNumber("kI", kI);
 	SmartDashboard::PutNumber("kD", kD);
+	}
 }
 void NavxSensorControl::TeleopInit() {
 	ahrs->ZeroYaw();
