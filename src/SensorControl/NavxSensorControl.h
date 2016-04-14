@@ -42,6 +42,7 @@ public:
 		waitForStopped,
 		waitForPicResult,
 		driveToAngle,
+		driveToDistance,
 	};
 
 	//Values for The DriveStraight Auto Step

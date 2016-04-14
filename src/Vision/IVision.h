@@ -31,6 +31,7 @@ public:
 	 * already returned true;
 	 */
 	virtual float getDegreesToTurn(){return 0.0f;}
+	virtual float getDistanceToTravel() {return 0.0f;};
 };
 
 #endif /* SRC_VISION_IVISION_H_ */

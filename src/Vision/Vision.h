@@ -16,7 +16,7 @@ public:
 	bool getDoneAiming();
 	bool getCrashed();
 	float getDegreesToTurn();
-
+	float getDistanceToTravel();
 
 private:
 	void visionUpdate();

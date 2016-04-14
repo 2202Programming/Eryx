@@ -95,6 +95,10 @@ void Vision::setState(int newState) {
 	table->PutNumber("shootingState", newState);
 }
 
+float Vision::getDistanceToTravel() {
+	return table->GetNumber("distance");
+}
+
 int Vision::getState() {
 	return (int) (table->GetNumber("shootingState", -1.0));
 }
