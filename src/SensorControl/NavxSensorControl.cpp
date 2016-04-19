@@ -115,9 +115,12 @@ void NavxSensorControl::TargetingStateMachine() {
 			t = NULL;
 		}
 		if (vision->getDoneAiming()) {
-
 			visionTargetAngle = vision->getDegreesToTurn();
 
+			delete t;
+			t = NULL;
+			delete dxdt;
+			dxdt=NULL;
 			ahrs->ZeroYaw();
 			turnController->Reset();
 			turnController->SetSetpoint(visionTargetAngle);
@@ -129,40 +132,57 @@ void NavxSensorControl::TargetingStateMachine() {
 		}
 		break;
 	case TargetingState::driveToAngle:
-		if (fabs(turnController->GetError()) < 0) //If the Error of the Turncontroller is below a certain value the timer starts to stop it
-				{	//This only works if it is less then 1 for a whole second
-			if (t == NULL) //If the timer doest exist yet we create a new one and start
+		SmartDashboard::PutNumber("TCON ERROR", turnController->GetError());
+		if (fabs(turnController->GetError()) < 1) //If the Error of the Turncontroller is below a certain value the timer starts to stop it
+		{
+			SmartDashboard::PutBoolean("T === NUILL", dxdt == NULL);
+			if (dxdt == NULL) 					//If the timer doest exist yet we create a new one and start
 			{
-				t = new Timer();
-				t->Start();	//TODO Figure out a way to start the timer if it already exists for some reason
-			} else {
-				if (t->Get() > 1) //If one second has passed then you are the correct angle
-						{
+				SmartDashboard::PutBoolean("IT GOT HERE", false);
+				dxdt = new Timer();
+				dxdt->Start();					//TODO Figure out a way to start the timer if it already exists for some reason
+			}
+			else
+			{
+				SmartDashboard::PutNumber("TIMER T DOG", dxdt->Get() + 1000);
+				if (dxdt->Get() > 1)			//If one second has passed then you are the correct angle
+				{
 					time = true;			//How you tell the system to move on
 				}
 			}
-		} else //If the error is not less then 1 destroy the timer and restart it
+		}
+		else //If the error is not less then 1 destroy the timer and restart it
 		{
+
+			delete dxdt;
 			delete t;
 			t = NULL;
+			dxdt= NULL;
+
 		}
 		if (xbox->getStartPressed()) {//exit this, added by David
 			turnController->Disable();			//Turns off the PID controller
 			targetState = TargetingState::waitForButtonPress;			//
 			commandDriveState = DriveSystemState::running;
+			delete dxdt;
 			delete t;
 			t = NULL;
+			dxdt = NULL;
 		}
 		if (time) //Checks at the correct angle or abort
 		{
+			SmartDashboard::PutNumber("dsdt", dxdt->Get());
 			turnController->Disable();			//Turns off the PID controller
 			targetState = TargetingState::driveToDistance;
 			right->Reset();
 			left->Reset();
+			delete dxdt;
+			dxdt = NULL;
 			delete t;
 			t = NULL;
 			//motorSpeed = 0;
-		} else {
+		}
+		else {
 			motorSpeed = turnSpeed;
 		}
 
@@ -174,6 +194,7 @@ void NavxSensorControl::TargetingStateMachine() {
 		break;
 
 	case TargetingState::driveToDistance: {
+		SmartDashboard::PutBoolean("kjlasfdkjl;asdf ", true);
 		if (xbox->getStartPressed()) {
 			turnController->Disable();
 			targetState = TargetingState::waitForButtonPress;
@@ -253,8 +274,7 @@ void NavxSensorControl::AutonomousInit() {
 	currentStep = -1;
 	inAutonomous = true;
 
-	ahrs->ZeroYaw();
-	turnController->SetPID(0.055, 0.0, 0.0);
+	turnController->SetPID(0.030, 0.001, 0.0);//SetPID(0.040, 0.0025, 0.0);
 }
 
 /*
@@ -454,13 +474,15 @@ void NavxSensorControl::InitTurn(turnStep *step) {
 bool NavxSensorControl::ExecTurn(turnStep *step) {
 	float motorSpeed;
 	SmartDashboard::PutString("AUTO STATE", "Exec Turn");
+	SmartDashboard::PutNumber("TCON EROR", turnController->GetError());
 	if (fabs(turnController->GetError()) < 1) {
 		if (t == NULL) {
 			t = new Timer();
 			t->Start();
 		} else {
+
 			if (t->Get() > 5) {
-				time = autoTime;
+				autoTime = true;
 			}
 		}
 	} else {

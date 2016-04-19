@@ -25,6 +25,10 @@ void Vision::TeleopInit() {
 	setState(WAITING);
 }
 
+void Vision::AutonomousInit() {
+	TeleopInit();
+}
+
 void Vision::TeleopPeriodic() {
 	if (Global::telemetry <= 1) { //Normal
 		switch (getState()) {
@@ -79,6 +83,7 @@ float Vision::getDegreesToTurn() {
 
 bool Vision::getDoneAiming() {
 	int shootingState = getState();
+	SmartDashboard::PutNumber("In Get Done AIMING, BRO ", shootingState);
 	if (shootingState == JAVA_ERROR || shootingState == NOT_SET) {
 		setState(WAITING);
 		table->PutNumber("degreesToTurn", 0);
@@ -86,6 +91,7 @@ bool Vision::getDoneAiming() {
 	}
 	if (shootingState == DONE) {
 		setState(WAITING);
+		SmartDashboard::PutNumber("In Get Done AIMING, BRO ", shootingState);
 		return true;
 	}
 	return false;

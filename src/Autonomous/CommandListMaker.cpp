@@ -230,11 +230,16 @@ void CommandListMaker::Experimental() {
 	}
 	storage = new std::vector<stepBase*>();
 
-	driveStep* one = new driveStep();
-	one->distance = 1000;
-	one->speed = .8;
-	one->command = stepBase::driveStraight;
-	one->stepNum = 0;
+	turnStep* two = new turnStep();
+	two->speed = .5;
+	two->angle = -90;
+	two->command = stepBase::turn;
+	two->stepNum = 0;
+	storage->push_back(two);
+
+	stepBase* one = new stepBase();
+	one->command = stepBase::target;
+	one->stepNum = 1;
 	storage->push_back(one);
 
 }
