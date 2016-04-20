@@ -4,7 +4,7 @@
  *  Created on: Feb 6, 2016
  *      Author: Beasty
  */
-
+///<summary></summary>
 #include <SensorControl/NavxSensorControl.h>
 #include <math.h>
 #define STABILIZE true
@@ -16,7 +16,8 @@
 #define TunePID false
 
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
-		IProfile *profileInstance, IVision *visionInstance, Shooter *shhh) {
+		IProfile *profileInstance, IVision *visionInstance, Shooter *shhh)
+{
 	// TODO Auto-generated constructor stub
 	shootie = shhh;
 	xbox = xboxInstance;
@@ -43,7 +44,8 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 
 }
 
-NavxSensorControl::~NavxSensorControl() {
+NavxSensorControl::~NavxSensorControl()
+{
 	// TODO Auto-generated destructor stub
 	delete ahrs;
 	delete turnController;
@@ -54,10 +56,13 @@ NavxSensorControl::~NavxSensorControl() {
 }
 
 MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
-		float rightMotorSpeed) {
-	if (!inAutonomous) {
+		float rightMotorSpeed)
+{
+	if (!inAutonomous)
+	{
 
-		switch (targetState) {
+		switch (targetState)
+		{
 		case TargetingState::driveToAngle:
 			break;
 		case TargetingState::driveToDistance:
@@ -69,7 +74,8 @@ MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
 		}
 	}
 
-	if (DEBUG) {
+	if (DEBUG)
+	{
 		SmartDashboard::PutNumber("Update Motor Left",
 				updateMotorSpeedResponse.leftMotorSpeed);
 		SmartDashboard::PutNumber("Update Motor right",
@@ -80,41 +86,48 @@ MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
 }
 
 NavxSensorControl::DriveSystemState NavxSensorControl::DriveSystemControlUpdate(
-		DriveSystemState currentState, DriveSystemState requestedState) {
+		DriveSystemState currentState, DriveSystemState requestedState)
+{
 	// Drive system tells you what it's doing
 	currentDriveState = currentState;
 	// Requests a drive system state change
 	return commandDriveState;
 }
 
-void NavxSensorControl::TargetingStateMachine() {
+void NavxSensorControl::TargetingStateMachine()
+{
 	SmartDashboard::PutNumber("***Target State:***", targetState);
 	float motorSpeed = 0;
-	switch (targetState) {
+	switch (targetState)
+	{
 	case TargetingState::waitForButtonPress:
 		if ((xbox->getLeftTriggerPressed() && !comp)
-				|| (xbox->getLeftBumperPressed() && comp)) {
+				|| (xbox->getLeftBumperPressed() && comp))
+		{
 			commandDriveState = DriveSystemState::stopped;
 			targetState = TargetingState::waitForStopped;
 		}
 
 		break;
 	case TargetingState::waitForStopped:
-		if (currentDriveState == DriveSystemState::stopped) {
+		if (currentDriveState == DriveSystemState::stopped)
+		{
 			// Tell Vision to take a picture
 			vision->startAiming();
 			targetState = TargetingState::waitForPicResult;
 		}
 		break;
 	case TargetingState::waitForPicResult:
-		if (xbox->getStartPressed()) {
+		if (xbox->getStartPressed())
+		{
 			turnController->Disable();
 			targetState = TargetingState::waitForButtonPress;
 			commandDriveState = DriveSystemState::running;
 			delete t;
 			t = NULL;
 		}
-		if (vision->getDoneAiming()) {
+		if (vision->getDoneAiming())
+		{
 
 			visionTargetAngle = vision->getDegreesToTurn();
 
@@ -130,23 +143,27 @@ void NavxSensorControl::TargetingStateMachine() {
 		break;
 	case TargetingState::driveToAngle:
 		if (fabs(turnController->GetError()) < 0) //If the Error of the Turncontroller is below a certain value the timer starts to stop it
-				{	//This only works if it is less then 1 for a whole second
+		{	//This only works if it is less then 1 for a whole second
 			if (t == NULL) //If the timer doest exist yet we create a new one and start
 			{
 				t = new Timer();
 				t->Start();	//TODO Figure out a way to start the timer if it already exists for some reason
-			} else {
+			}
+			else
+			{
 				if (t->Get() > 1) //If one second has passed then you are the correct angle
-						{
+				{
 					time = true;			//How you tell the system to move on
 				}
 			}
-		} else //If the error is not less then 1 destroy the timer and restart it
+		}
+		else //If the error is not less then 1 destroy the timer and restart it
 		{
 			delete t;
 			t = NULL;
 		}
-		if (xbox->getStartPressed()) {//exit this, added by David
+		if (xbox->getStartPressed())
+		{ //exit this, added by David
 			turnController->Disable();			//Turns off the PID controller
 			targetState = TargetingState::waitForButtonPress;			//
 			commandDriveState = DriveSystemState::running;
@@ -162,7 +179,9 @@ void NavxSensorControl::TargetingStateMachine() {
 			delete t;
 			t = NULL;
 			//motorSpeed = 0;
-		} else {
+		}
+		else
+		{
 			motorSpeed = turnSpeed;
 		}
 
@@ -173,25 +192,30 @@ void NavxSensorControl::TargetingStateMachine() {
 		updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
 		break;
 
-	case TargetingState::driveToDistance: {
-		if (xbox->getStartPressed()) {
+	case TargetingState::driveToDistance:
+	{
+		if (xbox->getStartPressed())
+		{
 			turnController->Disable();
 			targetState = TargetingState::waitForButtonPress;
 			commandDriveState = DriveSystemState::running;
 			delete t;
 			t = NULL;
 		}
-		double distanceToTravel=vision->getDistanceToTravel();
+		double distanceToTravel = vision->getDistanceToTravel();
 		SmartDashboard::PutNumber("DistanceToTravel", distanceToTravel);
-		float rightEncoderCount=right->Get();
-		float expectedEncoderCount=GetEncoderCount(distanceToTravel);
-		if (rightEncoderCount>expectedEncoderCount) {
-			motorSpeed=-0.3;
+		float rightEncoderCount = right->Get();
+		float expectedEncoderCount = GetEncoderCount(distanceToTravel);
+		if (rightEncoderCount > expectedEncoderCount)
+		{
+			motorSpeed = -0.3;
 		}
-		else {
-			motorSpeed=0.3;
+		else
+		{
+			motorSpeed = 0.3;
 		}
-		if (fabs(rightEncoderCount-expectedEncoderCount)<14*8) {
+		if (fabs(rightEncoderCount - expectedEncoderCount) < 14 * 8)
+		{
 			turnController->Disable();
 			targetState = TargetingState::waitForButtonPress;
 			commandDriveState = DriveSystemState::running;
@@ -209,7 +233,8 @@ void NavxSensorControl::TargetingStateMachine() {
 	}
 }
 
-void NavxSensorControl::PIDWrite(float output) {
+void NavxSensorControl::PIDWrite(float output)
+{
 	bool positive = output >= 0;
 	output = sqrt(fabs(output));//negative numbers don't have a real square root
 	if (!positive)
@@ -217,15 +242,18 @@ void NavxSensorControl::PIDWrite(float output) {
 	turnSpeed = output;
 }
 
-void NavxSensorControl::RobotInit() {
+void NavxSensorControl::RobotInit()
+{
 
-	if (TunePID) {
+	if (TunePID)
+	{
 		SmartDashboard::PutNumber("kP", kP);
 		SmartDashboard::PutNumber("kI", kI);
 		SmartDashboard::PutNumber("kD", kD);
 	}
 }
-void NavxSensorControl::TeleopInit() {
+void NavxSensorControl::TeleopInit()
+{
 	ahrs->ZeroYaw();
 	turnSpeed = 0;
 	targetState = TargetingState::waitForButtonPress;
@@ -234,21 +262,23 @@ void NavxSensorControl::TeleopInit() {
 	t = NULL;
 
 	//THIS IS PROBABLY BROKEN, I THINK IT SHOULD BE THE COSTANTS TOMMY MADE
-	turnController->SetPID(0.030, 0.001, 0.0);//SetPID(0.040, 0.0025, 0.0);
+	turnController->SetPID(0.030, 0.001, 0.0);	//SetPID(0.040, 0.0025, 0.0);
 	left->Reset();
 	right->Reset();
 	left2->Reset();
 	right2->Reset();
 }
 
-void NavxSensorControl::TeleopPeriodic() {
+void NavxSensorControl::TeleopPeriodic()
+{
 	inAutonomous = false;
 	TargetingStateMachine();
 	SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
 
 }
 
-void NavxSensorControl::AutonomousInit() {
+void NavxSensorControl::AutonomousInit()
+{
 	right->Reset();
 	currentStep = -1;
 	inAutonomous = true;
@@ -261,7 +291,8 @@ void NavxSensorControl::AutonomousInit() {
  * Initialize parameters for a straight drive
  */
 
-void NavxSensorControl::InitDriveStraight(driveStep *step) {
+void NavxSensorControl::InitDriveStraight(driveStep *step)
+{
 	delete t;
 	t = NULL;
 	t = new Timer();
@@ -274,9 +305,10 @@ void NavxSensorControl::InitDriveStraight(driveStep *step) {
 	right->SetDistancePerPulse(0.63);
 }
 
-double NavxSensorControl::GetEncoderCount(float value) {//COMMENT ON WTF THIS DOES PLEASE
-														//thank you :)
-	return value * 14.06579404;//what are the units of values?
+double NavxSensorControl::GetEncoderCount(float value)
+{			//COMMENT ON WTF THIS DOES PLEASE
+//thank you :)
+	return value * 14.06579404;					//what are the units of values?
 }
 
 /*
@@ -284,8 +316,10 @@ double NavxSensorControl::GetEncoderCount(float value) {//COMMENT ON WTF THIS DO
  * return true if target reached
  */
 
-bool NavxSensorControl::GetDriveStraightContinue(float value) {
-	switch (strat) {
+bool NavxSensorControl::GetDriveStraightContinue(float value)
+{
+	switch (strat)
+	{
 	case null:
 		return false;
 	case timer:
@@ -304,9 +338,11 @@ bool NavxSensorControl::GetDriveStraightContinue(float value) {
 
 }
 
-bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
+bool NavxSensorControl::ExecDriveStraight(driveStep *step)
+{
 
-	if (DEBUG) {
+	if (DEBUG)
+	{
 		SmartDashboard::PutNumber("Displacement Y", ahrs->GetDisplacementY());
 		SmartDashboard::PutNumber("Displacement X", ahrs->GetDisplacementX());
 		SmartDashboard::PutNumber("Displacement Z", ahrs->GetDisplacementZ());
@@ -319,22 +355,29 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 	SmartDashboard::PutNumber("Distance", right->GetDistance());
 	SmartDashboard::PutNumber("Raw", right->Get());
 
-	if (GetDriveStraightContinue(step->distance)) {
+	if (GetDriveStraightContinue(step->distance))
+	{
 		// Check these motor speed values
 		updateMotorSpeedResponse.leftMotorSpeed = step->speed;
 		updateMotorSpeedResponse.rightMotorSpeed = step->speed;
 
-		if (STABILIZE) {
-			if (ahrs->GetRawAccelY() > 0) {
+		if (STABILIZE)
+		{
+			if (ahrs->GetRawAccelY() > 0)
+			{
 				updateMotorSpeedResponse.leftMotorSpeed -= .05;
 				updateMotorSpeedResponse.rightMotorSpeed += .05;
-			} else if (ahrs->GetRawAccelY() < 0) {
+			}
+			else if (ahrs->GetRawAccelY() < 0)
+			{
 				updateMotorSpeedResponse.leftMotorSpeed += .05;
 				updateMotorSpeedResponse.rightMotorSpeed -= .05;
 			}
 		}
 		return false;
-	} else {
+	}
+	else
+	{
 		// Set speeds to zero
 		updateMotorSpeedResponse.leftMotorSpeed = 0;
 		updateMotorSpeedResponse.rightMotorSpeed = 0;
@@ -345,7 +388,8 @@ bool NavxSensorControl::ExecDriveStraight(driveStep *step) {
 	return true;
 }
 
-bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
+bool NavxSensorControl::AutonomousPeriodic(stepBase *step)
+{
 	updateMotorSpeedResponse.leftMotorSpeed = 0;
 	updateMotorSpeedResponse.rightMotorSpeed = 0;
 
@@ -355,14 +399,16 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 	SmartDashboard::PutNumber("Left Drive 2", left2->Get());
 	SmartDashboard::PutNumber("Right Drive 2", right2->Get());
 
-	switch (step->command) {
+	switch (step->command)
+	{
 	case step->driveStraight:
 		InitDriveStraight((driveStep *) step);
 
 		return ExecDriveStraight((driveStep *) step);
 		break;
 	case step->turn:
-		if (currentStep != step->stepNum) {
+		if (currentStep != step->stepNum)
+		{
 			currentStep = step->stepNum;
 			InitTurn((turnStep *) step);
 		}
@@ -382,42 +428,48 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 			delete t;
 		t = NULL;
 
-		if (currentStep != step->stepNum) {
+		if (currentStep != step->stepNum)
+		{
 			currentStep = step->stepNum;
 			InitAutoTarget();
 		}
 		return AutoTarget();
 		break;
 	case step->shoot:
-		if (currentStep != step->stepNum) {
+		if (currentStep != step->stepNum)
+		{
 			currentStep = step->stepNum;
 			InitAutoShoot();
 		}
 		return ExecAutoShoot();
 		break;
 	case step->experimentalDriveStraight:
-		if (currentStep != step->stepNum) {
+		if (currentStep != step->stepNum)
+		{
 			currentStep = step->stepNum;
 			InitExpDriveStraight();
 		}
 		return ExecExpDriveStraight((driveStep*) step);
 		break;
 	case step->driveThroughDefence:
-		if (currentStep != step->stepNum) {
+		if (currentStep != step->stepNum)
+		{
 			currentStep = step->stepNum;
 			InitDriveThroughDefence();
 		}
 		return ExecDriveThroughDefence();
 		break;
 	case step->driveTillHitsWall:
-		if (currentStep != step->stepNum) {
+		if (currentStep != step->stepNum)
+		{
 			currentStep = step->stepNum;
 			InitDriveTillHitsWall();
 		}
 		return ExecDriveTillHitsWall();
 		break;
 	case step->BeastModeDanceAttack:
-		if (currentStep != step->stepNum) {
+		if (currentStep != step->stepNum)
+		{
 			currentStep = step->stepNum;
 			InitBeastModeDanceAttack();
 		}
@@ -429,18 +481,21 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step) {
 	return false;	// If we get here, we're lost and we give up
 }
 
-void NavxSensorControl::InitAutoTarget() {
+void NavxSensorControl::InitAutoTarget()
+{
 	ahrs->ZeroYaw();
 	vision->startAiming();
 	targetState = TargetingState::waitForPicResult;
 }
 
-bool NavxSensorControl::AutoTarget() {
+bool NavxSensorControl::AutoTarget()
+{
 	TargetingStateMachine();
 	return time;
 }
 
-void NavxSensorControl::InitTurn(turnStep *step) {
+void NavxSensorControl::InitTurn(turnStep *step)
+{
 	ahrs->ZeroYaw();
 	turnController->Reset();
 	turnController->SetSetpoint(step->angle);
@@ -451,29 +506,40 @@ void NavxSensorControl::InitTurn(turnStep *step) {
 	updateMotorSpeedResponse.rightMotorSpeed = 0;
 }
 
-bool NavxSensorControl::ExecTurn(turnStep *step) {
+bool NavxSensorControl::ExecTurn(turnStep *step)
+{
 	float motorSpeed;
 	SmartDashboard::PutString("AUTO STATE", "Exec Turn");
-	if (fabs(turnController->GetError()) < 1) {
-		if (t == NULL) {
+	if (fabs(turnController->GetError()) < 1)
+	{
+		if (t == NULL)
+		{
 			t = new Timer();
 			t->Start();
-		} else {
-			if (t->Get() > 5) {
+		}
+		else
+		{
+			if (t->Get() > 5)
+			{
 				time = autoTime;
 			}
 		}
-	} else {
+	}
+	else
+	{
 		delete t;
 		t = NULL;
 	}
 
-	if (xbox->getStartPressed() || autoTime) {
+	if (xbox->getStartPressed() || autoTime)
+	{
 		turnController->Disable();
 		commandDriveState = DriveSystemState::running;
 		delete t;
 		t = NULL;
-	} else {
+	}
+	else
+	{
 		motorSpeed = turnSpeed;
 	}
 
@@ -482,16 +548,19 @@ bool NavxSensorControl::ExecTurn(turnStep *step) {
 	return autoTime;
 }
 
-void NavxSensorControl::InitAutoShoot() {
+void NavxSensorControl::InitAutoShoot()
+{
 
 }
 
-bool NavxSensorControl::ExecAutoShoot() {
+bool NavxSensorControl::ExecAutoShoot()
+{
 	return shootie->shoot();
 }
 
 //Drive Straight with navx stabilization
-void NavxSensorControl::InitExpDriveStraight() {
+void NavxSensorControl::InitExpDriveStraight()
+{
 	ahrs->ZeroYaw();
 
 	SmartDashboard::PutString("AUTO STATE", "Init Exp Drive Straight");
@@ -503,17 +572,21 @@ void NavxSensorControl::InitExpDriveStraight() {
 	AO = new ArtificialOutput();
 	AS = new ArtificialSource();
 
-	if (TunePID) {
+	if (TunePID)
+	{
 		nkp = SmartDashboard::GetNumber("kP", kP);
 		nki = SmartDashboard::GetNumber("kI", kI);
 		nkd = SmartDashboard::GetNumber("kD", kD);
-	} else {
+	}
+	else
+	{
 		nkp = kP;
 		nki = kI;
 		nkd = kD;
 	}
 
-	if (DriveingController != NULL) {
+	if (DriveingController != NULL)
+	{
 		delete DriveingController;
 		DriveingController = NULL;
 	}
@@ -521,7 +594,8 @@ void NavxSensorControl::InitExpDriveStraight() {
 	DriveingController->SetOutputRange(-.25, .25);
 	DriveingController->Enable();
 }
-bool NavxSensorControl::ExecExpDriveStraight(driveStep* ds) {
+bool NavxSensorControl::ExecExpDriveStraight(driveStep* ds)
+{
 	SmartDashboard::PutString("AUTO STATE", "Exec Exp Drive Straight");
 	float leftSet, rightSet;					//Left and right Set Values
 	leftSet = ds->speed;
@@ -539,7 +613,7 @@ bool NavxSensorControl::ExecExpDriveStraight(driveStep* ds) {
 	SmartDashboard::PutNumber("CurrentYaw", ahrs->GetYaw());
 
 	if (GetDriveStraightContinue(ds->distance))	//If it is less then whatever distance strat we are using
-			{
+	{
 
 		updateMotorSpeedResponse.leftMotorSpeed = leftSet;
 		updateMotorSpeedResponse.rightMotorSpeed = rightSet;
@@ -566,25 +640,30 @@ float NavxSensorControl::GetPIDError()//Support Return the offset from the corre
 }
 
 //Drive Throught Defence With Navx Heading to detect when the Pitch return to zero
-void NavxSensorControl::InitDriveThroughDefence() {
+void NavxSensorControl::InitDriveThroughDefence()
+{
 	SmartDashboard::PutString("AUTO STATE", "Init DriveThroughDefence");
 }
-bool NavxSensorControl::ExecDriveThroughDefence() {
+bool NavxSensorControl::ExecDriveThroughDefence()
+{
 	SmartDashboard::PutString("AUTO STATE", "Exec DriveThroughDefence");
 
 	SmartDashboard::PutString("AUTO STATE", "Exec DriveThroughDefence End");
 	return true;
 }
-float NavxSensorControl::getPitch() {
+float NavxSensorControl::getPitch()
+{
 	return 0.0f;
 }
 
 //DriveUntil it hits the wall
-void NavxSensorControl::InitDriveTillHitsWall() {
+void NavxSensorControl::InitDriveTillHitsWall()
+{
 	SmartDashboard::PutString("AUTO STATE", "Init DriveTillHitsWall");
 	VoltageList = new std::list<double>();
 }
-bool NavxSensorControl::ExecDriveTillHitsWall() {
+bool NavxSensorControl::ExecDriveTillHitsWall()
+{
 
 	double motorSpeed = 0.5;
 	updateMotorSpeedResponse.leftMotorSpeed = motorSpeed;
@@ -592,28 +671,35 @@ bool NavxSensorControl::ExecDriveTillHitsWall() {
 
 	SmartDashboard::PutString("AUTO STATE", "Exec DriveThroughDefence");
 	VoltageList->push_front(DriverStation::GetInstance().GetBatteryVoltage());
-	if (VoltageList->size() > 10) {
+	if (VoltageList->size() > 10)
+	{
 		VoltageList->pop_back();
 	}
 	double sum = 0;
 	for (std::list<double>::iterator iter = VoltageList->begin();
-			iter != VoltageList->end(); iter++) {
+			iter != VoltageList->end(); iter++)
+	{
 		sum = sum + *iter;
 	}
 	sum = sum / 10;
-	if (sum > minVoltage) {
+	if (sum > minVoltage)
+	{
 		return false;
-	} else {
+	}
+	else
+	{
 		SmartDashboard::PutString("AUTO STATE", "Exec DriveThroughDefence End");
 		return true;
 	}
 }
 
 //DANCE MODE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE
-void NavxSensorControl::InitBeastModeDanceAttack() {
+void NavxSensorControl::InitBeastModeDanceAttack()
+{
 
 }
-bool NavxSensorControl::ExecBeastModeDanceAttack() {
+bool NavxSensorControl::ExecBeastModeDanceAttack()
+{
 	float motorSpeed = 1.0f;
 	updateMotorSpeedResponse.leftMotorSpeed = -motorSpeed;
 	updateMotorSpeedResponse.rightMotorSpeed = motorSpeed;
