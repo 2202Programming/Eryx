@@ -16,6 +16,13 @@
 using namespace std;
 class CommandListMaker {
 public:
+
+	enum Stratagy
+	{
+		Cross,
+		Shoot,
+	};
+
 	CommandListMaker(IProfile *p);
 	virtual ~CommandListMaker();
 
@@ -24,6 +31,9 @@ public:
 	void makeBasic();
 	void makeDefenceBreaker();
 	void Experimental();
+	void makeOakWoodSpecial();
+
+	void Go(int x, std::string Defence, Stratagy strat);
 
 	vector<stepBase*>* getList();
 

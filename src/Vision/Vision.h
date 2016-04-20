@@ -7,6 +7,7 @@ public:
 	void RobotInit();
 	void TeleopInit();
 	void TeleopPeriodic();
+	void AutonomousInit();
 	void AutonomousPeriodic();
 	std::shared_ptr<NetworkTable> table;
 

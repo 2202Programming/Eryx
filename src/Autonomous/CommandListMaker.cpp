@@ -8,18 +8,28 @@
 #include "WPILib.h"
 #define TURNIF_NOSHOT true
 
-CommandListMaker::CommandListMaker(IProfile *p) {
+//Constants to be adjusted
+#define DIS_CENTR_ALIGN 508
+#define DIS_ALIGN_WALL 132
+#define DIS_FRONTD_BACKD 50
+#define DIS_LEFTPLAT_RIGHTPLAT 100
+#define ANG_ANGLESHOT
+
+CommandListMaker::CommandListMaker(IProfile *p)
+{
 	profile = p;
 	storage = NULL;
 
 	// TODO Auto-generated constructor stub
 }
 
-CommandListMaker::~CommandListMaker() {
+CommandListMaker::~CommandListMaker()
+{
 	delete storage;
 }
 
-void CommandListMaker::RobotInit() {
+void CommandListMaker::RobotInit()
+{
 	autoPosition = new SendableChooser();
 	autoPosition->AddDefault(low, (void*) &low);
 	autoPosition->AddObject(ram, (void*) &ram);
@@ -41,7 +51,8 @@ void CommandListMaker::RobotInit() {
 	SmartDashboard::PutData("Defence", autoDefence);
 }
 
-void CommandListMaker::makeBasic() {
+void CommandListMaker::makeBasic()
+{
 
 	driveStep* step1 = new driveStep();
 	step1->command = stepBase::driveStraight;
@@ -74,9 +85,11 @@ void CommandListMaker::makeBasic() {
 	storage->push_back(sb3);
 }
 
-void CommandListMaker::makeDefenceBreaker() {
+void CommandListMaker::makeDefenceBreaker()
+{
 
-	if (storage != NULL) {
+	if (storage != NULL)
+	{
 		delete storage;
 		storage = NULL;
 	}
@@ -108,26 +121,31 @@ void CommandListMaker::makeDefenceBreaker() {
 	//Which Defence we are going over determines the speed and distance they will go
 	//But ignores the type and number
 	if (defence.compare(deb) == 0)	//DEBRIS
-			{
+	{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	} else if (defence.compare(ram)) //RAMPARTS
-			{
+	}
+	else if (defence.compare(ram)) //RAMPARTS
+	{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	} else if (defence.compare(rock)) //ROCK WALL
-			{
+	}
+	else if (defence.compare(rock)) //ROCK WALL
+	{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	} else if (defence.compare(low)) // LOW BAR
-			{
+	}
+	else if (defence.compare(low)) // LOW BAR
+	{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	} else if (defence.compare(moat) == 0) // Moat
-			{
+	}
+	else if (defence.compare(moat) == 0) // Moat
+	{
 		DriveDistance = 28;
 		DriveSpeed = .75;
-	} else //THE OTHERS
+	}
+	else //THE OTHERS
 	{
 
 		DriveDistance = 0.5;
@@ -154,7 +172,8 @@ void CommandListMaker::makeDefenceBreaker() {
 	storage->push_back(stop);
 	//Turn Decision based on position
 
-	if (CanShoot && TURNIF_NOSHOT) {
+	if (CanShoot && TURNIF_NOSHOT)
+	{
 		//Eventual TurnStep
 		turnStep *turn = new turnStep();
 
@@ -166,7 +185,8 @@ void CommandListMaker::makeDefenceBreaker() {
 		double TurnSpeed; //TODO Remove from IControl this is't used
 
 		//Switch Controller;
-		switch (pos) {
+		switch (pos)
+		{
 		case 1:
 			TurnAngle = 39.09;
 			TurnSpeed = .6;
@@ -202,7 +222,8 @@ void CommandListMaker::makeDefenceBreaker() {
 		storage->push_back(turn);
 	}
 
-	if (CanShoot) {
+	if (CanShoot)
+	{
 		stepBase* prepareShot = new stepBase();
 		prepareShot->stepNum = GlobalStep;
 		GlobalStep++;
@@ -223,22 +244,138 @@ void CommandListMaker::makeDefenceBreaker() {
 	}
 }
 
-void CommandListMaker::Experimental() {
-	if (storage != NULL) {
+void CommandListMaker::Experimental()
+{
+	if (storage != NULL)
+	{
 		delete storage;
 		storage = NULL;
 	}
 	storage = new std::vector<stepBase*>();
 
-	driveStep* one = new driveStep();
-	one->distance = 1000;
-	one->speed = .8;
-	one->command = stepBase::driveStraight;
-	one->stepNum = 0;
+	turnStep* two = new turnStep();
+	two->speed = .5;
+	two->angle = -90;
+	two->command = stepBase::turn;
+	two->stepNum = 0;
+	storage->push_back(two);
+
+	stepBase* one = new stepBase();
+	one->command = stepBase::target;
+	one->stepNum = 1;
 	storage->push_back(one);
 
 }
 
-vector<stepBase*>* CommandListMaker::getList() {
+void CommandListMaker::makeOakWoodSpecial()
+{
+	if (storage != NULL)
+	{
+		delete storage;
+		storage = NULL;
+	}
+	storage = new std::vector<stepBase*>();
+
+	void* temp = autoPosition->GetSelected();
+	std::string* dt = static_cast<std::string*>(temp);
+	std::string defence = *dt;
+
+	temp = autoDefence->GetSelected();
+	dt = static_cast<std::string*>(temp);
+	std::string position = *dt;
+
+
+	int pos = position[position.length() - 1] - '0';
+
+	Go(pos, defence, Stratagy::Shoot);
+}
+
+void CommandListMaker::Go(int x, std::string Defence, Stratagy strat)
+{
+	stepBase *stp = new stepBase();
+
+	int xx = 0;
+	switch (x)
+	{
+	case 1:
+		if ((strat == Stratagy::Cross) || (strat == Stratagy::Shoot))
+		{
+			driveStep *c = new driveStep();
+			c->command = stepBase::experimentalDriveStraight;
+			c->stepNum = xx;
+			xx++;
+			c->distance = DIS_CENTR_ALIGN;
+			c->speed = .4;
+			storage->push_back(c);
+		}
+
+		if (strat == Stratagy::Shoot)
+		{
+			turnStep *ccc = new turnStep();
+			ccc->command = stepBase::turn;
+			ccc->angle = 45;
+			ccc->speed = 0;
+			ccc->stepNum = xx; xx++;
+
+			stepBase *c = new stepBase();
+			c->command = stepBase::target;
+			c->stepNum = xx;
+			xx++;
+			storage->push_back(c);
+
+			stepBase *cc = new stepBase();
+			c->command = stepBase::shoot;
+			c->stepNum = xx;
+			xx++;
+			storage->push_back(c);
+		}
+		stp->command = stepBase::stop;
+		stp->stepNum = xx; xx++;
+		storage->push_back(stp);
+
+		break;
+	case 2:
+		break;
+	case 3:
+		if ((strat == Stratagy::Cross) || (strat == Stratagy::Shoot))
+				{
+					driveStep *c = new driveStep();
+					c->command = stepBase::experimentalDriveStraight;
+					c->stepNum = xx;
+					xx++;
+					c->distance = DIS_CENTR_ALIGN;
+					c->speed = .4;
+					storage->push_back(c);
+				}
+
+				if (strat == Stratagy::Shoot)
+				{
+					stepBase *c = new stepBase();
+					c->command = stepBase::target;
+					c->stepNum = xx;
+					xx++;
+					storage->push_back(c);
+
+					stepBase *cc = new stepBase();
+					c->command = stepBase::shoot;
+					c->stepNum = xx;
+					xx++;
+					storage->push_back(c);
+				}
+
+				stp->command = stepBase::stop;
+				stp->stepNum = xx; xx++;
+				storage->push_back(stp);
+
+		break;
+	case 4:
+		break;
+	case 5:
+		break;
+	}
+}
+
+vector<stepBase*>* CommandListMaker::getList()
+{
 	return storage;
 }
