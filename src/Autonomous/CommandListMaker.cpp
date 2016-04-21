@@ -40,7 +40,13 @@ void CommandListMaker::RobotInit()
 	autoPosition->AddObject(deb, (void*) &deb);
 	autoPosition->AddObject(moat, (void*) &moat);
 	autoPosition->AddObject(draw, (void*) &draw);
-	SmartDashboard::PutData("Position", autoPosition);
+	//SmartDashboard::PutData("Position", autoPosition);
+
+	stratChooser = new SendableChooser();
+	stratChooser->AddDefault(str_Approach, (void*) &str_Approach);
+	stratChooser->AddObject(str_Cross, (void*) &str_Cross);
+	stratChooser->AddObject(str_Shoot, (void*) &str_Shoot);
+	SmartDashboard::PutData("Stratagy", stratChooser);
 
 	autoDefence = new SendableChooser();
 	autoDefence->AddDefault(pos1, (void*) &pos1);
@@ -282,109 +288,185 @@ void CommandListMaker::makeOakWoodSpecial()
 	dt = static_cast<std::string*>(temp);
 	std::string position = *dt;
 
+	temp = stratChooser->GetSelected();
+	dt = static_cast<std::string*>(temp);
+	std::string strat = *dt;
+
+	Stratagy c;
+
+	if (strat.compare(str_Approach) == 0)
+	{
+		c = Stratagy::Approach;
+	}
+	else if (strat.compare(str_Cross) == 0)
+	{
+		c = Stratagy::Cross;
+	}
+	else if (strat.compare(str_Shoot) == 0)
+	{
+		c = Stratagy::Shoot;
+	}
+	else
+	{
+		c = Stratagy::Approach;
+	}
 
 	int pos = position[position.length() - 1] - '0';
 
-	Go(pos, defence, Stratagy::Shoot);
+	Go(pos, c);
 }
 
-void CommandListMaker::Go(int x, std::string Defence, Stratagy strat)
+void CommandListMaker::Go(int x, Stratagy strat)
 {
 	stepBase *stp = new stepBase();
 
 	int xx = 0;
-	switch (x)
+	if (strat != Stratagy::Approach)
 	{
-	case 1:
-		if ((strat == Stratagy::Cross) || (strat == Stratagy::Shoot))
+		switch (x)
 		{
-			driveStep *c = new driveStep();
-			c->command = stepBase::experimentalDriveStraight;
-			c->stepNum = xx;
+		case 1:
+			if ((strat == Stratagy::Cross) || (strat == Stratagy::Shoot))
+			{
+				driveStep *c = new driveStep();
+				c->command = stepBase::experimentalDriveStraight;
+				c->stepNum = xx;
+				xx++;
+				c->distance = DIS_CENTR_ALIGN + 12.0f;
+				SmartDashboard::PutNumber("c->distance", c->distance);
+				c->speed = .5;
+				storage->push_back(c);
+			}
+
+			if (strat == Stratagy::Shoot)
+			{
+				turnStep *ccc = new turnStep();
+				ccc->command = stepBase::turn;
+				ccc->angle = ANG_ANGLESHOT; //Angle + Adjustment
+				ccc->speed = 0.5;
+				ccc->stepNum = xx;
+				xx++;
+				storage->push_back(ccc);
+
+				stepBase *c = new stepBase();
+				c->command = stepBase::target;
+				c->stepNum = xx;
+				xx++;
+				storage->push_back(c);
+
+				driveStep *d = new driveStep();
+				d->speed = .6;
+				d->distance = 20;
+				d->command = stepBase::driveStraight;
+				d->stepNum = xx;
+				xx++;
+				storage->push_back(d);
+
+				stepBase *dd = new stepBase();
+				dd->command = stepBase::target;
+				dd->stepNum = xx;
+				xx++;
+				storage->push_back(dd);
+
+				stepBase *cc = new stepBase();
+				cc->command = stepBase::shoot;
+				cc->stepNum = xx;
+				xx++;
+				storage->push_back(cc);
+			}
+
+			stp->command = stepBase::BeastModeDanceAttack;
+			stp->stepNum = xx;
 			xx++;
-			c->distance = DIS_CENTR_ALIGN + 12.0f;
-			SmartDashboard::PutNumber("c->distance", c->distance);
-			c->speed = .5;
-			storage->push_back(c);
+			storage->push_back(stp);
+
+			break;
+		case 2:
+			if (strat == Stratagy::Cross)
+			{
+				driveStep *c = new driveStep();
+				c->command = stepBase::experimentalDriveStraight;
+				c->stepNum = xx;
+				xx++;
+				c->distance = DIS_CENTR_ALIGN;
+				c->speed = .4;
+				storage->push_back(c);
+			}
+			break;
+		case 3:
+			if ((strat == Stratagy::Cross) || (strat == Stratagy::Shoot))
+			{
+				driveStep *c = new driveStep();
+				c->command = stepBase::experimentalDriveStraight;
+				c->stepNum = xx;
+				xx++;
+				c->distance = DIS_CENTR_ALIGN;
+				c->speed = .4;
+				storage->push_back(c);
+			}
+
+			if (strat == Stratagy::Shoot)
+			{
+				stepBase *c = new stepBase();
+				c->command = stepBase::target;
+				c->stepNum = xx;
+				xx++;
+				storage->push_back(c);
+
+				stepBase *cc = new stepBase();
+				c->command = stepBase::shoot;
+				c->stepNum = xx;
+				xx++;
+				storage->push_back(c);
+			}
+
+			stp->command = stepBase::stop;
+			stp->stepNum = xx;
+			xx++;
+			storage->push_back(stp);
+
+			break;
+		case 4:
+			if (strat == Stratagy::Cross)
+			{
+				driveStep *c = new driveStep();
+				c->command = stepBase::experimentalDriveStraight;
+				c->stepNum = xx;
+				xx++;
+				c->distance = DIS_CENTR_ALIGN;
+				c->speed = .4;
+				storage->push_back(c);
+			}
+			break;
+		case 5:
+			if (strat == Stratagy::Cross)
+			{
+				driveStep *c = new driveStep();
+				c->command = stepBase::experimentalDriveStraight;
+				c->stepNum = xx;
+				xx++;
+				c->distance = DIS_CENTR_ALIGN;
+				c->speed = .4;
+				storage->push_back(c);
+			}
+			break;
 		}
+	}
+	else
+	{
+		driveStep *d = new driveStep();
+		d->distance = 50;
+		d->speed = .5;
+		d->stepNum = xx;
+		xx++;
+		d->command = stepBase::experimentalDriveStraight;
+		storage->push_back(d);
 
-		if (strat == Stratagy::Shoot)
-		{
-			turnStep *ccc = new turnStep();
-			ccc->command = stepBase::turn;
-			ccc->angle = ANG_ANGLESHOT ; //Angle + Adjustment
-			ccc->speed = 0.5;
-			ccc->stepNum = xx; xx++;
-			storage->push_back(ccc);
-
-			stepBase *c = new stepBase();
-			c->command = stepBase::target;
-			c->stepNum = xx;
-			xx++;
-			storage->push_back(c);
-
-			driveStep *d = new driveStep();
-			d->speed = .6;
-			d->distance = 20;
-			d->command = stepBase::driveStraight;
-			d->stepNum = xx; xx++;
-			storage->push_back(d);
-
-			stepBase *dd = new stepBase();
-			dd->command = stepBase::target;
-			dd->stepNum = xx; xx++;
-			storage->push_back(dd);
-
-			stepBase *cc = new stepBase();
-			cc->command = stepBase::shoot;
-			cc->stepNum = xx;
-			xx++;
-			storage->push_back(cc);
-		}
-
-		stp->command = stepBase::BeastModeDanceAttack;
-		stp->stepNum = xx; xx++;
-		storage->push_back(stp);
-
-		break;
-	case 2:
-		break;
-	case 3:
-		if ((strat == Stratagy::Cross) || (strat == Stratagy::Shoot))
-				{
-					driveStep *c = new driveStep();
-					c->command = stepBase::experimentalDriveStraight;
-					c->stepNum = xx;
-					xx++;
-					c->distance = DIS_CENTR_ALIGN;
-					c->speed = .4;
-					storage->push_back(c);
-				}
-
-				if (strat == Stratagy::Shoot)
-				{
-					stepBase *c = new stepBase();
-					c->command = stepBase::target;
-					c->stepNum = xx;
-					xx++;
-					storage->push_back(c);
-
-					stepBase *cc = new stepBase();
-					c->command = stepBase::shoot;
-					c->stepNum = xx;
-					xx++;
-					storage->push_back(c);
-				}
-
-				stp->command = stepBase::stop;
-				stp->stepNum = xx; xx++;
-				storage->push_back(stp);
-
-		break;
-	case 4:
-		break;
-	case 5:
-		break;
+		stepBase *dd = new stepBase();
+		dd->command = stepBase::stop;
+		dd->stepNum = xx;
+		xx++;
+		storage->push_back(dd);
 	}
 }
 

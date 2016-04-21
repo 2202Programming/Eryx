@@ -19,6 +19,7 @@ public:
 
 	enum Stratagy
 	{
+		Approach,
 		Cross,
 		Shoot,
 	};
@@ -33,7 +34,7 @@ public:
 	void Experimental();
 	void makeOakWoodSpecial();
 
-	void Go(int x, std::string Defence, Stratagy strat);
+	void Go(int x, Stratagy strat);
 
 	vector<stepBase*>* getList();
 
@@ -74,8 +75,13 @@ private:
 	const std::string pos4 = "Position 4";
 	const std::string pos5 = "Position 5";
 
+	const std::string str_Approach = "Approach";
+	const std::string  str_Cross = "Cross";
+	const std::string str_Shoot = "Shoot";
+
 	SendableChooser *autoPosition;
 	SendableChooser *autoDefence;
+	SendableChooser *stratChooser;
 
 
 
