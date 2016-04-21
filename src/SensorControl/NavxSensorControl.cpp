@@ -51,7 +51,10 @@ NavxSensorControl::~NavxSensorControl()
 	delete turnController;
 	delete vision;
 
-	delete left, right, left2, right2;
+	delete left;
+	delete right;
+	delete left2;
+	delete right2;
 	delete t;
 }
 
@@ -301,6 +304,10 @@ void NavxSensorControl::TeleopPeriodic()
 void NavxSensorControl::AutonomousInit()
 {
 	right->Reset();
+	left->Reset();
+	left2->Reset();
+	right2->Reset();
+
 	currentStep = -1;
 	inAutonomous = true;
 
@@ -418,6 +425,7 @@ bool NavxSensorControl::AutonomousPeriodic(stepBase *step)
 	SmartDashboard::PutNumber("Right Drive", right->Get());
 	SmartDashboard::PutNumber("Left Drive 2", left2->Get());
 	SmartDashboard::PutNumber("Right Drive 2", right2->Get());
+	SmartDashboard::PutNumber("IT IS GETTING HERE", 1);
 
 	switch (step->command)
 	{
@@ -516,6 +524,12 @@ bool NavxSensorControl::AutoTarget()
 
 void NavxSensorControl::InitTurn(turnStep *step)
 {
+	if(t != NULL)
+	{
+		delete t;
+		t = NULL;
+	}
+
 	ahrs->ZeroYaw();
 	turnController->Reset();
 	turnController->SetSetpoint(step->angle);
@@ -568,11 +582,14 @@ bool NavxSensorControl::ExecTurn(turnStep *step)
 
 void NavxSensorControl::InitAutoShoot()
 {
+	SmartDashboard::PutString("AUTO STATE", "Init Target");
 
 }
 
 bool NavxSensorControl::ExecAutoShoot()
 {
+	SmartDashboard::PutString("AUTO STATE", "Exec Target");
+
 	return shootie->shoot();
 }
 
@@ -618,6 +635,8 @@ bool NavxSensorControl::ExecExpDriveStraight(driveStep* ds)
 	float leftSet, rightSet;					//Left and right Set Values
 	leftSet = ds->speed;
 	rightSet = ds->speed;
+
+	SmartDashboard::PutNumber("DRIVER STUFF", ds->distance);
 
 	AS->SetDiffence(GetPIDError());		//Set the PID Error of the artifical PID
 	float adjustment = AO->OutputValue;			//Get the Result of the PID

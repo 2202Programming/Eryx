@@ -9,11 +9,11 @@
 #define TURNIF_NOSHOT true
 
 //Constants to be adjusted
-#define DIS_CENTR_ALIGN 508
-#define DIS_ALIGN_WALL 132
-#define DIS_FRONTD_BACKD 50
-#define DIS_LEFTPLAT_RIGHTPLAT 100
-#define ANG_ANGLESHOT
+#define DIS_CENTR_ALIGN 181.0f
+#define DIS_ALIGN_WALL 132.0f
+#define DIS_FRONTD_BACKD 50.0f
+#define DIS_LEFTPLAT_RIGHTPLAT 100.0f
+#define ANG_ANGLESHOT 45.0f
 
 CommandListMaker::CommandListMaker(IProfile *p)
 {
@@ -253,10 +253,8 @@ void CommandListMaker::Experimental()
 	}
 	storage = new std::vector<stepBase*>();
 
-	turnStep* two = new turnStep();
-	two->speed = .5;
-	two->angle = -90;
-	two->command = stepBase::turn;
+	stepBase* two = new stepBase();
+	two->command = stepBase::shoot;
 	two->stepNum = 0;
 	storage->push_back(two);
 
@@ -304,8 +302,9 @@ void CommandListMaker::Go(int x, std::string Defence, Stratagy strat)
 			c->command = stepBase::experimentalDriveStraight;
 			c->stepNum = xx;
 			xx++;
-			c->distance = DIS_CENTR_ALIGN;
-			c->speed = .4;
+			c->distance = DIS_CENTR_ALIGN + 12.0f;
+			SmartDashboard::PutNumber("c->distance", c->distance);
+			c->speed = .5;
 			storage->push_back(c);
 		}
 
@@ -313,9 +312,10 @@ void CommandListMaker::Go(int x, std::string Defence, Stratagy strat)
 		{
 			turnStep *ccc = new turnStep();
 			ccc->command = stepBase::turn;
-			ccc->angle = 45;
-			ccc->speed = 0;
+			ccc->angle = ANG_ANGLESHOT ; //Angle + Adjustment
+			ccc->speed = 0.5;
 			ccc->stepNum = xx; xx++;
+			storage->push_back(ccc);
 
 			stepBase *c = new stepBase();
 			c->command = stepBase::target;
@@ -323,13 +323,26 @@ void CommandListMaker::Go(int x, std::string Defence, Stratagy strat)
 			xx++;
 			storage->push_back(c);
 
+			driveStep *d = new driveStep();
+			d->speed = .6;
+			d->distance = 20;
+			d->command = stepBase::driveStraight;
+			d->stepNum = xx; xx++;
+			storage->push_back(d);
+
+			stepBase *dd = new stepBase();
+			dd->command = stepBase::target;
+			dd->stepNum = xx; xx++;
+			storage->push_back(dd);
+
 			stepBase *cc = new stepBase();
-			c->command = stepBase::shoot;
-			c->stepNum = xx;
+			cc->command = stepBase::shoot;
+			cc->stepNum = xx;
 			xx++;
-			storage->push_back(c);
+			storage->push_back(cc);
 		}
-		stp->command = stepBase::stop;
+
+		stp->command = stepBase::BeastModeDanceAttack;
 		stp->stepNum = xx; xx++;
 		storage->push_back(stp);
 
