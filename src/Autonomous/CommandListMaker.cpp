@@ -414,10 +414,10 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				storage->push_back(c);
 
 				stepBase *cc = new stepBase();
-				c->command = stepBase::shoot;
-				c->stepNum = xx;
+				cc->command = stepBase::shoot;
+				cc->stepNum = xx;
 				xx++;
-				storage->push_back(c);
+				storage->push_back(cc);
 			}
 
 			stp->command = stepBase::stop;
