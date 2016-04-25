@@ -604,6 +604,18 @@ void NavxSensorControl::InitExpDriveStraight()
 	right2->Reset();
 	left2->Reset();
 
+	if(AO != NULL)
+	{
+		delete AO;
+		AO = NULL;
+	}
+
+	if( AS != NULL)
+	{
+		delete AS;
+		AS = NULL;
+	}
+
 	AO = new ArtificialOutput();
 	AS = new ArtificialSource();
 
@@ -660,9 +672,14 @@ bool NavxSensorControl::ExecExpDriveStraight(driveStep* ds)
 
 	//Should Only Get Here if it at the final and correct distance
 	SmartDashboard::PutString("AUTO STATE", "Init Exp Drive Straight End");
+	DriveingController->Disable();
 	delete AO;
 	delete AS;
 	delete DriveingController;
+	DriveingController = NULL;
+	AO = NULL;
+	AS = NULL;
+
 	return true;
 }
 float NavxSensorControl::GetPIDError()//Support Return the offset from the correct path
