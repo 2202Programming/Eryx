@@ -152,7 +152,7 @@ void NavxSensorControl::TargetingStateMachine()
 	case TargetingState::driveToAngle:
 
 		SmartDashboard::PutNumber("TCON ERROR", turnController->GetError());
-		if (fabs(turnController->GetError()) < 1) //If the Error of the Turncontroller is below a certain value the timer starts to stop it
+		if (fabs(turnController->GetError()) < 2) //If the Error of the Turncontroller is below a certain value the timer starts to stop it
 		{
 			SmartDashboard::PutBoolean("T === NUILL", dxdt == NULL);
 			if (dxdt == NULL) 					//If the timer doest exist yet we create a new one and start
@@ -164,7 +164,7 @@ void NavxSensorControl::TargetingStateMachine()
 			else
 			{
 				SmartDashboard::PutNumber("TIMER T DOG", dxdt->Get() + 1000);
-				if (dxdt->Get() > 1)			//If one second has passed then you are the correct angle
+				if (dxdt->Get() > .5)			//If one second has passed then you are the correct angle
 				{
 					time = true;			//How you tell the system to move on
 				}
@@ -228,15 +228,15 @@ void NavxSensorControl::TargetingStateMachine()
 		}
 		double distanceToTravel = vision->getDistanceToTravel();
 		SmartDashboard::PutNumber("DistanceToTravel", distanceToTravel);
-		float rightEncoderCount = right->Get();
+		float rightEncoderCount = left->Get();
 		float expectedEncoderCount = GetEncoderCount(distanceToTravel);
 		if (rightEncoderCount > expectedEncoderCount)
 		{
-			motorSpeed = -0.3;
+			motorSpeed = -0.4;
 		}
 		else
 		{
-			motorSpeed = 0.3;
+			motorSpeed = 0.4;
 		}
 		if (fabs(rightEncoderCount - expectedEncoderCount) < 14 * 8)
 		{
@@ -286,7 +286,7 @@ void NavxSensorControl::TeleopInit()
 	t = NULL;
 
 	//THIS IS PROBABLY BROKEN, I THINK IT SHOULD BE THE COSTANTS TOMMY MADE
-	turnController->SetPID(0.030, 0.001, 0.0);	//SetPID(0.040, 0.0025, 0.0);
+	turnController->SetPID(0.035, 0.001, 0.0);	//SetPID(0.040, 0.0025, 0.0);
 	left->Reset();
 	right->Reset();
 	left2->Reset();
@@ -295,6 +295,10 @@ void NavxSensorControl::TeleopInit()
 
 void NavxSensorControl::TeleopPeriodic()
 {
+	SmartDashboard::PutNumber("Left Drive", left->Get());
+	SmartDashboard::PutNumber("Right Drive", right->Get());
+	SmartDashboard::PutNumber("Left Drive 2", left2->Get());
+	SmartDashboard::PutNumber("Right Drive 2", right2->Get());
 	inAutonomous = false;
 	TargetingStateMachine();
 	SmartDashboard::PutNumber("Yaw", ahrs->GetYaw());
@@ -354,7 +358,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value)
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return right->Get() < GetEncoderCount(value);
+		return left->Get() < GetEncoderCount(value);
 	case hardTimer:
 
 		SmartDashboard::PutNumber("Timer", t->Get());
@@ -518,8 +522,10 @@ void NavxSensorControl::InitAutoTarget()
 
 bool NavxSensorControl::AutoTarget()
 {
+	SmartDashboard::PutString("AUTO STATE", "Targeting");
+
 	TargetingStateMachine();
-	return time;
+	return targetState == TargetingState::waitForButtonPress;
 }
 
 void NavxSensorControl::InitTurn(turnStep *step)
@@ -552,7 +558,7 @@ bool NavxSensorControl::ExecTurn(turnStep *step)
 			t->Start();
 		} else {
 
-			if (t->Get() > 1) {
+			if (t->Get() > .3) {
 				autoTime = true;
 			}
 		}

@@ -9,7 +9,7 @@
 #define TURNIF_NOSHOT true
 
 //Constants to be adjusted
-#define DIS_CENTR_ALIGN 181.0f
+#define DIS_CENTR_ALIGN 181.0f + 40.0f
 #define DIS_ALIGN_WALL 132.0f
 #define DIS_FRONTD_BACKD 50.0f
 #define DIS_LEFTPLAT_RIGHTPLAT 100.0f
@@ -30,6 +30,7 @@ CommandListMaker::~CommandListMaker()
 
 void CommandListMaker::RobotInit()
 {
+#if 0
 	autoPosition = new SendableChooser();
 	autoPosition->AddDefault(low, (void*) &low);
 	autoPosition->AddObject(ram, (void*) &ram);
@@ -41,6 +42,7 @@ void CommandListMaker::RobotInit()
 	autoPosition->AddObject(moat, (void*) &moat);
 	autoPosition->AddObject(draw, (void*) &draw);
 	//SmartDashboard::PutData("Position", autoPosition);
+#endif
 
 	stratChooser = new SendableChooser();
 	stratChooser->AddDefault(str_Approach, (void*) &str_Approach);
@@ -280,12 +282,8 @@ void CommandListMaker::makeOakWoodSpecial()
 	}
 	storage = new std::vector<stepBase*>();
 
-	void* temp = autoPosition->GetSelected();
+	void* temp = autoDefence->GetSelected();
 	std::string* dt = static_cast<std::string*>(temp);
-	std::string defence = *dt;
-
-	temp = autoDefence->GetSelected();
-	dt = static_cast<std::string*>(temp);
 	std::string position = *dt;
 
 	temp = stratChooser->GetSelected();
@@ -311,6 +309,8 @@ void CommandListMaker::makeOakWoodSpecial()
 		c = Stratagy::Approach;
 	}
 
+	c = Stratagy::Shoot;
+
 	int pos = position[position.length() - 1] - '0';
 
 	Go(pos, c);
@@ -332,7 +332,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				c->command = stepBase::experimentalDriveStraight;
 				c->stepNum = xx;
 				xx++;
-				c->distance = DIS_CENTR_ALIGN + 12.0f;
+				c->distance = DIS_CENTR_ALIGN + 60.0f;
 				SmartDashboard::PutNumber("c->distance", c->distance);
 				c->speed = .5;
 				storage->push_back(c);
@@ -394,39 +394,6 @@ void CommandListMaker::Go(int x, Stratagy strat)
 			}
 			break;
 		case 3:
-			if ((strat == Stratagy::Cross) || (strat == Stratagy::Shoot))
-			{
-				driveStep *c = new driveStep();
-				c->command = stepBase::experimentalDriveStraight;
-				c->stepNum = xx;
-				xx++;
-				c->distance = DIS_CENTR_ALIGN;
-				c->speed = .4;
-				storage->push_back(c);
-			}
-
-			if (strat == Stratagy::Shoot)
-			{
-				stepBase *c = new stepBase();
-				c->command = stepBase::target;
-				c->stepNum = xx;
-				xx++;
-				storage->push_back(c);
-
-				stepBase *cc = new stepBase();
-				cc->command = stepBase::shoot;
-				cc->stepNum = xx;
-				xx++;
-				storage->push_back(cc);
-			}
-
-			stp->command = stepBase::stop;
-			stp->stepNum = xx;
-			xx++;
-			storage->push_back(stp);
-
-			break;
-		case 4:
 			if (strat == Stratagy::Cross)
 			{
 				driveStep *c = new driveStep();
@@ -434,9 +401,44 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				c->stepNum = xx;
 				xx++;
 				c->distance = DIS_CENTR_ALIGN;
-				c->speed = .4;
+				c->speed = .6;
 				storage->push_back(c);
 			}
+
+			break;
+		case 4:
+
+			if ((strat == Stratagy::Cross) || (strat == Stratagy::Shoot))
+						{
+							driveStep *c = new driveStep();
+							c->command = stepBase::experimentalDriveStraight;
+							c->stepNum = xx;
+							xx++;
+							c->distance = DIS_CENTR_ALIGN;
+							c->speed = .7;
+							storage->push_back(c);
+						}
+
+						if (strat == Stratagy::Shoot)
+						{
+							stepBase *ccc = new stepBase();
+							ccc->command = stepBase::target;
+							ccc->stepNum = xx;
+							xx++;
+							storage->push_back(ccc);
+
+							stepBase *cc = new stepBase();
+							cc->command = stepBase::shoot;
+							cc->stepNum = xx;
+							xx++;
+							//storage->push_back(cc);
+						}
+
+						stp->command = stepBase::stop;
+						stp->stepNum = xx;
+						xx++;
+						storage->push_back(stp);
+
 			break;
 		case 5:
 			if (strat == Stratagy::Cross)
@@ -446,7 +448,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				c->stepNum = xx;
 				xx++;
 				c->distance = DIS_CENTR_ALIGN;
-				c->speed = .4;
+				c->speed = .6;
 				storage->push_back(c);
 			}
 			break;
