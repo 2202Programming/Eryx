@@ -261,15 +261,17 @@ void CommandListMaker::Experimental()
 	}
 	storage = new std::vector<stepBase*>();
 
-	stepBase* two = new stepBase();
-	two->command = stepBase::shoot;
-	two->stepNum = 0;
-	storage->push_back(two);
+	turnStep *t = new turnStep();
+	t->angle = 90;
+	t->stepNum = 0;
+	t->command = stepBase::turn;
+	storage->push_back(t);
 
-	stepBase* one = new stepBase();
-	one->command = stepBase::target;
-	one->stepNum = 1;
-	storage->push_back(one);
+
+	stepBase *tt = new stepBase();
+	tt->stepNum = 1;
+	tt->command = stepBase::stop;
+	storage->push_back(tt);
 
 }
 
@@ -331,7 +333,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				driveStep *c = new driveStep();
 				c->command = stepBase::experimentalDriveStraight;
 				c->stepNum = xx;
-				xx++;
+				xx+=1;
 				c->distance = DIS_CENTR_ALIGN + 60.0f;
 				SmartDashboard::PutNumber("c->distance", c->distance);
 				c->speed = .5;
@@ -345,13 +347,13 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				ccc->angle = ANG_ANGLESHOT; //Angle + Adjustment
 				ccc->speed = 0.5;
 				ccc->stepNum = xx;
-				xx++;
+				xx+=1;
 				storage->push_back(ccc);
 
 				stepBase *c = new stepBase();
 				c->command = stepBase::target;
 				c->stepNum = xx;
-				xx++;
+				xx+=1;
 				storage->push_back(c);
 
 				driveStep *d = new driveStep();
@@ -359,25 +361,25 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				d->distance = 20;
 				d->command = stepBase::driveStraight;
 				d->stepNum = xx;
-				xx++;
+				xx+=1;
 				storage->push_back(d);
 
 				stepBase *dd = new stepBase();
 				dd->command = stepBase::target;
 				dd->stepNum = xx;
-				xx++;
+				xx+=1;
 				storage->push_back(dd);
 
 				stepBase *cc = new stepBase();
 				cc->command = stepBase::shoot;
 				cc->stepNum = xx;
-				xx++;
+				xx+=1;
 				storage->push_back(cc);
 			}
 
-			stp->command = stepBase::BeastModeDanceAttack;
+			stp->command = stepBase::stop;
 			stp->stepNum = xx;
-			xx++;
+			xx+=1;
 			storage->push_back(stp);
 
 			break;
@@ -387,7 +389,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				driveStep *c = new driveStep();
 				c->command = stepBase::experimentalDriveStraight;
 				c->stepNum = xx;
-				xx++;
+				xx+=1;
 				c->distance = DIS_CENTR_ALIGN;
 				c->speed = .4;
 				storage->push_back(c);
@@ -399,7 +401,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				driveStep *c = new driveStep();
 				c->command = stepBase::experimentalDriveStraight;
 				c->stepNum = xx;
-				xx++;
+				xx+=1;
 				c->distance = DIS_CENTR_ALIGN;
 				c->speed = .6;
 				storage->push_back(c);
@@ -413,7 +415,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 							driveStep *c = new driveStep();
 							c->command = stepBase::experimentalDriveStraight;
 							c->stepNum = xx;
-							xx++;
+							xx+=1;
 							c->distance = DIS_CENTR_ALIGN;
 							c->speed = .7;
 							storage->push_back(c);
@@ -424,19 +426,19 @@ void CommandListMaker::Go(int x, Stratagy strat)
 							stepBase *ccc = new stepBase();
 							ccc->command = stepBase::target;
 							ccc->stepNum = xx;
-							xx++;
+							xx+=1;
 							storage->push_back(ccc);
 
 							stepBase *cc = new stepBase();
 							cc->command = stepBase::shoot;
 							cc->stepNum = xx;
-							xx++;
+							xx+=1;
 							//storage->push_back(cc);
 						}
 
 						stp->command = stepBase::stop;
 						stp->stepNum = xx;
-						xx++;
+						xx+=1;
 						storage->push_back(stp);
 
 			break;
@@ -446,7 +448,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				driveStep *c = new driveStep();
 				c->command = stepBase::experimentalDriveStraight;
 				c->stepNum = xx;
-				xx++;
+				xx+=1;
 				c->distance = DIS_CENTR_ALIGN;
 				c->speed = .6;
 				storage->push_back(c);
@@ -460,14 +462,14 @@ void CommandListMaker::Go(int x, Stratagy strat)
 		d->distance = 50;
 		d->speed = .5;
 		d->stepNum = xx;
-		xx++;
+		xx+=1;
 		d->command = stepBase::experimentalDriveStraight;
 		storage->push_back(d);
 
 		stepBase *dd = new stepBase();
 		dd->command = stepBase::stop;
 		dd->stepNum = xx;
-		xx++;
+		xx+=1;
 		storage->push_back(dd);
 	}
 }
