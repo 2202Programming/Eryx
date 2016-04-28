@@ -13,6 +13,10 @@
 #define kI 0.002
 #define kD 0.0
 
+#define tkP 0.04
+#define tkI 0.0025
+#define tkD 0.000
+
 #define TunePID false
 
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
@@ -24,7 +28,7 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 	profile = profileInstance;
 	vision = visionInstance;
 	ahrs = new AHRS(SPI::Port::kMXP);
-	turnController = new PIDController(0.01, 0.000, 0.00, ahrs, this);
+	turnController = new PIDController(tkP, tkI, tkD, ahrs, this);
 	turnController->SetInputRange(-180.0, 180.0);
 	turnController->SetOutputRange(-1, 1);
 	turnController->SetContinuous(true);
@@ -164,7 +168,7 @@ void NavxSensorControl::TargetingStateMachine()
 			else
 			{
 				SmartDashboard::PutNumber("TIMER T DOG", dxdt->Get() + 1000);
-				if (dxdt->Get() > .5)			//If one second has passed then you are the correct angle
+				if (dxdt->Get() > .5)//0.5 TODO		//If one second has passed then you are the correct angle
 				{
 					time = true;			//How you tell the system to move on
 				}
@@ -228,7 +232,7 @@ void NavxSensorControl::TargetingStateMachine()
 		}
 		double distanceToTravel = vision->getDistanceToTravel();
 		SmartDashboard::PutNumber("DistanceToTravel", distanceToTravel);
-		float rightEncoderCount = left->Get();
+		float rightEncoderCount = right->Get();
 		float expectedEncoderCount = GetEncoderCount(distanceToTravel);
 		if (rightEncoderCount > expectedEncoderCount)
 		{
@@ -286,7 +290,7 @@ void NavxSensorControl::TeleopInit()
 	t = NULL;
 
 	//THIS IS PROBABLY BROKEN, I THINK IT SHOULD BE THE COSTANTS TOMMY MADE
-	turnController->SetPID(0.035, 0.001, 0.0);	//SetPID(0.040, 0.0025, 0.0);
+	turnController->SetPID(tkP, tkI, tkD);	//SetPID(0.040, 0.0025, 0.0);
 	left->Reset();
 	right->Reset();
 	left2->Reset();
@@ -339,7 +343,7 @@ void NavxSensorControl::InitDriveStraight(driveStep *step)
 double NavxSensorControl::GetEncoderCount(float value)
 {			//COMMENT ON WTF THIS DOES PLEASE
 //thank you :)
-	return value * 14.06579404;					//what are the units of values?
+	return value * 15.4901960784;					//what are the units of values?
 }
 
 /*
@@ -358,7 +362,7 @@ bool NavxSensorControl::GetDriveStraightContinue(float value)
 	case distance:
 		return ahrs->GetDisplacementX() < value;
 	case encoder:
-		return left->Get() < GetEncoderCount(value);
+		return right->Get() < GetEncoderCount(value);
 	case hardTimer:
 
 		SmartDashboard::PutNumber("Timer", t->Get());
@@ -535,7 +539,7 @@ void NavxSensorControl::InitTurn(turnStep *step)
 		delete t;
 		t = NULL;
 	}
-
+	shootie->raise();
 	ahrs->ZeroYaw();
 	turnController->Reset();
 	turnController->SetSetpoint(step->angle);

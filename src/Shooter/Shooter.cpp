@@ -508,3 +508,8 @@ float Shooter::acceleration(float newS, float oldS) {
 
 	return newS;
 }
+
+void Shooter::raise()
+{
+	angle = true;
+}

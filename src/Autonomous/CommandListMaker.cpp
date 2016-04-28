@@ -261,10 +261,9 @@ void CommandListMaker::Experimental()
 	}
 	storage = new std::vector<stepBase*>();
 
-	turnStep *t = new turnStep();
-	t->angle = 90;
+	stepBase *t = new stepBase();
 	t->stepNum = 0;
-	t->command = stepBase::turn;
+	t->command = stepBase::shoot;
 	storage->push_back(t);
 
 
@@ -334,7 +333,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				c->command = stepBase::experimentalDriveStraight;
 				c->stepNum = xx;
 				xx+=1;
-				c->distance = DIS_CENTR_ALIGN + 60.0f;
+				c->distance = DIS_CENTR_ALIGN + 40.0f;
 				SmartDashboard::PutNumber("c->distance", c->distance);
 				c->speed = .5;
 				storage->push_back(c);
@@ -344,7 +343,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 			{
 				turnStep *ccc = new turnStep();
 				ccc->command = stepBase::turn;
-				ccc->angle = ANG_ANGLESHOT; //Angle + Adjustment
+				ccc->angle = ANG_ANGLESHOT + 15; //Angle + Adjustment
 				ccc->speed = 0.5;
 				ccc->stepNum = xx;
 				xx+=1;
