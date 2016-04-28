@@ -310,7 +310,6 @@ void CommandListMaker::makeOakWoodSpecial()
 		c = Stratagy::Approach;
 	}
 
-	c = Stratagy::Shoot;
 
 	int pos = position[position.length() - 1] - '0';
 
