@@ -284,9 +284,9 @@ void Shooter::readXboxComp() {
 		break;
 	}
 
-	/*if (xbox->getBackHeld()) {
+	if (xbox->getBackHeld()) {
 		runIntake = !runIntake;
-	}*/
+	}
 
 	switch (sState) {
 	case ready:
