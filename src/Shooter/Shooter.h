@@ -26,7 +26,7 @@ public:
 	void TeleopPeriodic();
 
 	bool shoot();
-
+	void raise();
 private:
 	//Input from Xbox Controller
 	void readXbox();

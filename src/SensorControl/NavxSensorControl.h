@@ -1,5 +1,5 @@
 /*
- * NavxSensorControl.h
+f * NavxSensorControl.h
  *
  *  Created on: Feb 6, 2016
  *      Author: Beasty
@@ -143,6 +143,7 @@ protected:
 	int timesCalled = 0;
 	Timer *t = NULL;
 	Timer *autoT = NULL;
+	Timer *dxdt = NULL;
 
 	double motorConstant = 1.5;
 	double DriveStraitTime;

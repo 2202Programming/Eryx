@@ -93,22 +93,28 @@ void Shooter::AutonomousInit() {
 void Shooter::AutonomousPeriodic() {
 	updateMotor1();
 	setPnumatics();
-	motor->setShoot(leftSpeed, rightSpeed);
+	motor->setShoot(-leftSpeed, -rightSpeed);
 }
 
 bool Shooter::shoot() {
 	angle = true;
 	runShoot = true;
 
-	if (t == NULL) {
+	if (t == NULL)
+	{
 		t = new Timer();
 		t->Start();
-	} else if (t->Get() > 5) {
+	}
+	else if (t->Get() > 5)
+	{
 		runTrigger = true;
+		runShoot = false;
 		shot = true;
 	}
 
-	if (runTrigger) {
+	if (runTrigger)
+	{
+
 		delete t;
 		t = NULL;
 		return true;
@@ -501,4 +507,9 @@ float Shooter::acceleration(float newS, float oldS) {
 	}
 
 	return newS;
+}
+
+void Shooter::raise()
+{
+	angle = true;
 }
