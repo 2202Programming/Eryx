@@ -41,9 +41,9 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 	left2 = new Encoder(6, 7);
 	right2 = new Encoder(0, 1);
 
-	left->SetReverseDirection(true);
+	left->SetReverseDirection(false);
 	left2->SetReverseDirection(true);
-	right->SetReverseDirection(false);
+	right->SetReverseDirection(true);
 	right2->SetReverseDirection(false);
 
 }
@@ -339,6 +339,7 @@ void NavxSensorControl::InitDriveStraight(driveStep *step)
 
 	right->SetDistancePerPulse(0.63);
 }
+
 
 double NavxSensorControl::GetEncoderCount(float value)
 {			//COMMENT ON WTF THIS DOES PLEASE

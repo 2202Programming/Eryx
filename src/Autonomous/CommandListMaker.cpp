@@ -9,7 +9,7 @@
 #define TURNIF_NOSHOT true
 
 //Constants to be adjusted
-#define DIS_CENTR_ALIGN 181.0f + 40.0f
+#define DIS_CENTR_ALIGN 181.0f + 50.0f
 #define DIS_ALIGN_WALL 132.0f
 #define DIS_FRONTD_BACKD 50.0f
 #define DIS_LEFTPLAT_RIGHTPLAT 100.0f
@@ -332,7 +332,7 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				c->command = stepBase::experimentalDriveStraight;
 				c->stepNum = xx;
 				xx+=1;
-				c->distance = DIS_CENTR_ALIGN + 40.0f;
+				c->distance = DIS_CENTR_ALIGN;// + 40.0f;
 				SmartDashboard::PutNumber("c->distance", c->distance);
 				c->speed = .5;
 				storage->push_back(c);

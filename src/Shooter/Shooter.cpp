@@ -27,8 +27,8 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	encFrontLeft = new Encoder(10, 11);
 	encFrontRight = new Encoder(12, 13);
 
-	encFrontLeft->SetReverseDirection(true); //For test board
-	encFrontRight->SetReverseDirection(true); //For test board
+	//encFrontLeft->SetReverseDirection(true); //For test board
+	//encFrontRight->SetReverseDirection(true); //For test board
 	encFrontLeft->SetDistancePerPulse(0.00001);
 	encFrontRight->SetDistancePerPulse(0.00001);
 
