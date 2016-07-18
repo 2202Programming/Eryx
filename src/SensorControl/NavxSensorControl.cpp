@@ -557,7 +557,7 @@ bool NavxSensorControl::ExecTurn(turnStep *step)
 	SmartDashboard::PutString("AUTO STATE", "Exec Turn");
 
 	SmartDashboard::PutNumber("TCON EROR", turnController->GetError());
-	if (fabs(turnController->GetError()) < 1) {
+	if (fabs(turnController->GetError()) < 8) {
 		if (t == NULL) {
 			t = new Timer();
 			t->Start();
