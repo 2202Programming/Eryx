@@ -33,6 +33,7 @@ public:
 	void makeDefenceBreaker();
 	void Experimental();
 	void makeOakWoodSpecial();
+	void MakeDHarmSpecial();
 
 	void Go(int x, Stratagy strat);
 

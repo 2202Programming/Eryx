@@ -42,6 +42,7 @@ public:
 		experimentalDriveStraight,
 		driveTillHitsWall,
 		BeastModeDanceAttack,
+		spinUp,
 	};
 
 	int stepNum;

@@ -32,30 +32,30 @@ void CommandListMaker::RobotInit()
 {
 #if 0
 	autoPosition = new SendableChooser();
-	autoPosition->AddDefault(low, (void*) &low);
-	autoPosition->AddObject(ram, (void*) &ram);
-	autoPosition->AddObject(rock, (void*) &rock);
-	autoPosition->AddObject(port, (void*) &port);
-	autoPosition->AddObject(chev, (void*) &chev);
-	autoPosition->AddObject(sall, (void*) &sall);
-	autoPosition->AddObject(deb, (void*) &deb);
-	autoPosition->AddObject(moat, (void*) &moat);
-	autoPosition->AddObject(draw, (void*) &draw);
+	autoPosition->AtargetTwoDefault(low, (void*) &low);
+	autoPosition->AtargetTwoObject(ram, (void*) &ram);
+	autoPosition->AtargetTwoObject(rock, (void*) &rock);
+	autoPosition->AtargetTwoObject(port, (void*) &port);
+	autoPosition->AtargetTwoObject(chev, (void*) &chev);
+	autoPosition->AtargetTwoObject(sall, (void*) &sall);
+	autoPosition->AtargetTwoObject(deb, (void*) &deb);
+	autoPosition->AtargetTwoObject(moat, (void*) &moat);
+	autoPosition->AtargetTwoObject(draw, (void*) &draw);
 	//SmartDashboard::PutData("Position", autoPosition);
 #endif
 
 	stratChooser = new SendableChooser();
-	stratChooser->AddDefault(str_Approach, (void*) &str_Approach);
-	stratChooser->AddObject(str_Cross, (void*) &str_Cross);
-	stratChooser->AddObject(str_Shoot, (void*) &str_Shoot);
+	stratChooser->AtargetTwoDefault(str_Approach, (void*) &str_Approach);
+	stratChooser->AtargetTwoObject(str_Cross, (void*) &str_Cross);
+	stratChooser->AtargetTwoObject(str_Shoot, (void*) &str_Shoot);
 	SmartDashboard::PutData("Stratagy", stratChooser);
 
 	autoDefence = new SendableChooser();
-	autoDefence->AddDefault(pos1, (void*) &pos1);
-	autoDefence->AddObject(pos2, (void*) &pos2);
-	autoDefence->AddObject(pos3, (void*) &pos3);
-	autoDefence->AddObject(pos4, (void*) &pos4);
-	autoDefence->AddObject(pos5, (void*) &pos5);
+	autoDefence->AtargetTwoDefault(pos1, (void*) &pos1);
+	autoDefence->AtargetTwoObject(pos2, (void*) &pos2);
+	autoDefence->AtargetTwoObject(pos3, (void*) &pos3);
+	autoDefence->AtargetTwoObject(pos4, (void*) &pos4);
+	autoDefence->AtargetTwoObject(pos5, (void*) &pos5);
 	SmartDashboard::PutData("Defence", autoDefence);
 }
 
@@ -340,13 +340,13 @@ void CommandListMaker::Go(int x, Stratagy strat)
 
 			if (strat == Stratagy::Shoot)
 			{
-				turnStep *ccc = new turnStep();
-				ccc->command = stepBase::turn;
-				ccc->angle = ANG_ANGLESHOT + 15; //Angle + Adjustment
-				ccc->speed = 0.5;
-				ccc->stepNum = xx;
+				turnStep *shootc = new turnStep();
+				shootc->command = stepBase::turn;
+				shootc->angle = ANG_ANGLESHOT + 15; //Angle + Adjustment
+				shootc->speed = 0.5;
+				shootc->stepNum = xx;
 				xx+=1;
-				storage->push_back(ccc);
+				storage->push_back(shootc);
 
 				stepBase *c = new stepBase();
 				c->command = stepBase::target;
@@ -362,17 +362,17 @@ void CommandListMaker::Go(int x, Stratagy strat)
 				xx+=1;
 				storage->push_back(d);
 
-				stepBase *dd = new stepBase();
-				dd->command = stepBase::target;
-				dd->stepNum = xx;
+				stepBase *targetTwo = new stepBase();
+				targetTwo->command = stepBase::target;
+				targetTwo->stepNum = xx;
 				xx+=1;
-				storage->push_back(dd);
+				storage->push_back(targetTwo);
 
-				stepBase *cc = new stepBase();
-				cc->command = stepBase::shoot;
-				cc->stepNum = xx;
+				stepBase *shoot = new stepBase();
+				shoot->command = stepBase::shoot;
+				shoot->stepNum = xx;
 				xx+=1;
-				storage->push_back(cc);
+				storage->push_back(shoot);
 			}
 
 			stp->command = stepBase::stop;
@@ -421,17 +421,17 @@ void CommandListMaker::Go(int x, Stratagy strat)
 
 						if (strat == Stratagy::Shoot)
 						{
-							stepBase *ccc = new stepBase();
-							ccc->command = stepBase::target;
-							ccc->stepNum = xx;
+							stepBase *shootc = new stepBase();
+							shootc->command = stepBase::target;
+							shootc->stepNum = xx;
 							xx+=1;
-							storage->push_back(ccc);
+							storage->push_back(shootc);
 
-							stepBase *cc = new stepBase();
-							cc->command = stepBase::shoot;
-							cc->stepNum = xx;
+							stepBase *shoot = new stepBase();
+							shoot->command = stepBase::shoot;
+							shoot->stepNum = xx;
 							xx+=1;
-							//storage->push_back(cc);
+							//storage->push_back(shoot);
 						}
 
 						stp->command = stepBase::stop;
@@ -464,15 +464,92 @@ void CommandListMaker::Go(int x, Stratagy strat)
 		d->command = stepBase::experimentalDriveStraight;
 		storage->push_back(d);
 
-		stepBase *dd = new stepBase();
-		dd->command = stepBase::stop;
-		dd->stepNum = xx;
+		stepBase *targetTwo = new stepBase();
+		targetTwo->command = stepBase::stop;
+		targetTwo->stepNum = xx;
 		xx+=1;
-		storage->push_back(dd);
+		storage->push_back(targetTwo);
 	}
 }
 
 vector<stepBase*>* CommandListMaker::getList()
 {
 	return storage;
+}
+
+void CommandListMaker::MakeDHarmSpecial()
+{
+	int i = 0;
+
+	const double DISTANCE_FAST_ONE = 0.0;
+	const double DISTANCE_SLOW_ONE = 0.0;
+	const double DISTANCE_FAST_TWO = 0.0;
+	const double TURNRADIUS = 90.0;
+	const double DISTANCE_SLOW_TWO = 0.0;
+	const double SPEED_FAST = 0.8;
+	const double SPEED_SLOW = 0.4;
+
+
+	//Fast Drive 1
+	driveStep *fastDriveOne = new DriveStep();
+	fastDriveOne->Speed = SPEED_FAST;
+	fastDriveOne->distance = DISTANCE_FAST_ONE;
+	fastDriveOne->stepNum = ++i;
+	fastDriveOne->command = stepBase::experimentalDriveStraight;
+	storage->push_back(fastDriveOned);
+
+	//Slow Drive 
+	driveStep *slowDrive = new DriveStep();
+	slowDrive->Speed = SPEED_SLOW;
+	slowDrive->distance = DISTANCE_SLOW_ONE;
+	slowDrive->stepNum = ++i;
+	slowDrive->command = stepBase::experimentalDriveStraight;
+	storage->push_back(slowDrive);
+
+	//Fast Drive Two
+	driveStep *fastDriveTwo = new DriveStep();
+	fastDriveTwo->Speed = SPEED_FAST;
+	fastDriveTwo->distance = DISTANCE_FAST_TWO;
+	fastDriveTwo->stepNum = ++i;
+	fastDriveTwo->command = stepBase::experimentalDriveStraight;
+	storage->push_back(fastDriveTwo);
+
+	// Very Rough Turn to face goal
+	turnStep *roughTurn = new turnStep();
+	roughTurn->command = stepBase::turn;
+	roughTurn->angle = TURNRADIUS; //Angle + Adjustment
+	roughTurn->stepNum = ++i;
+	storage->push_back(roughTurn);
+
+	// Start Spinning up Drive Motors
+	stepBase *spinUp = new stepBase();
+	spinUp->command = stepBase::spinUp;
+	spinUp->stepNum = ++i;
+	storage->push_back(spinUp);
+
+	// Rough Targeting
+	stepBase *targetOne = new stepBase();
+	targetOne->command = stepBase::target;
+	targetOne->stepNum = ++i;
+	storage->push_back(targetOne);
+
+	// Drive Adjustment
+	driveStep *slowDriveTwo = new driveStep();
+	slowDriveTwo->speed = SPEED_SLOW;
+	slowDriveTwo->distance = DISTANCE_SLOW_TWO;
+	slowDriveTwo->command = stepBase::driveStraight;
+	slowDriveTwo->stepNum = ++i;
+	storage->push_back(slowDriveTwo);
+
+	// Percise Targeting
+	stepBase *targetTwo = new stepBase();
+	targetTwo->command = stepBase::target;
+	targetTwo->stepNum = ++i;
+	storage->push_back(targetTwo);
+
+	// Final Shoot
+	stepBase *shoot = new stepBase();
+	shoot->command = stepBase::shoot;
+	shoot->stepNum = ++i;
+	storage->push_back(shoot);
 }
