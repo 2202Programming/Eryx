@@ -41,6 +41,7 @@ public:
 		driveThroughDefence,
 		experimentalDriveStraight,
 		driveTillHitsWall,
+		spinUp,
 		BeastModeDanceAttack,
 	};
 

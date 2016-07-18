@@ -491,3 +491,80 @@ vector<stepBase*>* CommandListMaker::getList()
 {
 	return storage;
 }
+
+void CommandListMaker::MakeDHarmSpecial()
+{
+	int i = 0;
+
+	const double DISTANCE_FAST_ONE = 0.0;
+	const double DISTANCE_SLOW_ONE = 0.0;
+	const double DISTANCE_FAST_TWO = 0.0;
+	const double TURNRADIUS = 90.0;
+	const double DISTANCE_SLOW_TWO = 0.0;
+	const double SPEED_FAST = 0.8;
+	const double SPEED_SLOW = 0.4;
+
+
+	//Fast Drive 1
+	driveStep *fastDriveOne = new driveStep();
+	fastDriveOne->speed = SPEED_FAST;
+	fastDriveOne->distance = DISTANCE_FAST_ONE;
+	fastDriveOne->stepNum = ++i;
+	fastDriveOne->command = stepBase::experimentalDriveStraight;
+	storage->push_back(fastDriveOne);
+
+	//Slow Drive
+	driveStep *slowDrive = new driveStep();
+	slowDrive->speed = SPEED_SLOW;
+	slowDrive->distance = DISTANCE_SLOW_ONE;
+	slowDrive->stepNum = ++i;
+	slowDrive->command = stepBase::experimentalDriveStraight;
+	storage->push_back(slowDrive);
+
+	//Fast Drive Two
+	driveStep *fastDriveTwo = new driveStep();
+	fastDriveTwo->speed = SPEED_FAST;
+	fastDriveTwo->distance = DISTANCE_FAST_TWO;
+	fastDriveTwo->stepNum = ++i;
+	fastDriveTwo->command = stepBase::experimentalDriveStraight;
+	storage->push_back(fastDriveTwo);
+
+	// Very Rough Turn to face goal
+	turnStep *roughTurn = new turnStep();
+	roughTurn->command = stepBase::turn;
+	roughTurn->angle = TURNRADIUS; //Angle + Adjustment
+	roughTurn->stepNum = ++i;
+	storage->push_back(roughTurn);
+
+	// Start Spinning up Drive Motors
+	stepBase *spinUp = new stepBase();
+	spinUp->command = stepBase::spinUp;
+	spinUp->stepNum = ++i;
+	storage->push_back(spinUp);
+
+	// Rough Targeting
+	stepBase *targetOne = new stepBase();
+	targetOne->command = stepBase::target;
+	targetOne->stepNum = ++i;
+	storage->push_back(targetOne);
+
+	// Drive Adjustment
+	driveStep *slowDriveTwo = new driveStep();
+	slowDriveTwo->speed = SPEED_SLOW;
+	slowDriveTwo->distance = DISTANCE_SLOW_TWO;
+	slowDriveTwo->command = stepBase::driveStraight;
+	slowDriveTwo->stepNum = ++i;
+	storage->push_back(slowDriveTwo);
+
+	// Percise Targeting
+	stepBase *targetTwo = new stepBase();
+	targetTwo->command = stepBase::target;
+	targetTwo->stepNum = ++i;
+	storage->push_back(targetTwo);
+
+	// Final Shoot
+	stepBase *shoot = new stepBase();
+	shoot->command = stepBase::shoot;
+	shoot->stepNum = ++i;
+	storage->push_back(shoot);
+}
