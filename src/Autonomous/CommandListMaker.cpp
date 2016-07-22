@@ -494,15 +494,17 @@ vector<stepBase*>* CommandListMaker::getList()
 
 void CommandListMaker::MakeDHarmSpecial()
 {
+	storage = new std::vector<stepBase*>();
+
 	int i = 0;
 
-	const double DISTANCE_FAST_ONE = 0.0;
-	const double DISTANCE_SLOW_ONE = 0.0;
-	const double DISTANCE_FAST_TWO = 0.0;
-	const double TURNRADIUS = 90.0;
+	const double DISTANCE_FAST_ONE = 50;
+	const double DISTANCE_SLOW_ONE = 55;
+	const double DISTANCE_FAST_TWO = 149;//
+	const double TURNRADIUS = 52.0;
 	const double DISTANCE_SLOW_TWO = 0.0;
-	const double SPEED_FAST = 0.8;
-	const double SPEED_SLOW = 0.4;
+	const double SPEED_FAST = 0.9;
+	const double SPEED_SLOW = 0.5;
 
 
 	//Fast Drive 1
@@ -536,23 +538,23 @@ void CommandListMaker::MakeDHarmSpecial()
 	roughTurn->stepNum = ++i;
 	storage->push_back(roughTurn);
 
-	// Start Spinning up Drive Motors
+	//Start Spinning up Drive Motors
 	stepBase *spinUp = new stepBase();
 	spinUp->command = stepBase::spinUp;
 	spinUp->stepNum = ++i;
 	storage->push_back(spinUp);
 
-	// Rough Targeting
+	/* Rough Targeting
 	stepBase *targetOne = new stepBase();
 	targetOne->command = stepBase::target;
 	targetOne->stepNum = ++i;
-	storage->push_back(targetOne);
+	storage->push_back(targetOne);*/
 
 	// Drive Adjustment
 	driveStep *slowDriveTwo = new driveStep();
 	slowDriveTwo->speed = SPEED_SLOW;
 	slowDriveTwo->distance = DISTANCE_SLOW_TWO;
-	slowDriveTwo->command = stepBase::driveStraight;
+	slowDriveTwo->command = stepBase::experimentalDriveStraight;
 	slowDriveTwo->stepNum = ++i;
 	storage->push_back(slowDriveTwo);
 

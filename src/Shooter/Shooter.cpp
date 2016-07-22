@@ -105,7 +105,7 @@ bool Shooter::shoot() {
 		t = new Timer();
 		t->Start();
 	}
-	else if (t->Get() > 5)
+	else if (t->Get() > 6)
 	{
 		runTrigger = true;
 		runShoot = false;

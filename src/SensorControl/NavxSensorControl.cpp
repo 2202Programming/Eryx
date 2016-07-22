@@ -117,6 +117,7 @@ void NavxSensorControl::TargetingStateMachine()
 
 		break;
 	case TargetingState::waitForStopped:
+		SmartDashboard::PutString("kljdsaf","good stuff");
 		if (currentDriveState == DriveSystemState::stopped)
 		{
 			// Tell Vision to take a picture
@@ -156,7 +157,7 @@ void NavxSensorControl::TargetingStateMachine()
 	case TargetingState::driveToAngle:
 
 		SmartDashboard::PutNumber("TCON ERROR", turnController->GetError());
-		if (fabs(turnController->GetError()) < 2) //If the Error of the Turncontroller is below a certain value the timer starts to stop it
+		if (fabs(turnController->GetError()) < 1) //If the Error of the Turncontroller is below a certain value the timer starts to stop it
 		{
 			SmartDashboard::PutBoolean("T === NUILL", dxdt == NULL);
 			if (dxdt == NULL) 					//If the timer doest exist yet we create a new one and start
@@ -210,7 +211,7 @@ void NavxSensorControl::TargetingStateMachine()
 		else
 		{
 
-			motorSpeed = turnSpeed;
+			motorSpeed = turnSpeed+0.05;
 		}
 
 		SmartDashboard::PutNumber("NavX Motor Speed", motorSpeed);//SmartDashboard applied motor speed

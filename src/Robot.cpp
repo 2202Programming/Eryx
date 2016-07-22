@@ -98,7 +98,7 @@ private:
 	void AutonomousInit() {
 		SmartDashboard::PutString("State", "Autonomous Init");
 
-		clMaker->makeOakWoodSpecial();
+		clMaker->MakeDHarmSpecial();
 		currentStep = clMaker->getFirstStep();
 
 		nLNode* test = master->head;
