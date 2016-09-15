@@ -42,7 +42,7 @@ Shooter::Shooter(Motor *motor, IXbox *xbox, IProfile *p) {
 	leftSpeed = 0.0;
 	rightSpeed = 0.0;
 	intakeSpeed = 0.0;
-	shootRPM = 0.5;
+	shootRPM = 0.40;
 	shootPercentState = 0;
 
 	t = NULL;
@@ -71,6 +71,8 @@ Shooter::~Shooter() {
 }
 
 void Shooter::AutonomousInit() {
+	shootPercentState = 1;
+
 	motor->setShoot(0.0, 0.0);
 	motor->setIntake(0.0);
 	runShoot = false;
@@ -105,7 +107,7 @@ bool Shooter::shoot() {
 		t = new Timer();
 		t->Start();
 	}
-	else if (t->Get() > 6)
+	else if (t->Get() > 5)
 	{
 		runTrigger = true;
 		runShoot = false;
@@ -132,6 +134,8 @@ bool Shooter::hasShot() {
 }
 
 void Shooter::TeleopInit() {
+	shootPercentState = 0;
+
 	motor->setShoot(0.0, 0.0);
 	motor->setIntake(0.0);
 	runShoot = false;
@@ -166,7 +170,7 @@ void Shooter::TeleopPeriodic() {
 		shootRPM = 0.40;
 		break;
 	case 1:
-		shootRPM = 0.38;
+		shootRPM = 0.32;
 		break;
 	case 2:
 		shootRPM = 0.35;
@@ -407,6 +411,8 @@ void Shooter::setPnumatics() {
 void Shooter::updateMotor1() {
 	if (!useEncoder) {
 		if (runShoot) {
+
+
 			leftSpeed = acceleration(shootRPM, leftSpeed);
 			rightSpeed = acceleration(shootRPM, rightSpeed);
 		} else {

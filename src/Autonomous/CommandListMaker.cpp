@@ -398,11 +398,11 @@ void CommandListMaker::Go(int x, Stratagy strat)
 			if(strat == Stratagy::Cross)
 			{
 				driveStep *crossDrive = new driveStep();
-				c->command = stepBase::experimentalDriveStraight;
-				c-> stepNum = ++x;
-				c->distance = DIS_CENTR_ALIGN;
-				c->speed = .4;
-				storage->push_back(crossDrive)
+				crossDrive->command = stepBase::experimentalDriveStraight;
+				crossDrive-> stepNum = ++x;
+				crossDrive->distance = DIS_CENTR_ALIGN;
+				crossDrive->speed = .6;
+				storage->push_back(crossDrive);
 			}
 			else if(strat == Stratagy::Shoot)
 			{
@@ -515,9 +515,10 @@ void CommandListMaker::MakeDHarmSpecial()
 
 	const double DISTANCE_FAST_ONE = 50;
 	const double DISTANCE_SLOW_ONE = 55;
-	const double DISTANCE_FAST_TWO = 149;//
-	const double TURNRADIUS = 52.0;
-	const double DISTANCE_SLOW_TWO = 0.0;
+	const double DISTANCE_FAST_TWO = 135;//149
+	const double TURNRADIUS = 60.0;
+	const double DISTANCE_SLOW_TWO = 30.0;
+	const double DISTANCE_SLOW_THREE = 10.0;
 	const double SPEED_FAST = 0.9;
 	const double SPEED_SLOW = 0.5;
 
@@ -546,6 +547,13 @@ void CommandListMaker::MakeDHarmSpecial()
 	fastDriveTwo->command = stepBase::experimentalDriveStraight;
 	storage->push_back(fastDriveTwo);
 
+	driveStep *slowDrive2 = new driveStep();
+	slowDrive2->speed = SPEED_SLOW;
+	slowDrive2->distance = DISTANCE_SLOW_TWO;
+	slowDrive2->stepNum = ++i;
+	slowDrive2->command = stepBase::experimentalDriveStraight;
+	storage->push_back(slowDrive2);
+
 	// Very Rough Turn to face goal
 	turnStep *roughTurn = new turnStep();
 	roughTurn->command = stepBase::turn;
@@ -563,15 +571,15 @@ void CommandListMaker::MakeDHarmSpecial()
 	stepBase *targetOne = new stepBase();
 	targetOne->command = stepBase::target;
 	targetOne->stepNum = ++i;
-	storage->push_back(targetOne);*/
+	storage->push_back(targetOne); */
 
 	// Drive Adjustment
-	driveStep *slowDriveTwo = new driveStep();
-	slowDriveTwo->speed = SPEED_SLOW;
-	slowDriveTwo->distance = DISTANCE_SLOW_TWO;
-	slowDriveTwo->command = stepBase::experimentalDriveStraight;
-	slowDriveTwo->stepNum = ++i;
-	storage->push_back(slowDriveTwo);
+	driveStep *slowDrive3 = new driveStep();
+	slowDrive3->speed = SPEED_SLOW;
+	slowDrive3->distance = DISTANCE_SLOW_THREE;
+	slowDrive3->command = stepBase::experimentalDriveStraight;
+	slowDrive3->stepNum = ++i;
+	storage->push_back(slowDrive3);
 
 	// Percise Targeting
 	stepBase *targetTwo = new stepBase();
