@@ -291,7 +291,7 @@ void NavxSensorControl::TeleopInit()
 	t = NULL;
 
 	//THIS IS PROBABLY BROKEN, I THINK IT SHOULD BE THE COSTANTS TOMMY MADE
-	turnController->SetPID(tkP, tkI, tkD);	//SetPID(0.040, 0.0025, 0.0);
+	turnController->SetPID(0.03, 0.002, 0);//tkP, tkI, tkD);	//SetPID(0.040, 0.0025, 0.0);
 	left->Reset();
 	right->Reset();
 	left2->Reset();
@@ -320,7 +320,7 @@ void NavxSensorControl::AutonomousInit()
 	currentStep = -1;
 	inAutonomous = true;
 
-	turnController->SetPID(0.030, 0.001, 0.0);//SetPID(0.040, 0.0025, 0.0);
+	turnController->SetPID(0.030, 0.002, 0.00, 0);//0.03, 0.00//SetPID(0.040, 0.0025, 0.0);
 }
 
 /*
