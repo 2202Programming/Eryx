@@ -117,6 +117,7 @@ void NavxSensorControl::TargetingStateMachine()
 
 		break;
 	case TargetingState::waitForStopped:
+		SmartDashboard::PutString("kljdsaf","good stuff");
 		if (currentDriveState == DriveSystemState::stopped)
 		{
 			// Tell Vision to take a picture
@@ -156,7 +157,7 @@ void NavxSensorControl::TargetingStateMachine()
 	case TargetingState::driveToAngle:
 
 		SmartDashboard::PutNumber("TCON ERROR", turnController->GetError());
-		if (fabs(turnController->GetError()) < 2) //If the Error of the Turncontroller is below a certain value the timer starts to stop it
+		if (fabs(turnController->GetError()) < 1) //If the Error of the Turncontroller is below a certain value the timer starts to stop it
 		{
 			SmartDashboard::PutBoolean("T === NUILL", dxdt == NULL);
 			if (dxdt == NULL) 					//If the timer doest exist yet we create a new one and start
@@ -210,7 +211,7 @@ void NavxSensorControl::TargetingStateMachine()
 		else
 		{
 
-			motorSpeed = turnSpeed;
+			motorSpeed = turnSpeed+0.05;
 		}
 
 		SmartDashboard::PutNumber("NavX Motor Speed", motorSpeed);//SmartDashboard applied motor speed
@@ -290,7 +291,7 @@ void NavxSensorControl::TeleopInit()
 	t = NULL;
 
 	//THIS IS PROBABLY BROKEN, I THINK IT SHOULD BE THE COSTANTS TOMMY MADE
-	turnController->SetPID(tkP, tkI, tkD);	//SetPID(0.040, 0.0025, 0.0);
+	turnController->SetPID(0.03, 0.002, 0);//tkP, tkI, tkD);	//SetPID(0.040, 0.0025, 0.0);
 	left->Reset();
 	right->Reset();
 	left2->Reset();
@@ -319,7 +320,7 @@ void NavxSensorControl::AutonomousInit()
 	currentStep = -1;
 	inAutonomous = true;
 
-	turnController->SetPID(0.030, 0.001, 0.0);//SetPID(0.040, 0.0025, 0.0);
+	turnController->SetPID(0.030, 0.002, 0.00, 0);//0.03, 0.00//SetPID(0.040, 0.0025, 0.0);
 }
 
 /*
