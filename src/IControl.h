@@ -43,7 +43,6 @@ public:
 		driveTillHitsWall,
 		spinUp,
 		BeastModeDanceAttack,
-		spinUp,
 	};
 
 	int stepNum;
