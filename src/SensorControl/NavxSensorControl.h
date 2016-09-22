@@ -1,5 +1,5 @@
 /*
-f * NavxSensorControl.h
+ * NavxSensorControl.h
  *
  *  Created on: Feb 6, 2016
  *      Author: Beasty
@@ -7,34 +7,25 @@ f * NavxSensorControl.h
 
 #ifndef SRC_SENSORCONTROL_NAVXSENSORCONTROL_H_
 #define SRC_SENSORCONTROL_NAVXSENSORCONTROL_H_
-#include <Xbox/IXbox.h>
-#include <Profile/IProfile.h>
-#include <AHRS.h>
-#include <Vision/IVision.h>
-#include "Shooter/Shooter.h"
-#include "WPILib.h"
+
+#define DEBUG false;
+
+#include <WPILib.h>
 #include <math.h>
 #include <list>
-#include "SensorControl/Artificial.cpp"
+#include <AHRS.h>
 
-#include <SensorControl/ISensorControl.h>
+#include "Xbox/IXbox.h"
+#include "Profile/IProfile.h"
+#include "Vision/IVision.h"
+#include "Shooter/Shooter.h"
+#include "SensorControl/Artificial.cpp"
+#include "SensorControl/ISensorControl.h"
 
 class NavxSensorControl: public ISensorControl, public PIDOutput {
 public:
-	NavxSensorControl(IXbox *xbox, IProfile *profileInstance, IVision *visionInstance, Shooter *shhh);
+	NavxSensorControl(IXbox *xbox, IProfile *profileInstance, IVision *visionInstance, Shooter *shooterInstance);
 	virtual ~NavxSensorControl();
-
-	//
-
-
-	Shooter *shootie;					//Main Shooting Mechanism
-	IXbox *xbox;						//Xbox Controller
-	IProfile *profile;					//Profile System
-	AHRS *ahrs;                         // navX-MXP
-	PIDController *turnController;      // PID Controller
-	IVision *vision;					//Vision Class
-
-	bool DEBUG = false;					//Debug
 
 	//Values for Targeting State machine
 	enum TargetingState{
@@ -69,45 +60,15 @@ public:
 
 private:
 
-	//All the Auto Methods
-	//Drive Straight Methods
-	void InitDriveStraight(driveStep *step);
-	bool ExecDriveStraight(driveStep *step);
-	bool GetDriveStraightContinue(float value);		//Support return the criteria to continue driveing
-	double GetEncoderCount(float);					//Return the current encoder count
-													//TODO Average all the encoders or something
 
-	//Turn Methods
-	void InitTurn(turnStep *step);
-	bool ExecTurn(turnStep *step);
+		Shooter *shooter;									//Main Shooting Mechanism
+		IXbox *xbox;										  //Xbox Controller
+		IProfile *profile;								//Profile System
+		AHRS *ahrs;                       // navX-MXP
+		PIDController *turnController;    // PID Controller
+		IVision *vision;									//Vision Class
 
-	//Shooting Methods
-	void InitAutoShoot();
-	bool ExecAutoShoot();
-
-	//Targeting Methods
-	void InitAutoTarget();
-	bool AutoTarget();
-
-	//Drive Straight with navx stabilization
-	void InitExpDriveStraight();
-	bool ExecExpDriveStraight(driveStep* ds);
-	float GetPIDError();							//Support Return the offset from the correct path
-
-	//Drive Throught Defence With Navx Heading to detect when the Pitch return to zero
-	void InitDriveThroughDefence();
-	bool ExecDriveThroughDefence();
-	float getPitch();
-
-	//DriveUntil it hits the wall
-	void InitDriveTillHitsWall();
-	bool ExecDriveTillHitsWall();
-
-	//DANCE MODE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE
-	void InitBeastModeDanceAttack();
-	bool ExecBeastModeDanceAttack();
-
-
+		void InitEncoders();
 
 protected:
 
@@ -115,12 +76,12 @@ protected:
 
 	float nkp, nkd, nki;
 
-	ArtificialOutput* AO;					//Artifical PID Output for auto drive staight
-	ArtificialSource* AS;					//Artifical PID Input for auto Drive Straight
+	ArtificialOutput* AO;									//Artifical PID Output for auto drive staight
+	ArtificialSource* AS;									//Artifical PID Input for auto Drive Straight
 	PIDController* DriveingController;		//PID Controller for auto Drive Straight
 
-	std::list<double>* VoltageList;		//Stores the Last x Voltages to normalize the value
-	double minVoltage = 8.0f;			//Store the Lowest Normal Voltage
+	std::list<double>* VoltageList;				//Stores the Last x Voltages to normalize the value
+	double minVoltage = 8.0f;							//Store the Lowest Normal Voltage
 
 	Encoder *left;
 	Encoder *right;

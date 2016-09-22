@@ -20,22 +20,36 @@
 #define TunePID false
 
 NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
-		IProfile *profileInstance, IVision *visionInstance, Shooter *shhh)
+		IProfile *profileInstance,
+		IVision *visionInstance,
+		Shooter *shooterInstance)
 {
-	// TODO Auto-generated constructor stub
-	shootie = shhh;
+	// Save Passed in IControl Objects
+	shooter = shooterInstance;
 	xbox = xboxInstance;
 	profile = profileInstance;
 	vision = visionInstance;
+
+	// Create NavX Controller
 	ahrs = new AHRS(SPI::Port::kMXP);
+
+	// Initialize PI
 	turnController = new PIDController(tkP, tkI, tkD, ahrs, this);
 	turnController->SetInputRange(-180.0, 180.0);
 	turnController->SetOutputRange(-1, 1);
 	turnController->SetContinuous(true);
+
 	time = false;
 	angleTime = 0.0;
 	t = NULL;
 
+	// Initialize Encoder's
+	InitEncoders();
+
+}
+
+NavxSensorControl::InitEncoders()
+{
 	left = new Encoder(2, 3);
 	right = new Encoder(4, 5);
 	left2 = new Encoder(6, 7);
@@ -45,7 +59,6 @@ NavxSensorControl::NavxSensorControl(IXbox *xboxInstance,
 	left2->SetReverseDirection(true);
 	right->SetReverseDirection(true);
 	right2->SetReverseDirection(false);
-
 }
 
 NavxSensorControl::~NavxSensorControl()
@@ -62,34 +75,21 @@ NavxSensorControl::~NavxSensorControl()
 	delete t;
 }
 
-MotorCommand *NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
+MotorCommand* NavxSensorControl::UpdateMotorSpeeds(float leftMotorSpeed,
 		float rightMotorSpeed)
 {
 	if (!inAutonomous)
-	{
-
 		switch (targetState)
 		{
-		case TargetingState::driveToAngle:
-			break;
-		case TargetingState::driveToDistance:
-			break;
-		default:
-			updateMotorSpeedResponse.leftMotorSpeed = leftMotorSpeed;
-			updateMotorSpeedResponse.rightMotorSpeed = rightMotorSpeed;
-			break;
+			case TargetingState::driveToAngle:
+			case TargetingState::driveToDistance:
+				break;
+			default:
+				updateMotorSpeedResponse.leftMotorSpeed = leftMotorSpeed;
+				updateMotorSpeedResponse.rightMotorSpeed = rightMotorSpeed;
+				break;
 		}
-	}
-
-	if (DEBUG)
-	{
-		SmartDashboard::PutNumber("Update Motor Left",
-				updateMotorSpeedResponse.leftMotorSpeed);
-		SmartDashboard::PutNumber("Update Motor right",
-				updateMotorSpeedResponse.rightMotorSpeed);
-	}
-
-	return &updateMotorSpeedResponse;
+		return &updateMotorSpeedResponse;
 }
 
 NavxSensorControl::DriveSystemState NavxSensorControl::DriveSystemControlUpdate(
